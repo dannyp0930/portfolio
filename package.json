@@ -1,11 +1,13 @@
 {
+  "homepage": "https://dannyp0930.github.io/portfolio",
   "name": "react-common",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
     "dev": "cross-env NODE_ENV=development webpack serve --progress",
-    "prod": "cross-env NODE_ENV=production webpack --progress"
+    "prod": "cross-env NODE_ENV=production webpack --progress",
+    "deploy": "gh-pages -d build"
   },
   "keywords": [],
   "author": "",
@@ -36,6 +38,7 @@
     "webpack-dev-server": "^4.15.1"
   },
   "dependencies": {
+    "gh-pages": "^6.1.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.14.1"
