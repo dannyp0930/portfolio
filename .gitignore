@@ -41,6 +41,5 @@ dist
 
 # env
 .env.dev
-.env.prod
 
 # End of https://www.toptal.com/developers/gitignore/api/visualstudiocode,react
