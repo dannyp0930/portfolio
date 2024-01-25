@@ -13,7 +13,7 @@ module.exports = {
   entry: path.join(__dirname, "src", "index.js"),
   mode: webpackMode,
   output: {
-    path: path.resolve(__dirname, "dist"),
+    path: path.resolve(__dirname, "build"),
     filename:
       webpackMode === "production"
         ? "[name].[contenthash].js"
