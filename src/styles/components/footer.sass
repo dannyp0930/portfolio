@@ -1,2 +1,11 @@
 footer
-  display: flex
+  +flex-box(center, center)
+  height: $desktop-footer-height
+
++tablet
+  footer
+    height: $tablet-footer-height
+
++mobile
+  footer
+    height: $mobile-footer-height
