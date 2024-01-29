@@ -2,4 +2,15 @@
 @import "./content"
 
 article
-  min-height: 100vh
+  +padding(top $desktop-header-height)
+  min-height: calc(100vh - $desktop-header-height - $desktop-footer-height)
+
++tablet
+  article
+    +padding(top $tablet-header-height)
+    min-height: calc(100vh - $tablet-header-height - $tablet-footer-height)
+
++mobile
+  article
+    +padding(top $mobile-header-height)
+    min-height: calc(100vh - $mobile-header-height - $mobile-footer-height)

@@ -2,13 +2,13 @@ import React from "react";
 import Footer from "components/Footer";
 import Header from "components/Header";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import "styles/App.sass";
+import "styles/app.sass";
 import Home from "pages/home";
 import Content from "pages/content";
 
 function App() {
   return (
-    <div className="App">
+    <div className="app">
       <BrowserRouter>
         <Header />
         <Routes>
