@@ -1,0 +1,209 @@
+@mixin size($width: null, $height: null) {
+  $width_attr: width, max, min;
+  $height_attr: height, max, min;
+
+  @if type-of($width) == "list" {
+    @if type-of(nth($width, 1)) == "string" {
+      @each $attr in $width_attr {
+        $i: index($width, $attr);
+        @if $i {
+          @if $attr == width {
+            width: nth($width, $i + 1);
+          } @else {
+            #{$attr}-width: nth($width, $i + 1);
+          }
+        }
+      }
+    } @else {
+      @for $i from 1 through length($width) {
+        @if $i == 1 {
+          width: nth($width, 1);
+        } @else {
+          #{nth($width_attr, $i)}-width: nth($width, $i);
+        }
+      }
+    }
+  } @else {
+    width: $width;
+  }
+
+  @if type-of($height) == "list" {
+    @if type-of(nth($height, 1)) == "string" {
+      @each $attr in $height_attr {
+        $i: index($height, $attr);
+        @if $i {
+          @if $attr == height {
+            height: nth($height, $i + 1);
+          } @else {
+            #{$attr}-height: nth($height, $i + 1);
+          }
+        }
+      }
+    } @else {
+      @for $i from 1 through length($height) {
+        @if $i == 1 {
+          height: nth($height, 1);
+        } @else {
+          #{nth($height_attr, $i)}-height: nth($height, $i);
+        }
+      }
+    }
+  } @else {
+    height: $height;
+  }
+}
+
+@mixin flex-box($jfc: null, $agn: null, $gap-width: null, $gap-vertical: null) {
+  display: flex;
+  @if $jfc != null {
+    justify-content: $jfc;
+  } @else {
+    justify-content: flex-start;
+  }
+
+  @if $agn != null {
+    align-items: $agn;
+  } @else {
+    align-items: flex-start;
+  }
+
+  @if ($gap-vertical != null or $gap-width != null) {
+    gap: $gap-vertical $gap-width;
+  }
+}
+
+@mixin position(
+  $position: null,
+  $top: null,
+  $right: null,
+  $bottom: null,
+  $left: null
+) {
+  @if ($position) {
+    position: $position;
+  } @else {
+    position: absolute;
+  }
+  top: $top;
+  right: $right;
+  bottom: $bottom;
+  left: $left;
+}
+
+@mixin margin($args: 0) {
+  $null-check: false;
+
+  @if type-of($args) == "list" {
+    @if type-of(nth($args, 1)) == "string" {
+      @each $attr in top, right, bottom, left {
+        $i: index($args, $attr);
+        @if $i {
+          margin-#{$attr}: nth($args, $i + 1);
+        }
+      }
+    } @else {
+      $args-length: length($args);
+      @for $i from 1 through $args-length {
+        @if nth($args, $i) == null {
+          $null-check: true;
+        }
+      }
+      @if $null-check {
+        @if $args-length == 2 {
+          margin: nth($args, 1) nth($args, 2);
+        } @else if $args-length == 3 {
+          margin: nth($args, 1) nth($args, 2) nth($args, 3);
+        } @else {
+          margin: nth($args, 1) nth($args, 2) nth($args, 3) nth($args, 4);
+        }
+      } @else {
+        @if $args-length == 2 {
+          $m-t-b: nth($args, 1);
+          $m-r-l: nth($args, 2);
+          margin: $m-t-b $m-r-l;
+        } @else if $args-length == 3 {
+          $m-t: nth($args, 1);
+          $m-r-l: nth($args, 2);
+          $m-b: nth($args, 3);
+          margin: $m-t $m-r-l $m-b;
+        } @else {
+          $m-t: nth($args, 1);
+          $m-r: nth($args, 2);
+          $m-b: nth($args, 3);
+          $m-l: nth($args, 4);
+          margin: $m-t $m-r $m-b $m-l;
+        }
+      }
+    }
+  } @else {
+    margin: $args;
+  }
+}
+
+@mixin padding($args: 0) {
+  $null-check: false;
+
+  @if type-of($args) == "list" {
+    @if type-of(nth($args, 1)) == "string" {
+      @each $attr in top, right, bottom, left {
+        $i: index($args, $attr);
+        @if $i {
+          padding-#{$attr}: nth($args, $i + 1);
+        }
+      }
+    } @else {
+      $args-length: length($args);
+      @for $i from 1 through $args-length {
+        @if nth($args, $i) == null {
+          $null-check: true;
+        }
+      }
+      @if $null-check {
+        @if $args-length == 2 {
+          padding: nth($args, 1) nth($args, 2);
+        } @else if $args-length == 3 {
+          padding: nth($args, 1) nth($args, 2) nth($args, 3);
+        } @else {
+          padding: nth($args, 1) nth($args, 2) nth($args, 3) nth($args, 4);
+        }
+      } @else {
+        @if $args-length == 2 {
+          $m-t-b: nth($args, 1);
+          $m-r-l: nth($args, 2);
+          padding: $m-t-b $m-r-l;
+        } @else if $args-length == 3 {
+          $m-t: nth($args, 1);
+          $m-r-l: nth($args, 2);
+          $m-b: nth($args, 3);
+          padding: $m-t $m-r-l $m-b;
+        } @else {
+          $m-t: nth($args, 1);
+          $m-r: nth($args, 2);
+          $m-b: nth($args, 3);
+          $m-l: nth($args, 4);
+          padding: $m-t $m-r $m-b $m-l;
+        }
+      }
+    }
+  } @else {
+    padding: $args;
+  }
+}
+
+@mixin mobile {
+  @media (min-width: #{$breakpoint-mobile}) and (max-width: #{$breakpoint-tablet - 1px}) {
+    @content;
+  }
+}
+
+@mixin tablet {
+  @media (min-width: #{$breakpoint-tablet}) and (max-width: #{$breakpoint-desktop - 1px}) {
+    @content;
+  }
+}
+
+@mixin desktop {
+  @media (min-width: #{$breakpoint-desktop}) {
+    @content;
+  }
+}
