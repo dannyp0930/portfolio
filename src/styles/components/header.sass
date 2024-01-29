@@ -2,15 +2,53 @@ header
   +size(100vw, $desktop-header-height)
   +position(fixed, 0, 0)
 
-  nav
-    +size(100%, 100%)
-    +flex-box(center, center, 30px)
-    +margin(auto)
-
-+tablet
-  header
+  +tablet
     height: $tablet-header-height
 
-+mobile
-  header
+  +mobile
     height: $mobile-header-height
+
+  nav
+    +size(100%, 100%)
+    +flex-box(space-between, center, 30px)
+    +padding(0 50px)
+    box-sizing: border-box
+
+    +tablet
+      +padding(0 40px)
+
+    +mobile
+      +padding(0 20px)
+
+    a
+      color: $white
+      font-weight: bold
+      text-decoration: none
+      text-underline-offset: 3px
+
+    .home
+      font:
+        size: 48px
+        weight: bold
+      line-height: normal
+      font-family: Parisienne, serif, sans-serif
+
+      +tablet
+        font-size: 40px
+
+      +mobile
+        font-size: 30px
+
+    ul
+      +flex-box(null, center, 20px)
+      font-size: 24px
+
+      +tablet
+        gap: 14px
+        font-size: 20px
+
+      a:hover
+        text-decoration: underline
+
+      .active
+        text-decoration: underline
