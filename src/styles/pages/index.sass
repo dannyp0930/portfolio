@@ -3,14 +3,75 @@
 
 article
   +padding(top $desktop-header-height)
+  background-color: $background-color
   min-height: calc(100vh - $desktop-header-height - $desktop-footer-height)
+
+  h1
+    font:
+      size: 34px
+      weight: bold
+    line-height: 1
+
+  h2
+    font:
+      size: 32px
+      weight: bold
+    line-height: 1.067
+
+  h3
+    font:
+      size: 26px
+      weight: bold
+    line-height: 1.083
+
+  h4
+    font:
+      size: 20px
+      weight: bold
+    line-height: 1.1
+  
+  p
+    font:
+      size: 18px
+      weight: bold
+    line-height: 1.1
 
 +tablet
   article
     +padding(top $tablet-header-height)
     min-height: calc(100vh - $tablet-header-height - $tablet-footer-height)
 
+    h1
+      font-size: 34px
+
+    h2
+      font-size: 24px
+
+    h3
+      font-size: 20px
+
+    h4
+      font-size: 18px
+
+    p
+      font-size: 16px
+
 +mobile
   article
     +padding(top $mobile-header-height)
     min-height: calc(100vh - $mobile-header-height - $mobile-footer-height)
+
+    h1
+      font-size: 24px
+
+    h2
+      font-size: 20px
+
+    h3
+      font-size: 18px
+
+    h4
+      font-size: 16px
+
+    p
+      font-size: 14px
