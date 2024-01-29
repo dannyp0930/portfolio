@@ -6,12 +6,12 @@ export default function Header() {
     <header>
       <nav>
         <NavLink className="desktop-tablet home" to="/">SH Portfolio</NavLink>
-        <NavLink className="mobile home" to="/">SH</NavLink>
+        <NavLink className="mobile home" to="/portfolio">SH</NavLink>
         <ul className="desktop-tablet">
-          <li><NavLink to="/content">Content</NavLink></li>
-          <li><NavLink to="/content">Content</NavLink></li>
-          <li><NavLink to="/content">Content</NavLink></li>
-          <li><NavLink to="/content">Content</NavLink></li>
+          <li><NavLink to="/portfolio/content">Content</NavLink></li>
+          <li><NavLink to="/portfolio/content">Content</NavLink></li>
+          <li><NavLink to="/portfolio/content">Content</NavLink></li>
+          <li><NavLink to="/portfolio/content">Content</NavLink></li>
         </ul>
       </nav>
     </header>
