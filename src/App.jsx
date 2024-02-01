@@ -1,10 +1,10 @@
 import React from "react";
 import Footer from "components/Footer";
 import Header from "components/Header";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import "styles/index.sass";
 import Home from "pages/home";
-import Content from "pages/content";
+import Project from "pages/project";
 
 function App() {
   return (
@@ -12,8 +12,10 @@ function App() {
       <BrowserRouter>
         <Header />
         <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/content" element={<Content />} />
+          <Route path="/" element={<Navigate to="/portfolio"/>}/>
+          <Route path="/portfolio" element={<Home />}>
+            <Route path="project" element={<Project />} />
+          </Route>
         </Routes>
         <Footer />
       </BrowserRouter>
