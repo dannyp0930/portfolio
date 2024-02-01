@@ -13,9 +13,8 @@ function App() {
         <Header />
         <Routes>
           <Route path="/" element={<Navigate to="/portfolio"/>}/>
-          <Route path="/portfolio" element={<Home />}>
-            <Route path="project" element={<Project />} />
-          </Route>
+          <Route path="/portfolio" element={<Home />} />
+          <Route path="/portfolio/project" element={<Project />} />
         </Routes>
         <Footer />
       </BrowserRouter>
