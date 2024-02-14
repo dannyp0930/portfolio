@@ -5,10 +5,10 @@ export default function Header() {
   return (
     <header>
       <nav>
-        <NavLink className="desktop-tablet home" to="/portfolio">SH Portfolio</NavLink>
-        <NavLink className="mobile home" to="/portfolio">SH</NavLink>
+        <NavLink className="desktop-tablet home" to="/">SH Portfolio</NavLink>
+        <NavLink className="mobile home" to="/">SH</NavLink>
         <ul className="desktop-tablet">
-          <li><NavLink to="/portfolio/project">Project</NavLink></li>
+          <li><NavLink to="/project">Project</NavLink></li>
         </ul>
       </nav>
     </header>

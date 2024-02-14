@@ -9,12 +9,11 @@ import Project from "pages/project";
 function App() {
   return (
     <div className="app">
-      <BrowserRouter>
+      <BrowserRouter basename={process.env.PUBLIC_URL}>
         <Header />
         <Routes>
-          <Route path="/" element={<Navigate to="/portfolio"/>}/>
-          <Route path="/portfolio" element={<Home />} />
-          <Route path="/portfolio/project" element={<Project />} />
+          <Route path="/" element={<Home />} />
+          <Route path="/project" element={<Project />} />
         </Routes>
         <Footer />
       </BrowserRouter>
