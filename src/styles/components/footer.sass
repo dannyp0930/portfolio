@@ -1,5 +1,6 @@
 footer
-  +flex-box(center, center)
+  +flex-box(center, center, 20px)
+  flex-direction: column
   height: $desktop-footer-height
   background-color: $black-000
   color: $white
@@ -11,3 +12,13 @@ footer
 +mobile
   footer
     height: $mobile-footer-height
+
+.link-container
+  +flex-box(space-between, center, 30px)
+
+  a
+    +size(48px, 48px)
+    color: $white
+
+    svg
+      +size(100%, 100%)
