@@ -9,11 +9,11 @@ import Content from "pages/content";
 function App() {
   return (
     <div className="app">
-      <BrowserRouter>
+      <BrowserRouter basename={process.env.PUBLIC_URL}>
         <Header />
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/content" element={<Content />} />
+          <Route path="/project" element={<Project />} />
         </Routes>
         <Footer />
       </BrowserRouter>
