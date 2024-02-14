@@ -9,6 +9,8 @@ $breakpoint-mobile: 360px;
 $breakpoint-tablet: 768px;
 $breakpoint-desktop: 1280px;
 
+$full-vh: calc(var(--vh, 1vh) * 100);
+
 $theme-color: #FFDAB9;
 $theme-sub-color: #522A28;
 $background-color: #FFDAB9;

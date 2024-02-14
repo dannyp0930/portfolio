@@ -1,5 +1,6 @@
-import api from "api";
 import React, { useEffect, useState } from "react";
+import ProjectCard from "components/pages/project/ProjectCard";
+import api from "api";
 
 export default function Project() {
   const [projects, setProjects] = useState([]);
@@ -14,12 +15,12 @@ export default function Project() {
   }, []);
 
   return (
-    <article>
-      {projects.map((project) => (
-        <div key={project.id}>
-          <h1>{project.title}</h1>
-        </div>
-      ))}
+    <article id="project">
+      <section className="card-container">
+        {projects.map((project) => (
+          <ProjectCard key={project.id} project={project} />
+        ))}
+      </section>
     </article>
   );
 }

@@ -1,0 +1,29 @@
+.project-card
+  +size(40% null 500px)
+  +padding(50px)
+  +flex-box(center, null, 20px)
+  box-sizing: border-box
+  flex-direction: column
+  border-radius: 20px
+  background-color: $white
+  transition: transform 100ms linear
+
+  &:hover
+    transform: scale(1.1)
+
+  +mobile
+    +size(90% null 300px)
+    +padding(20px)
+
+    &:hover
+      transform: none
+
+  .link-container
+    +flex-box(null, center, 10px)
+
+    .link-wrap
+      +size(46px, 46px)
+      color: $theme-sub-color
+
+      svg
+        +size(100%, 100%)
