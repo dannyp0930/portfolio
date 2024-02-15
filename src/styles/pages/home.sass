@@ -1,0 +1,33 @@
+#home
+  +size(100%, $full-vh)
+  position: relative
+
+  .home-nav
+    +position(absolute, 50%, null, null, 30px)
+    transform: translateY(-50%)
+    z-index: 99
+
+    ul
+      +flex-box(null, null, 30px)
+      flex-direction: column
+
+      li
+
+        a
+          +size(20px, 20px)
+          box-sizing: border-box
+          border-radius: 999px
+          display: block
+          content: " "
+          border: 5px solid $white
+          transition: border 200ms linear
+
+        .active
+          border-color: $theme-sub-color
+
+  article
+    +size(100%, 100%)
+    overflow: hidden
+
+    section
+      +size(100%, 100%)
