@@ -1,10 +1,12 @@
 @import "./home"
 @import "./project"
 
-article
+main
   background-color: $background-color
   min-width: 320px
-  min-height: calc($full-vh - $desktop-footer-height)
+
+  &:not(#home)
+    min-height: calc($full-vh - $desktop-header-height - $desktop-footer-height)
 
   h1
     font:
@@ -37,8 +39,8 @@ article
     line-height: 1.1
 
 +tablet
-  article
-    min-height: calc($full-vh - $tablet-footer-height)
+  main
+    min-height: calc($full-vh - $tablet-header-height - $tablet-footer-height)
 
     h1
       font-size: 34px
@@ -56,8 +58,8 @@ article
       font-size: 16px
 
 +mobile
-  article
-    min-height: calc($full-vh - $mobile-footer-height)
+  main
+    min-height: calc($full-vh - $mobile-header-height - $mobile-footer-height)
 
     h1
       font-size: 24px

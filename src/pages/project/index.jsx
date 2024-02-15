@@ -15,12 +15,12 @@ export default function Project() {
   }, []);
 
   return (
-    <article id="project">
+    <main id="project">
       <section className="card-container">
         {projects.map((project) => (
           <ProjectCard key={project.id} project={project} />
         ))}
       </section>
-    </article>
+    </main>
   );
 }

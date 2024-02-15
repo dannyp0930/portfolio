@@ -1,16 +1,18 @@
 import React, { useEffect } from "react";
 import Footer from "components/Footer";
 import Header from "components/Header";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { Route, Routes, useLocation } from "react-router-dom";
 import "styles/index.sass";
 import Home from "pages/home";
 import Project from "pages/project";
 
+function setScreenSize() {
+  let vh = window.innerHeight * 0.01;
+  document.documentElement.style.setProperty("--vh", `${vh}px`);
+}
+
 function App() {
-  function setScreenSize() {
-    let vh = window.innerHeight * 0.01;
-    document.documentElement.style.setProperty("--vh", `${vh}px`);
-  }
+  const location = useLocation();
 
   useEffect(() => {
     setScreenSize();
@@ -19,14 +21,12 @@ function App() {
 
   return (
     <div className="app">
-      <BrowserRouter basename={process.env.PUBLIC_URL}>
-        <Header />
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/project" element={<Project />} />
-        </Routes>
-        <Footer />
-      </BrowserRouter>
+      <Header />
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/project" element={<Project />} />
+      </Routes>
+      {location.pathname !== "/" && <Footer />}
     </div>
   );
 }
