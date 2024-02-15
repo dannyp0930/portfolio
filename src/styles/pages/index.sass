@@ -2,10 +2,9 @@
 @import "./project"
 
 article
-  +padding(top $desktop-header-height)
   background-color: $background-color
   min-width: 320px
-  min-height: calc($full-vh - $desktop-header-height - $desktop-footer-height)
+  min-height: calc($full-vh - $desktop-footer-height)
 
   h1
     font:
@@ -34,13 +33,12 @@ article
   p
     font:
       size: 18px
-      weight: bold
+      weight: normal
     line-height: 1.1
 
 +tablet
   article
-    +padding(top $tablet-header-height)
-    min-height: calc($full-vh - $tablet-header-height - $tablet-footer-height)
+    min-height: calc($full-vh - $tablet-footer-height)
 
     h1
       font-size: 34px
@@ -59,8 +57,7 @@ article
 
 +mobile
   article
-    +padding(top $mobile-header-height)
-    min-height: calc($full-vh - $mobile-header-height - $mobile-footer-height)
+    min-height: calc($full-vh - $mobile-footer-height)
 
     h1
       font-size: 24px

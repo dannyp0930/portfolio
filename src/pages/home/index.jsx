@@ -1,23 +1,16 @@
+import Banner from "components/pages/home/Banner";
+import Career from "components/pages/home/Career";
+import Info from "components/pages/home/Info";
+import Skills from "components/pages/home/Skills";
 import React from "react";
 
 export default function Home() {
   return (
     <article>
-      <section>
-         배너
-      </section>
-      <section>
-        기본정보(연락처)
-      </section>
-      <section>
-        설명
-      </section>
-      <section>
-        스택
-      </section>
-      <section>
-        경력 / 자격사항
-      </section>
+      <Banner />
+      <Info />
+      <Skills />
+      <Career />
     </article>
   );
 }
