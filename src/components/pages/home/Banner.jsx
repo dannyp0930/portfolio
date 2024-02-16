@@ -4,7 +4,6 @@ import BannerTablet from "assets/images/banner-tablet.webp";
 import BannerMobile from "assets/images/banner-mobile.webp";
 
 export default function Banner() {
-  console.log(BannerMobile);
   return (
     <section className="banner">
       <picture>
