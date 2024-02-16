@@ -1,13 +1,28 @@
 import React, { useEffect, useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import Banner from "components/pages/home/Banner";
 import Career from "components/pages/home/Career";
 import Info from "components/pages/home/Info";
 import Skills from "components/pages/home/Skills";
+import { debounce } from "lodash";
 
 export default function Home() {
   const [hash, setHash] = useState(1);
   const location = useLocation();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    function scrollEvent(e) {
+      if (e.deltaY > 0 && hash < 4) {
+        navigate({ hash: `#${hash + 1}` });
+      } else if (e.deltaY < 0 && hash > 0) {
+        navigate({ hash: `#${hash - 1}` });
+      }
+    }
+    const srcollEventFunc = debounce(scrollEvent, 500);
+    window.addEventListener("wheel", srcollEventFunc);
+    return () => window.removeEventListener("wheel", srcollEventFunc);
+  }, [hash]);
 
   useEffect(() => {
     if (location.hash) {
@@ -36,10 +51,10 @@ export default function Home() {
         </ul>
       </nav>
       <article>
-        <section className="section-1" ><Banner/></section>
-        <section className="section-2" ><Info/></section>
-        <section className="section-3" ><Skills/></section>
-        <section className="section-4" ><Career/></section>
+        <section className="section-1"><Banner /></section>
+        <section className="section-2"><Info /></section>
+        <section className="section-3"><Skills /></section>
+        <section className="section-4"><Career /></section>
       </article>
     </main>
   );
