@@ -13,15 +13,31 @@ export default function Home() {
 
   useEffect(() => {
     function scrollEvent(e) {
-      if (e.deltaY > 0 && hash < 4) {
+      const deltaY = e.deltaY
+      if (deltaY > 0 && hash < 4) {
         navigate({ hash: `#${hash + 1}` });
-      } else if (e.deltaY < 0 && hash > 0) {
+      } else if (deltaY < 0 && hash > 1) {
         navigate({ hash: `#${hash - 1}` });
       }
     }
+    
+    function keydownEvent(e) {
+      const keyCode = e.keyCode;
+      if (keyCode === 40 && hash < 4) {
+        navigate({ hash: `#${hash + 1}` });
+      } else if (keyCode === 38 && hash > 1) {
+        navigate({ hash: `#${hash - 1}` });
+      }
+    }
+
     const srcollEventFunc = debounce(scrollEvent, 500);
+    const keydownEventFunc = debounce(keydownEvent, 300);
     window.addEventListener("wheel", srcollEventFunc);
-    return () => window.removeEventListener("wheel", srcollEventFunc);
+    window.addEventListener("keydown", keydownEventFunc);
+    return () => {
+      window.removeEventListener("wheel", srcollEventFunc);
+      window.removeEventListener("keydown", keydownEventFunc);
+    }
   }, [hash]);
 
   useEffect(() => {
