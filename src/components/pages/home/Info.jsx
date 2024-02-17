@@ -1,10 +1,53 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { ModalContainer } from "components/common/ModalContainer";
+import { debounce } from "lodash";
 
 export default function Info() {
+  const [selectItemIdx, setSelectItemIdx] = useState(0);
+  const [selectItem, setSelectItem] = useState(null);
+
+  useEffect(() => {
+    function closeModal() {
+      setSelectItemIdx(0);
+    }
+    const srcollEventFunc = debounce(closeModal, 500);
+    const touchStartEventFunc = debounce(closeModal, 100);
+    const touchMoveEventFunc = debounce(closeModal, 100);
+    const keydownEventFunc = debounce(closeModal, 300);
+    window.addEventListener("wheel", srcollEventFunc);
+    window.addEventListener("keydown", keydownEventFunc);
+    window.addEventListener("touchstart", touchStartEventFunc);
+    window.addEventListener("touchmove", touchMoveEventFunc);
+    return () => {
+      window.removeEventListener("wheel", srcollEventFunc);
+      window.removeEventListener("keydown", keydownEventFunc);
+      window.removeEventListener("touchstart", touchStartEventFunc);
+      window.removeEventListener("touchmove", touchMoveEventFunc);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (selectItemIdx) {
+      const item =
+        document.querySelectorAll(`.content-wrap`)[selectItemIdx - 1];
+      if (item) {
+        setSelectItem(item.innerHTML);
+      } else {
+        setSelectItem(null);
+      }
+    }
+  }, [selectItemIdx]);
+
   return (
     <section className="info">
+      {selectItemIdx ? (
+        <ModalContainer
+          closeModal={() => setSelectItemIdx(0)}
+          children={selectItem}
+        />
+      ) : null}
       <div className="content-container">
-        <div className="content-wrap">
+        <div className="content-wrap" onClick={() => setSelectItemIdx(1)}>
           <h3>CONTACT</h3>
           <ul>
             <li>
@@ -23,7 +66,7 @@ export default function Info() {
             </li>
           </ul>
         </div>
-        <div className="content-wrap">
+        <div className="content-wrap" onClick={() => setSelectItemIdx(2)}>
           <h3>EDUCATION</h3>
           <ul>
             <li>
@@ -36,7 +79,7 @@ export default function Info() {
             </li>
           </ul>
         </div>
-        <div className="content-wrap">
+        <div className="content-wrap" onClick={() => setSelectItemIdx(3)}>
           <h3>EXPERIENCE</h3>
           <ul>
             <li>
@@ -49,7 +92,7 @@ export default function Info() {
             </li>
           </ul>
         </div>
-        <div className="content-wrap">
+        <div className="content-wrap" onClick={() => setSelectItemIdx(4)}>
           <h3>CARRER</h3>
           <ul>
             <li>
@@ -74,7 +117,7 @@ export default function Info() {
             </li>
           </ul>
         </div>
-        <div className="content-wrap">
+        <div className="content-wrap" onClick={() => setSelectItemIdx(5)}>
           <h3>LANGUAGE</h3>
           <ul>
             <li>
@@ -87,7 +130,7 @@ export default function Info() {
             </li>
           </ul>
         </div>
-        <div className="content-wrap">
+        <div className="content-wrap" onClick={() => setSelectItemIdx(6)}>
           <h3>CERTIFICATE</h3>
           <ul>
             <li>

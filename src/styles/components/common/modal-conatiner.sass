@@ -1,0 +1,15 @@
+.modal-container
+  +position(fixed, 0, 0)
+  +size(100vw, calc($full-vh))
+  +flex-box(center, center)
+  background-color: rgba(0, 0, 0, 0.6)
+  z-index: 99
+
+  .modal-wrap
+    +padding(40px)
+    background-color: $white
+    border-radius: 20px
+
+    +mobile
+      +padding(20px)
+      border-radius: 10px
