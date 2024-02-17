@@ -57,14 +57,25 @@
   display: flex;
   @if $jfc != null {
     justify-content: $jfc;
-  } @else {
-    justify-content: flex-start;
   }
 
   @if $agn != null {
     align-items: $agn;
-  } @else {
-    align-items: flex-start;
+  }
+
+  @if ($gap-vertical != null or $gap-width != null) {
+    gap: $gap-vertical $gap-width;
+  }
+}
+
+@mixin grid($gtc: null, $gtr: null, $gap-width: null, $gap-vertical: null) {
+  display: grid;
+  @if $gtc != null {
+    grid-template-columns: repeat($gtc, 1fr);
+  }
+
+  @if $gtr != null {
+    grid-template-rows: repeat($gtr, 1fr);
   }
 
   @if ($gap-vertical != null or $gap-width != null) {
