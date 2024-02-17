@@ -7,15 +7,21 @@ import Info from "components/pages/home/Info";
 import Skills from "components/pages/home/Skills";
 
 export default function Home() {
+  const [sectionLength, setSectionLength] = useState(0);
   const [hash, setHash] = useState(1);
   const [initialY, setInitialY] = useState(0);
   const location = useLocation();
   const navigate = useNavigate();
 
   useEffect(() => {
+    const sections = document.querySelectorAll(".section");
+    setSectionLength(sections.length);
+  }, []);
+
+  useEffect(() => {
     function scrollEvent(e) {
       const deltaY = e.deltaY;
-      if (deltaY > 0 && hash < 4) {
+      if (deltaY > 0 && hash < sectionLength) {
         navigate({ hash: `#${hash + 1}` });
       } else if (deltaY < 0 && hash > 1) {
         navigate({ hash: `#${hash - 1}` });
@@ -24,7 +30,7 @@ export default function Home() {
 
     function keydownEvent(e) {
       const keyCode = e.keyCode;
-      if (keyCode === 40 && hash < 4) {
+      if (keyCode === 40 && hash < sectionLength) {
         navigate({ hash: `#${hash + 1}` });
       } else if (keyCode === 38 && hash > 1) {
         navigate({ hash: `#${hash - 1}` });
@@ -37,7 +43,7 @@ export default function Home() {
 
     function toucMoveEvent(e) {
       const dir = initialY - e.touches[0].clientY > 0;
-      if (dir && hash < 4) {
+      if (dir && hash < sectionLength) {
         navigate({ hash: `#${hash + 1}` });
       } else if (!dir && hash > 1) {
         navigate({ hash: `#${hash - 1}` });
@@ -58,7 +64,7 @@ export default function Home() {
       window.removeEventListener("touchstart", touchStartEventFunc);
       window.removeEventListener("touchmove", touchMoveEventFunc);
     };
-  }, [hash, initialY]);
+  }, [sectionLength, hash, initialY]);
 
   useEffect(() => {
     if (location.hash) {
@@ -87,10 +93,10 @@ export default function Home() {
         </ul>
       </nav>
       <article>
-        <section className="section-1"><Banner /></section>
-        <section className="section-2"><Info /></section>
-        <section className="section-3"><Skills /></section>
-        <section className="section-4"><Career /></section>
+        <section className="section section-1"><Banner /></section>
+        <section className="section section-2"><Info /></section>
+        <section className="section section-3"><Skills /></section>
+        <section className="section section-4"><Career /></section>
       </article>
     </main>
   );
