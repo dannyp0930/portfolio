@@ -44,7 +44,7 @@ jobs:
 
       - name: Build
         run: |
-          npm run build
+          npm run prod
           cp ./build/index.html ./build/404.html
 
       - name: Deploy to gh-pages branch
