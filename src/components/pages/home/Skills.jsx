@@ -25,10 +25,10 @@ export default function Skills() {
     { title: "Git", image: gitSvg, content: "소스코드 버전 관리 및 프로젝트 협업 경험", level: 2 },
     { title: "Python", image: pythonSvg, content: "기본 파이썬 문법 이해, 라이브러리를 사용한 알고리즘 구현", level: 2 },
     { title: "JavaScript", image: javascriptSvg, content: "기본 자바스크립트 문법 이해, 자바스크립트 프레임 워크 사용", level: 3 },
-    { title: "TypeScript", image: typescriptSvg, content: "타입, 인터페이스 사용하여 정적 타입 명시", level: 1 },
+    { title: "TypeScript", image: typescriptSvg, content: "타입, 인터페이스 사용하여 정적 타입 명시", level: 2 },
     { title: "React", image: reactSvg, content: "SPA 서비스 제작 및 업무 경험", level: 4 },
     { title: "Next.js", image: nextdotjsSvg, content: "SSR 프로젝트 제작", level: 2 },
-    { title: "Recoil", image: recoilSvg, content: "React 상태관리 라이브러리", level: 1 },
+    { title: "Recoil", image: recoilSvg, content: "React 상태관리 라이브러리", level: 2 },
     { title: "Vue.js", image: vuedotjsSvg, content: "SPA 서비스 제작 및 업무 경험", level: 4 },
     { title: "JQuery", image: jquerySvg, content: "서비스 제작 및 업무 경험", level: 4 },
     { title: "Sass", image: sassSvg, content: "", level: 4 },
@@ -46,10 +46,10 @@ export default function Skills() {
             <div className="skill-detail">
               <h3>
                 {skill.title}
-                <span>
-                  {Array(skill.level).fill().map((_, idx) => <FontAwesomeIcon key={idx} icon={faStar} style={{color: "#FFD43B"}} />)}
-                </span>
               </h3>
+              <div className="level-wrap">
+                {Array(skill.level).fill().map((_, idx) => <FontAwesomeIcon key={idx} icon={faStar} style={{color: "#FFD43B"}} />)}
+              </div>
               {skill.content ? <p>{skill.content}</p> : null}
             </div>
             <img src={skill.image} alt={skill.title} />

@@ -9,9 +9,10 @@
     text-align: center
 
   .skill-container
-    +size(1280px, 720px)
+    +size(1280px, fit-content)
     +grid(6, null, 50px)
     +padding(60px)
+    align-items: center
     box-sizing: border-box
     background-color: $white
     border-radius: 20px
@@ -23,7 +24,7 @@
 
       .skill-detail
         +position(absolute, 0, 50%)
-        +size(400px)
+        +size(300px)
         +padding(20px)
         background-color: $white
         border:
@@ -32,21 +33,19 @@
           color: $theme-sub-color
           radius: 10px
         transform: translateX(50%)
-        white-space: nowrap
         transition: transform 300ms linear, opacity 300ms linear
         opacity: 0
 
-        h3
-
-          span
-            +padding(left 10px)
+        .level-wrap
+          +padding(top 10px)
 
         p
           +margin(top 10px)
           white-space: pre-wrap
 
       img
-        fill: blue
+        +size(100%, 100%)
+        object-fit: cover
 
       &:hover
         transform: translateY(-20px)
@@ -54,3 +53,49 @@
         & > .skill-detail
           transform: translate(50%, calc(-100% - 20px))
           opacity: 1
+
++tablet
+  .skills
+    +padding(top $tablet-header-height)
+
+    .skill-container
+      width: 90%
+      grid-template-columns: repeat(4, 1fr)
+
+      .skill-wrap
+
+        .skill-detail
+          +size(250px)
+
+          h3
+            font-size: 16px
+
++mobile
+  .skills
+    +padding(top $mobile-header-height)
+    gap: 20px
+
+    h1
+      +margin(top 20px)
+
+    .skill-container
+      +padding(20px)
+      +size(300px)
+      grid-template-columns: repeat(4, 1fr)
+      gap: 15px
+
+      .skill-wrap
+
+        .skill-detail
+          +size(100px)
+
+          h3
+            font-size: 16px
+            word-break: break-all
+
+        &:hover
+          transform: translateY(-10px)
+
+          & > .skill-detail
+            transform: translate(50%, calc(-100% - 10px))
+            opacity: 1
