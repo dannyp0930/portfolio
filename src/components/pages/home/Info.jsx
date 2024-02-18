@@ -93,7 +93,7 @@ export default function Info() {
           </ul>
         </div>
         <div className="content-wrap" onClick={() => setSelectItemIdx(4)}>
-          <h3>CARRER</h3>
+          <h3>CAREER</h3>
           <ul>
             <li>
               <h4>한국교통안전공단 인턴</h4>
