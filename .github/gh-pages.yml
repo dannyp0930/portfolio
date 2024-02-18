@@ -3,7 +3,7 @@ name: Build and Deploy
 on:
   push:
     branches:
-      - maister
+      - master
 
 jobs:
   deploy:
