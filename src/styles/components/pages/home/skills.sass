@@ -1,0 +1,56 @@
+.skills
+  +padding(top $desktop-header-height)
+  +flex-box(flex-start, center, 50px)
+  flex-direction: column
+
+  h1
+    +margin(top 50px)
+    font-size: 48px
+    text-align: center
+
+  .skill-container
+    +size(1280px, 720px)
+    +grid(6, null, 50px)
+    +padding(60px)
+    box-sizing: border-box
+    background-color: $white
+    border-radius: 20px
+
+    .skill-wrap
+      position: relative
+      transition: transform 300ms linear
+      cursor: pointer
+
+      .skill-detail
+        +position(absolute, 0, 50%)
+        +size(400px)
+        +padding(20px)
+        background-color: $white
+        border:
+          width: 1px
+          style: solid
+          color: $theme-sub-color
+          radius: 10px
+        transform: translateX(50%)
+        white-space: nowrap
+        transition: transform 300ms linear, opacity 300ms linear
+        opacity: 0
+
+        h3
+
+          span
+            +padding(left 10px)
+
+        p
+          +margin(top 10px)
+          white-space: pre-wrap
+
+      img
+        fill: blue
+
+      &:hover
+        transform: translateY(-20px)
+
+        & > .skill-detail
+          transform: translate(50%, calc(-100% - 20px))
+          opacity: 1
