@@ -4,7 +4,6 @@ import Header from "components/Header";
 import { Route, Routes, useLocation } from "react-router-dom";
 import "styles/index.sass";
 import Home from "pages/home";
-import Project from "pages/project";
 
 function setScreenSize() {
   let vh = window.innerHeight * 0.01;
@@ -24,7 +23,6 @@ function App() {
       <Header />
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/project" element={<Project />} />
       </Routes>
       {location.pathname !== "/" && <Footer />}
     </div>
