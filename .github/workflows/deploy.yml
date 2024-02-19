@@ -43,6 +43,14 @@ jobs:
           echo PUBLIC_URL=$PUBLIC_URL > .env.prod
       
       - name: Set ENV
+        run: |
+          echo "FIREBASE_APP_KEY=FIREBASE_APP_KEY" >> .env.prd
+          echo "FIREBASE_AUTH_DOMAIN=FIREBASE_AUTH_DOMAIN" >> .env.prd
+          echo "FIREBASE_PROJECT_ID=FIREBASE_PROJECT_ID" >> .env.prd
+          echo "FIREBASE_STORAGE_BUCKET=FIREBASE_STORAGE_BUCKET" >> .env.prd
+          echo "FIREBASE_MESSAGING_SENDER_ID=FIREBASE_MESSAGING_SENDER_ID" >> .env.prd
+          echo "FIREBASE_APP_ID=FIREBASE_APP_ID" >> .env.prd
+          echo "FIREBASE_MEASUREMENT_ID=FIREBASE_MEASUREMENT_ID" >> .env.prd
         env:
           FIREBASE_APP_KEY: ${{ secrets.FIREBASE_APP_KEY }}
           FIREBASE_AUTH_DOMAIN: ${{ secrets.FIREBASE_AUTH_DOMAIN }}
@@ -51,14 +59,6 @@ jobs:
           FIREBASE_MESSAGING_SENDER_ID: ${{ secrets.FIREBASE_MESSAGING_SENDER_ID }}
           FIREBASE_APP_ID: ${{ secrets.FIREBASE_APP_ID }}
           FIREBASE_MEASUREMENT_ID: ${{ secrets.FIREBASE_MEASUREMENT_ID }}
-        run: |
-          echo "FIREBASE_APP_KEY=${FIREBASE_APP_KEY}" >> $GITHUB_ENV
-          echo "FIREBASE_AUTH_DOMAIN=${FIREBASE_AUTH_DOMAIN}" >> $GITHUB_ENV
-          echo "FIREBASE_PROJECT_ID=${FIREBASE_PROJECT_ID}" >> $GITHUB_ENV
-          echo "FIREBASE_STORAGE_BUCKET=${FIREBASE_STORAGE_BUCKET}" >> $GITHUB_ENV
-          echo "FIREBASE_MESSAGING_SENDER_ID=${FIREBASE_MESSAGING_SENDER_ID}" >> $GITHUB_ENV
-          echo "FIREBASE_APP_ID=${FIREBASE_APP_ID}" >> $GITHUB_ENV
-          echo "FIREBASE_MEASUREMENT_ID=${FIREBASE_MEASUREMENT_ID}" >> $GITHUB_ENV
 
       - name: Build
         run: |
