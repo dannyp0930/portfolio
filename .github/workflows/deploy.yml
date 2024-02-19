@@ -40,9 +40,9 @@ jobs:
       - name: Set PUBLIC_URL
         run: |
           PUBLIC_URL=$(echo $GITHUB_REPOSITORY | sed -r 's/^.+\/(.+)$/\/\1\//')
-          echo PUBLIC_URL=$PUBLIC_URL > .env.prod
-      
-      - name: Set ENV
+          echo PUBLIC_URL=$PUBLIC_URL > .env
+
+      - name: Build
         env:
           FIREBASE_APP_KEY: ${{ secrets.FIREBASE_APP_KEY }}
           FIREBASE_AUTH_DOMAIN: ${{ secrets.FIREBASE_AUTH_DOMAIN }}
@@ -51,8 +51,6 @@ jobs:
           FIREBASE_MESSAGING_SENDER_ID: ${{ secrets.FIREBASE_MESSAGING_SENDER_ID }}
           FIREBASE_APP_ID: ${{ secrets.FIREBASE_APP_ID }}
           FIREBASE_MEASUREMENT_ID: ${{ secrets.FIREBASE_MEASUREMENT_ID }}
-
-      - name: Build
         run: |
           npm run prod
 
