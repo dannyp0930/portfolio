@@ -1,0 +1,48 @@
+@import "./project-card"
+
+.project
+  +flex-box(center, center)
+
+  .carousel-container
+    +size(1000px, 500px)
+    +margin(auto)
+    position: relative
+
+    .nav-container
+      +position(absolute, 50%)
+      +size(100%)
+      +flex-box(space-between)
+      transform: translateY(-50%)
+      z-index: 99
+
+      .nav-btn
+        font:
+          size: 48px
+          weight: bold
+          family: "KBO Dia Gothic"
+        color: $theme-sub-color
+        background-color: transparent
+        border: none
+        cursor: pointer
+
+      .nav-prev
+        &:after
+          content: "<"
+
+      .nav-next
+        &:after
+          content: ">"
+
+      .nav-disabled
+        opacity: 0.6
+
+    .carousel-wrap
+      +size(100%, 100%)
+      +flex-box(flex-start, center)
+      transition: transform 400ms ease-out
+
+      .carousel-item
+        +size(100%, 100%)
+        +flex-box(center, center)
+        flex-grow: 1
+        flex-shrink: 0

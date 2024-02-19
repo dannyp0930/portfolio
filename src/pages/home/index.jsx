@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { debounce } from "lodash";
-import Banner from "components/pages/home/Banner";
-import Career from "components/pages/home/Career";
-import Info from "components/pages/home/Info";
-import Skills from "components/pages/home/Skills";
+import Banner from "components/home/Banner";
+import Project from "components/home/Project";
+import Info from "components/home/Info";
+import Skills from "components/home/Skills";
 
 export default function Home() {
   const [sectionLength, setSectionLength] = useState(0);
@@ -84,19 +84,11 @@ export default function Home() {
 
   return (
     <main id="home">
-      <nav className="home-nav">
-        <ul>
-          <li><Link className={hash === 1 ? "active" : ""} to="/#1"></Link></li>
-          <li><Link className={hash === 2 ? "active" : ""} to="/#2"></Link></li>
-          <li><Link className={hash === 3 ? "active" : ""} to="/#3"></Link></li>
-          <li><Link className={hash === 4 ? "active" : ""} to="/#4"></Link></li>
-        </ul>
-      </nav>
       <article>
         <section className="section section-1"><Banner /></section>
         <section className="section section-2"><Info /></section>
         <section className="section section-3"><Skills /></section>
-        <section className="section section-4"><Career /></section>
+        <section className="section section-4"><Project /></section>
       </article>
     </main>
   );
