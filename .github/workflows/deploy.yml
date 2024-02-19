@@ -40,14 +40,21 @@ jobs:
       - name: Set ENV
         run: |
           PUBLIC_URL=$(echo $GITHUB_REPOSITORY | sed -r 's/^.+\/(.+)$/\/\1\//')
+          FIREBASE_APP_KEY=${{ secrets.FIREBASE_APP_KEY }}
+          FIREBASE_AUTH_DOMAIN=${{ secrets.FIREBASE_AUTH_DOMAIN }}
+          FIREBASE_PROJECT_ID=${{ secrets.FIREBASE_PROJECT_ID }}
+          FIREBASE_STORAGE_BUCKET=${{ secrets.FIREBASE_STORAGE_BUCKET }}
+          FIREBASE_MESSAGING_SENDER_ID=${{ secrets.FIREBASE_MESSAGING_SENDER_ID }}
+          FIREBASE_APP_ID=${{ secrets.FIREBASE_APP_ID }}
+          FIREBASE_MEASUREMENT_ID=${{ secrets.FIREBASE_MEASUREMENT_ID }}
           echo PUBLIC_URL=$PUBLIC_URL > .env.prod
-          echo FIREBASE_APP_KEY=${{ secrets.FIREBASE_APP_KEY }} > .env.prd
-          echo FIREBASE_AUTH_DOMAIN=${{ secrets.FIREBASE_AUTH_DOMAIN }} > .env.prd
-          echo FIREBASE_PROJECT_ID=${{ secrets.FIREBASE_PROJECT_ID }} > .env.prd
-          echo FIREBASE_STORAGE_BUCKET=${{ secrets.FIREBASE_STORAGE_BUCKET }} > .env.prd
-          echo FIREBASE_MESSAGING_SENDER_ID=${{ secrets.FIREBASE_MESSAGING_SENDER_ID }} > .env.prd
-          echo FIREBASE_APP_ID=${{ secrets.FIREBASE_APP_ID }} > .env.prd
-          echo FIREBASE_MEASUREMENT_ID=${{ secrets.FIREBASE_MEASUREMENT_ID }} > .env.prd
+          echo FIREBASE_APP_KEY=$secrets.FIREBASE_APP_KEY > .env.prd
+          echo FIREBASE_AUTH_DOMAIN=$secrets.FIREBASE_AUTH_DOMAIN > .env.prd
+          echo FIREBASE_PROJECT_ID=$secrets.FIREBASE_PROJECT_ID > .env.prd
+          echo FIREBASE_STORAGE_BUCKET=$secrets.FIREBASE_STORAGE_BUCKET > .env.prd
+          echo FIREBASE_MESSAGING_SENDER_ID=$secrets.FIREBASE_MESSAGING_SENDER_ID > .env.prd
+          echo FIREBASE_APP_ID=$secrets.FIREBASE_APP_ID > .env.prd
+          echo FIREBASE_MEASUREMENT_ID=$secrets.FIREBASE_MEASUREMENT_ID > .env.prd
 
       - name: Build
         run: |
