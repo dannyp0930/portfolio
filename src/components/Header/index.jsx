@@ -8,7 +8,6 @@ export default function Header() {
         <NavLink className="desktop-tablet home" to="/">SH Portfolio</NavLink>
         <NavLink className="mobile home" to="/">SH</NavLink>
         <ul className="desktop-tablet">
-          <li>{process.env.FIREBASE_APP_KEY}</li>
           <li><NavLink to="/#2">Info</NavLink></li>
           <li><NavLink to="/#3">Skills</NavLink></li>
           <li><NavLink to="/#4">Project</NavLink></li>
