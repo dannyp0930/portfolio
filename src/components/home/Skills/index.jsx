@@ -2,6 +2,7 @@ import React from "react";
 import htmlSvg from "assets/images/icons/html5.svg";
 import css3Svg from "assets/images/icons/css3.svg";
 import gitSvg from "assets/images/icons/git.svg";
+import jiraSvg from "assets/images/icons/jira.svg";
 import pythonSvg from "assets/images/icons/python.svg";
 import javascriptSvg from "assets/images/icons/javascript.svg";
 import typescriptSvg from "assets/images/icons/typescript.svg";
@@ -23,6 +24,7 @@ export default function Skills() {
     { title: "HTML", image: htmlSvg, content: "SEO를 위한 시멘틱 태그 사용", level: 4 },
     { title: "CSS", image: css3Svg, content: "Class별 스타일링 선호", level: 4 },
     { title: "Git", image: gitSvg, content: "소스코드 버전 관리 및 프로젝트 협업 경험", level: 2 },
+    { title: "Jira", image: jiraSvg, content: "프로젝트 일정 관리 및 협업 툴 사용", level: 3 },
     { title: "Python", image: pythonSvg, content: "기본 파이썬 문법 이해, 라이브러리를 사용한 알고리즘 구현", level: 2 },
     { title: "JavaScript", image: javascriptSvg, content: "기본 자바스크립트 문법 이해, 자바스크립트 프레임 워크 사용", level: 3 },
     { title: "TypeScript", image: typescriptSvg, content: "타입, 인터페이스 사용하여 정적 타입 명시", level: 2 },
