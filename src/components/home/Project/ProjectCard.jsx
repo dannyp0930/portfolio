@@ -11,7 +11,7 @@ export default function ProjectCard({ project }) {
       <h1>{project.title}<span>{project.organization}</span></h1>
       <h4>{project.intro}</h4>
       <p>
-        {timeToDate(project.startDate)} ~ {timeToDate(project.endDate)}
+        {timeToDate(project.startDate)} ~ {project.endDate ? timeToDate(project.endDate) : null}
       </p>
       <div className="link-container">
         {project.github && (
