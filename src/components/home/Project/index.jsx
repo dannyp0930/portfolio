@@ -40,7 +40,7 @@ export default function Project() {
           <button className={`nav-btn nav-prev ${!select ? "nav-disabled": ""}`} onClick={goPrev}></button>
           <button className={`nav-btn nav-next ${select === total - 1 ? "nav-disabled": ""}`} onClick={goNext}></button>
         </div>
-        <div className="carousel-wrap" style={{ transform: `translateX(${select * -1000}px)`}}>
+        <div className="carousel-wrap" style={{ transform: `translateX(${select * -100}%)`}}>
           {projects.map((project) => (
             <div className="carousel-item" key={project.id}>
               <ProjectCard project={project} />

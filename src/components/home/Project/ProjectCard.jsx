@@ -2,6 +2,7 @@ import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGithub } from "@fortawesome/free-brands-svg-icons";
 import { faHome } from "@fortawesome/free-solid-svg-icons";
+import notionSvg from "assets/images/icons/notion.svg";
 import { timeToDate } from "utils";
 
 export default function ProjectCard({ project }) {
@@ -21,6 +22,11 @@ export default function ProjectCard({ project }) {
         {project.homepage && (
           <a className="link-wrap" href={project.homepage} target="_blank">
             <FontAwesomeIcon icon={faHome} />
+          </a>
+        )}
+        {project.notion && (
+          <a className="link-wrap" href={project.notion} target="_blank">
+            <img src={notionSvg} alt="" />
           </a>
         )}
       </div>

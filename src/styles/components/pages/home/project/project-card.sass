@@ -8,19 +8,19 @@
   background-color: $white
   transition: transform 100ms linear
 
-  +mobile
-    +padding(20px)
-
-    &:hover
-      transform: none
-  h1 
+  h1
     +size(100%)
     +flex-box(space-between, center)
+
     span
       font-size: 16px
 
+  h4
+    word-break: keep-all
+
   .link-container
-    +flex-box(null, center, 10px)
+    +margin(top 20px)
+    +flex-box(flex-start, center, 50px)
 
     .link-wrap
       +size(46px, 46px)
@@ -28,3 +28,19 @@
 
       svg
         +size(100%, 100%)
+
++tablet
+  .project-card
+    +size(80%)
+
++mobile
+  .project-card
+    +size(70%, 60%)
+    +padding(20px)
+
+    &:hover
+      transform: none
+    
+    .link-container
+      +margin(top 10px)
+      gap: 20px
