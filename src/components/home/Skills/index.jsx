@@ -6,6 +6,7 @@ import jiraSvg from "assets/images/icons/jira.svg";
 import pythonSvg from "assets/images/icons/python.svg";
 import javascriptSvg from "assets/images/icons/javascript.svg";
 import typescriptSvg from "assets/images/icons/typescript.svg";
+import firebaseSvg from "assets/images/icons/firebase.svg";
 import reactSvg from "assets/images/icons/react.svg";
 import nextdotjsSvg from "assets/images/icons/nextdotjs.svg";
 import recoilSvg from "assets/images/icons/recoil.svg";
@@ -28,6 +29,7 @@ export default function Skills() {
     { title: "Python", image: pythonSvg, content: "기본 파이썬 문법 이해, 라이브러리를 사용한 알고리즘 구현", level: 2 },
     { title: "JavaScript", image: javascriptSvg, content: "기본 자바스크립트 문법 이해, 자바스크립트 프레임 워크 사용", level: 3 },
     { title: "TypeScript", image: typescriptSvg, content: "타입, 인터페이스 사용하여 정적 타입 명시", level: 2 },
+    { title: "Firebase", image: firebaseSvg, content: "Firestore 이용한 No SQL 사용", level: 1 },
     { title: "React", image: reactSvg, content: "SPA 서비스 제작 및 업무 경험", level: 4 },
     { title: "Next.js", image: nextdotjsSvg, content: "SSR 프로젝트 제작", level: 2 },
     { title: "Recoil", image: recoilSvg, content: "React 상태관리 라이브러리", level: 2 },
