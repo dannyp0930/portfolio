@@ -4,9 +4,10 @@
   +flex-box(center, center)
 
   .carousel-container
-    +size(1000px, 500px)
+    +size(1280px, 500px)
     +margin(auto)
     position: relative
+    overflow: hidden
 
     .nav-container
       +position(absolute, 50%)
@@ -37,7 +38,8 @@
         opacity: 0.6
 
     .carousel-wrap
-      +size(100%, 100%)
+      +size(80%, 100%)
+      +margin(auto)
       +flex-box(flex-start, center)
       transition: transform 400ms ease-out
 
@@ -51,8 +53,12 @@
   .project
     .carousel-container
       +size(95%)
+      .carousel-wrap
+        +size(70%)
 
 +mobile
   .project
     .carousel-container
       +size(95%)
+      .carousel-wrap
+        +size(60%)

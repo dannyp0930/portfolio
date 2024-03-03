@@ -29,10 +29,6 @@ export default function Project() {
     getProjects();
   }, []);
 
-  useEffect(() => {
-    console.log(select)
-  }, [select])
-
   return (
     <section className="project">
       <div className="carousel-container">
