@@ -6,31 +6,16 @@ export default function Info() {
   const [selectItemIdx, setSelectItemIdx] = useState(0);
   const [selectItem, setSelectItem] = useState(null);
 
-  useEffect(() => {
-    function closeModal() {
-      setSelectItemIdx(0);
-    }
-    const srcollEventFunc = debounce(closeModal, 500);
-    const touchStartEventFunc = debounce(closeModal, 100);
-    const touchMoveEventFunc = debounce(closeModal, 100);
-    const keydownEventFunc = debounce(closeModal, 300);
-    window.addEventListener("wheel", srcollEventFunc);
-    window.addEventListener("keydown", keydownEventFunc);
-    window.addEventListener("touchstart", touchStartEventFunc);
-    window.addEventListener("touchmove", touchMoveEventFunc);
-    return () => {
-      window.removeEventListener("wheel", srcollEventFunc);
-      window.removeEventListener("keydown", keydownEventFunc);
-      window.removeEventListener("touchstart", touchStartEventFunc);
-      window.removeEventListener("touchmove", touchMoveEventFunc);
-    };
-  }, []);
+  function closeModal() {
+    setSelectItemIdx(0);
+    document.body.style.removeProperty("overflow");
+  }
 
   useEffect(() => {
     if (selectItemIdx) {
-      const item =
-        document.querySelectorAll(`.content-wrap`)[selectItemIdx - 1];
+      const item = document.querySelectorAll(`.content-wrap`)[selectItemIdx - 1];
       if (item) {
+        document.body.style.overflow = "hidden";
         setSelectItem(item.innerHTML);
       } else {
         setSelectItem(null);
@@ -42,7 +27,7 @@ export default function Info() {
     <section className="info">
       {selectItemIdx ? (
         <ModalContainer
-          closeModal={() => setSelectItemIdx(0)}
+          closeModal={closeModal}
           children={selectItem}
         />
       ) : null}
