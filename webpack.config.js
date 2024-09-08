@@ -103,14 +103,14 @@ module.exports = {
           ? "[name].[contenthash].css"
           : "[name].min.css",
     }),
-    webpackMode === "development" &&
-      new Dotenv({
-        path: ".env",
-      }),
-    new webpack.DefinePlugin({
-      "process.env": JSON.stringify(process.env),
-    }),
-  ].filter(Boolean),
+    webpackMode === "development"
+      ? new Dotenv({
+          path: ".env",
+        })
+      : new webpack.DefinePlugin({
+          "process.env": JSON.stringify(process.env),
+        }),
+  ],
   devServer: {
     historyApiFallback: true,
     port: 3333,
