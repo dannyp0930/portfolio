@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { ModalContainer } from "components/common/ModalContainer";
-import { debounce } from "lodash";
 
 export default function Info() {
   const [selectItemIdx, setSelectItemIdx] = useState(0);
