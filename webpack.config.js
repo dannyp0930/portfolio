@@ -110,7 +110,7 @@ module.exports = {
     new webpack.DefinePlugin({
       "process.env": JSON.stringify(process.env),
     }),
-  ],
+  ].filter(Boolean),
   devServer: {
     historyApiFallback: true,
     port: 3333,
