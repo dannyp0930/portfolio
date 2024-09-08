@@ -103,7 +103,7 @@ module.exports = {
           ? "[name].[contenthash].css"
           : "[name].min.css",
     }),
-    new Dotenv({
+    webpackMode === "development" && new Dotenv({
       path: '.env',
     }),
   ],
