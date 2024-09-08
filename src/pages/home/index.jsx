@@ -8,10 +8,10 @@ export default function Home() {
   return (
     <main id="home">
       <article>
-        <section className="section section-1"><Banner /></section>
-        <section className="section section-2"><Info /></section>
-        <section className="section section-3"><Skills /></section>
-        <section className="section section-4"><Project /></section>
+        <section id="banner" className="section section-1"><Banner /></section>
+        <section id="info" className="section section-2"><Info /></section>
+        <section id="skills" className="section section-3"><Skills /></section>
+        <section id="project" className="section section-4"><Project /></section>
       </article>
     </main>
   );

@@ -104,7 +104,7 @@ module.exports = {
           : "[name].min.css",
     }),
     new Dotenv({
-      path: `.env${webpackMode === "production" ? "" : ".dev"}`,
+      path: '.env',
     }),
   ],
   devServer: {

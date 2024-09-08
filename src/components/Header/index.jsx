@@ -5,12 +5,12 @@ export default function Header() {
   return (
     <header>
       <nav>
-        <NavLink className="desktop-tablet home" to="/">SH Portfolio</NavLink>
-        <NavLink className="mobile home" to="/">SH</NavLink>
+        <a className="desktop-tablet home" href="#banner">SH Portfolio</a>
+        <a className="mobile home" href="#banner">SH</a>
         <ul className="desktop-tablet">
-          <li><NavLink to="/#2">Info</NavLink></li>
-          <li><NavLink to="/#3">Skills</NavLink></li>
-          <li><NavLink to="/#4">Project</NavLink></li>
+          <li><a href="#info">Info</a></li>
+          <li><a href="#skills">Skills</a></li>
+          <li><a href="#project">Project</a></li>
         </ul>
       </nav>
     </header>

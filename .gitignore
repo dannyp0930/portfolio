@@ -40,7 +40,7 @@ sketch
 build
 
 # env
-.env.dev
-.env.prod
+.env
+.env.*
 
 # End of https://www.toptal.com/developers/gitignore/api/visualstudiocode,react
