@@ -6,9 +6,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "cross-env NODE_ENV=development webpack serve --progress",
-    "prod": "cross-env NODE_ENV=production webpack --progress",
-    "predeploy": "npm run prod",
-    "deploy": "gh-pages -d build"
+    "prod": "cross-env NODE_ENV=production webpack --progress"
   },
   "keywords": [],
   "author": "",
@@ -44,7 +42,6 @@
     "@fortawesome/free-solid-svg-icons": "^6.5.1",
     "@fortawesome/react-fontawesome": "^0.2.0",
     "firebase": "^10.7.2",
-    "gh-pages": "^6.1.1",
     "lodash": "^4.17.21",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
