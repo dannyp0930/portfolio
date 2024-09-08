@@ -103,11 +103,10 @@ module.exports = {
           ? "[name].[contenthash].css"
           : "[name].min.css",
     }),
-    webpackMode === "development" &&
-      new Dotenv({
-        path: ".env",
-      }),
-  ].filter(Boolean),
+    new Dotenv({
+      path: ".env",
+    }),
+  ],
   devServer: {
     historyApiFallback: true,
     port: 3333,
