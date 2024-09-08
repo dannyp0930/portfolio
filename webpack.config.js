@@ -103,9 +103,12 @@ module.exports = {
           ? "[name].[contenthash].css"
           : "[name].min.css",
     }),
-    new Dotenv({
-      path: ".env",
-    }),
+    webpackMode === "development" ?
+      new Dotenv({
+        path: ".env",
+      }) : new webpack.DefinePlugin({
+        "process.env": JSON.stringify(process.env),
+      }),
   ],
   devServer: {
     historyApiFallback: true,
