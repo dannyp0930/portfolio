@@ -5,10 +5,9 @@
 @layer base {
   @font-face {
     font-family: "Parisienne";
-    font-weight: 400;
     src: url("assets/fonts/Parisienne-Regular.woff2");
   }
-  
+
   @font-face {
     font-family: "KBO Dia Gothic";
     font-weight: 100;
@@ -26,7 +25,24 @@
     font-weight: 700;
     src: url("assets/fonts/KBO-Dia-Gothic-bold.woff");
   }
+
   html {
-    @apply scroll-smooth font-kbo text-theme-sub;
+    @apply scroll-smooth font-kbo text-theme-sub bg-bg;
+  }
+
+  h1 {
+    @apply text-4xl font-bold;
+  }
+  h2 {
+    @apply text-3xl font-bold;
+  }
+  h3 {
+    @apply text-2xl font-bold;
+  }
+  h4 {
+    @apply text-xl font-bold;
+  }
+  h5 {
+    @apply text-lg font-bold;
   }
 }

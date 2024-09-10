@@ -21,10 +21,12 @@ function App() {
   return (
     <div className="app">
       <Header />
-      <Routes>
-        <Route path="/" element={<Home />} />
-      </Routes>
-      {location.pathname !== "/" && <Footer />}
+      <main className="min-w-80">
+        <Routes>
+          <Route path="/" element={<Home />} />
+        </Routes>
+      </main>
+      <Footer />
     </div>
   );
 }

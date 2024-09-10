@@ -4,7 +4,8 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        "kbo": [ "KBO Dia Gothic", "serif", "sans-serif" ]
+        "kbo": [ "KBO Dia Gothic", "serif", "sans-serif" ],
+        "parisienne": [ "Parisienne", "serif", "sans-serif" ],
       },
       colors: {
         "theme": "#ffdab9",
