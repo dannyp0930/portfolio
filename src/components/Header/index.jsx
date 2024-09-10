@@ -5,9 +5,9 @@ export default function Header() {
   return (
     <header>
       <nav>
-        <a className="desktop-tablet home" href="#banner">SH Portfolio</a>
-        <a className="mobile home" href="#banner">SH</a>
-        <ul className="desktop-tablet">
+        <a className="home hidden md:block" href="#banner">SH Portfolio</a>
+        <a className="home md:hidden" href="#banner">SH</a>
+        <ul className="hidden md:flex">
           <li><a href="#info">Info</a></li>
           <li><a href="#skills">Skills</a></li>
           <li><a href="#project">Project</a></li>

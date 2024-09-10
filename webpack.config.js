@@ -58,6 +58,16 @@ module.exports = {
         use: ["source-map-loader"],
       },
       {
+        test: /.css?$/,
+        use: [
+          webpackMode === "production"
+          ? MiniCssExtractPlugin.loader
+            : "style-loader",
+          "css-loader",
+          "postcss-loader",
+        ],
+      },
+      {
         test: /\.s[ac]ss$/i,
         use: [
           webpackMode === "production"
