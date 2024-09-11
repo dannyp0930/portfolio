@@ -14,7 +14,6 @@ export default function Info() {
     if (selectItemIdx) {
       const item = document.querySelectorAll(`.content-wrap`)[selectItemIdx - 1];
       if (item) {
-        document.body.style.overflow = "hidden";
         setSelectItem(item.innerHTML);
       } else {
         setSelectItem(null);
@@ -23,17 +22,17 @@ export default function Info() {
   }, [selectItemIdx]);
 
   return (
-    <section className="info">
+    <section className="flex justify-center items-center pt-24 md:pt-36 lg:pt-52">
       {selectItemIdx ? (
         <ModalContainer
           closeModal={closeModal}
           children={selectItem}
         />
       ) : null}
-      <div className="content-container">
-        <div className="content-wrap" onClick={() => setSelectItemIdx(1)}>
-          <h3>CONTACT</h3>
-          <ul>
+      <div className="w-72 grid grid-cols-1 grid-rows-6 gap-5 md:w-3/4 md:grid-cols-2 md:grid-rows-3 md:gap-10 lg:w-1/2">
+        <div className="content-wrap p-5 flex flex-col bg-white box-border rounded-lg lg:transition-transform shadow-lg cursor-pointer lg:hover:-translate-y-5" onClick={() => setSelectItemIdx(1)}>
+          <h3 className="text-center">CONTACT</h3>
+          <ul className="mt-3 hidden">
             <li>
               <h4>E-mail</h4>
               <p>
@@ -50,9 +49,9 @@ export default function Info() {
             </li>
           </ul>
         </div>
-        <div className="content-wrap" onClick={() => setSelectItemIdx(2)}>
-          <h3>EDUCATION</h3>
-          <ul>
+        <div className="content-wrap p-5 flex flex-col bg-white box-border rounded-lg lg:transition-transform shadow-lg cursor-pointer lg:hover:-translate-y-5" onClick={() => setSelectItemIdx(2)}>
+          <h3 className="text-center">EDUCATION</h3>
+          <ul className="mt-3 hidden">
             <li>
               <h4>광주 금호고등학교</h4>
               <p>2011.03 ~ 2014.02</p>
@@ -63,9 +62,9 @@ export default function Info() {
             </li>
           </ul>
         </div>
-        <div className="content-wrap" onClick={() => setSelectItemIdx(3)}>
-          <h3>EXPERIENCE</h3>
-          <ul>
+        <div className="content-wrap p-5 flex flex-col bg-white box-border rounded-lg lg:transition-transform shadow-lg cursor-pointer lg:hover:-translate-y-5" onClick={() => setSelectItemIdx(3)}>
+          <h3 className="text-center">EXPERIENCE</h3>
+          <ul className="mt-3 hidden">
             <li>
               <h4>삼성청년SW아카데미(SSAFY)</h4>
               <p>
@@ -76,9 +75,9 @@ export default function Info() {
             </li>
           </ul>
         </div>
-        <div className="content-wrap" onClick={() => setSelectItemIdx(4)}>
-          <h3>CAREER</h3>
-          <ul>
+        <div className="content-wrap p-5 flex flex-col bg-white box-border rounded-lg lg:transition-transform shadow-lg cursor-pointer lg:hover:-translate-y-5" onClick={() => setSelectItemIdx(4)}>
+          <h3 className="text-center">CAREER</h3>
+          <ul className="mt-3 hidden">
             <li>
               <h4>한국교통안전공단 인턴</h4>
               <p>
@@ -101,9 +100,9 @@ export default function Info() {
             </li>
           </ul>
         </div>
-        <div className="content-wrap" onClick={() => setSelectItemIdx(5)}>
-          <h3>LANGUAGE</h3>
-          <ul>
+        <div className="content-wrap p-5 flex flex-col bg-white box-border rounded-lg lg:transition-transform shadow-lg cursor-pointer lg:hover:-translate-y-5" onClick={() => setSelectItemIdx(5)}>
+          <h3 className="text-center">LANGUAGE</h3>
+          <ul className="mt-3 hidden">
             <li>
               <h4>TOEIC 885</h4>
               <p>2023.11.12 YBM시사</p>
@@ -114,9 +113,9 @@ export default function Info() {
             </li>
           </ul>
         </div>
-        <div className="content-wrap" onClick={() => setSelectItemIdx(6)}>
-          <h3>CERTIFICATE</h3>
-          <ul>
+        <div className="content-wrap p-5 flex flex-col bg-white box-border rounded-lg lg:transition-transform shadow-lg cursor-pointer lg:hover:-translate-y-5" onClick={() => setSelectItemIdx(6)}>
+          <h3 className="text-center">CERTIFICATE</h3>
+          <ul className="mt-3 hidden">
             <li>
               <h4>한자능력검정시험 2급</h4>
               <p>2008.09.02 (사)한국어문회</p>

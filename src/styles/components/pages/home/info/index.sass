@@ -1,94 +1,19 @@
-.info
-  +flex-box(center, center)
-  +padding(top 200px)
+//   .modal-wrap
+//     width: 350px
 
-  .modal-wrap
-    width: 350px
+//   ul
+//     +margin(top 20px)
+//     +flex-box(null, null, 10px)
+//     flex-direction: column
 
-  h3
-    text-align: center
+//     li
 
-  ul
-    +margin(top 20px)
-    +flex-box(null, null, 10px)
-    flex-direction: column
+//       h4
+//         line-height: 1.4
 
-    li
+//       p
+//         +margin(top 10px)
+//         line-height: 1.4
 
-      h4
-        line-height: 1.4
-
-      p
-        +margin(top 10px)
-        line-height: 1.4
-
-        a
-          color: $theme-sub-color
-
-  .content-container
-    +size(50%)
-    +grid(2, 3, 40px)
-
-    .content-wrap
-      +padding(40px)
-      +flex-box(null, null)
-      flex-direction: column
-      background-color: $white
-      box-sizing: border-box
-      border-radius: 10px
-      transition: transform 200ms linear
-      box-shadow: 3px 3px 6px $black-000
-      cursor: pointer
-
-      &:hover
-        transform: translateY(-20px)
-
-      ul
-        display: none
-
-+tablet
-
-  .info
-    +padding(top 150px)
-
-    ul li
-
-      h4
-        font-size: 18px
-        line-height: 1.1
-
-        p
-          font-size: 14px
-          line-height: 1.3
-
-    .content-container
-      +size(70%)
-      gap: 20px
-
-      .content-wrap
-        +padding(20px)
-
-        &:hover
-          transform: none
-
-+mobile
-
-  .info
-    +padding(top 100px)
-
-    .modal-wrap
-      +size(280px)
-
-    ul
-      +margin(top 10px)
-
-    .content-container
-      +size(300px)
-      +grid(1, 6, 20px)
-
-      .content-wrap
-        +padding(20px)
-        +size(300px)
-
-        &:hover
-          transform: none
+//         a
+//           color: $theme-sub-color
