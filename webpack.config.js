@@ -68,16 +68,6 @@ module.exports = {
         ],
       },
       {
-        test: /\.s[ac]ss$/i,
-        use: [
-          webpackMode === "production"
-            ? MiniCssExtractPlugin.loader
-            : "style-loader",
-          "css-loader",
-          "sass-loader",
-        ],
-      },
-      {
         test: /\.(png|jp(e*)g|svg|gif|webp)$/,
         use: ["file-loader"],
       },
