@@ -18,9 +18,9 @@ function App() {
   }, []);
 
   return (
-    <div className="app">
+    <div className="app bg-bg min-w-80">
       <Header />
-      <main className="min-w-80">
+      <main>
         <Routes>
           <Route path="/" element={<Home />} />
         </Routes>

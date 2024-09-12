@@ -27,7 +27,7 @@
   }
 
   html {
-    @apply scroll-smooth font-kbo text-theme-sub bg-bg;
+    @apply scroll-smooth font-kbo text-theme-sub;
   }
 
   h1 {

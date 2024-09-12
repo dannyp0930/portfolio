@@ -8,12 +8,31 @@ export default function Info() {
   function closeModal() {
     setSelectItemIdx(0);
     document.body.style.removeProperty("overflow");
+    document.body.style.removeProperty("padding-right");
+  }
+
+  function scrollWidth() {
+    const outer = document.createElement('div');
+    outer.style.visibility = 'hidden';
+    outer.style.overflow = 'scroll';
+    outer.style.msOverflowStyle = 'scrollbar';
+    document.body.appendChild(outer);
+    const inner = document.createElement('div');
+    outer.appendChild(inner);
+    const scrollbarWidth = (outer.offsetWidth - inner.offsetWidth);
+    outer.parentNode.removeChild(outer);
+    return scrollbarWidth;
   }
 
   useEffect(() => {
     if (selectItemIdx) {
-      const item = document.querySelectorAll(`.content-wrap`)[selectItemIdx - 1];
+      const item = document
+        .querySelectorAll(`.content-wrap`)
+        [selectItemIdx - 1].cloneNode(true);
+      item.querySelector("ul").classList.remove("hidden");
       if (item) {
+        document.body.style.overflow = "hidden";
+        document.body.style.paddingRight = `${scrollWidth()}px`
         setSelectItem(item.innerHTML);
       } else {
         setSelectItem(null);
@@ -24,13 +43,13 @@ export default function Info() {
   return (
     <section className="flex justify-center items-center pt-24 md:pt-36 lg:pt-52">
       {selectItemIdx ? (
-        <ModalContainer
-          closeModal={closeModal}
-          children={selectItem}
-        />
+        <ModalContainer closeModal={closeModal} children={selectItem} />
       ) : null}
       <div className="w-72 grid grid-cols-1 grid-rows-6 gap-5 md:w-3/4 md:grid-cols-2 md:grid-rows-3 md:gap-10 lg:w-1/2">
-        <div className="content-wrap p-5 flex flex-col bg-white box-border rounded-lg lg:transition-transform shadow-lg cursor-pointer lg:hover:-translate-y-5" onClick={() => setSelectItemIdx(1)}>
+        <div
+          className="content-wrap p-5 flex flex-col bg-white box-border rounded-lg lg:transition-transform shadow-lg cursor-pointer lg:hover:-translate-y-5"
+          onClick={() => setSelectItemIdx(1)}
+        >
           <h3 className="text-center">CONTACT</h3>
           <ul className="mt-3 hidden">
             <li>
@@ -49,7 +68,10 @@ export default function Info() {
             </li>
           </ul>
         </div>
-        <div className="content-wrap p-5 flex flex-col bg-white box-border rounded-lg lg:transition-transform shadow-lg cursor-pointer lg:hover:-translate-y-5" onClick={() => setSelectItemIdx(2)}>
+        <div
+          className="content-wrap p-5 flex flex-col bg-white box-border rounded-lg lg:transition-transform shadow-lg cursor-pointer lg:hover:-translate-y-5"
+          onClick={() => setSelectItemIdx(2)}
+        >
           <h3 className="text-center">EDUCATION</h3>
           <ul className="mt-3 hidden">
             <li>
@@ -62,7 +84,10 @@ export default function Info() {
             </li>
           </ul>
         </div>
-        <div className="content-wrap p-5 flex flex-col bg-white box-border rounded-lg lg:transition-transform shadow-lg cursor-pointer lg:hover:-translate-y-5" onClick={() => setSelectItemIdx(3)}>
+        <div
+          className="content-wrap p-5 flex flex-col bg-white box-border rounded-lg lg:transition-transform shadow-lg cursor-pointer lg:hover:-translate-y-5"
+          onClick={() => setSelectItemIdx(3)}
+        >
           <h3 className="text-center">EXPERIENCE</h3>
           <ul className="mt-3 hidden">
             <li>
@@ -75,7 +100,10 @@ export default function Info() {
             </li>
           </ul>
         </div>
-        <div className="content-wrap p-5 flex flex-col bg-white box-border rounded-lg lg:transition-transform shadow-lg cursor-pointer lg:hover:-translate-y-5" onClick={() => setSelectItemIdx(4)}>
+        <div
+          className="content-wrap p-5 flex flex-col bg-white box-border rounded-lg lg:transition-transform shadow-lg cursor-pointer lg:hover:-translate-y-5"
+          onClick={() => setSelectItemIdx(4)}
+        >
           <h3 className="text-center">CAREER</h3>
           <ul className="mt-3 hidden">
             <li>
@@ -100,7 +128,10 @@ export default function Info() {
             </li>
           </ul>
         </div>
-        <div className="content-wrap p-5 flex flex-col bg-white box-border rounded-lg lg:transition-transform shadow-lg cursor-pointer lg:hover:-translate-y-5" onClick={() => setSelectItemIdx(5)}>
+        <div
+          className="content-wrap p-5 flex flex-col bg-white box-border rounded-lg lg:transition-transform shadow-lg cursor-pointer lg:hover:-translate-y-5"
+          onClick={() => setSelectItemIdx(5)}
+        >
           <h3 className="text-center">LANGUAGE</h3>
           <ul className="mt-3 hidden">
             <li>
@@ -113,7 +144,10 @@ export default function Info() {
             </li>
           </ul>
         </div>
-        <div className="content-wrap p-5 flex flex-col bg-white box-border rounded-lg lg:transition-transform shadow-lg cursor-pointer lg:hover:-translate-y-5" onClick={() => setSelectItemIdx(6)}>
+        <div
+          className="content-wrap p-5 flex flex-col bg-white box-border rounded-lg lg:transition-transform shadow-lg cursor-pointer lg:hover:-translate-y-5"
+          onClick={() => setSelectItemIdx(6)}
+        >
           <h3 className="text-center">CERTIFICATE</h3>
           <ul className="mt-3 hidden">
             <li>
