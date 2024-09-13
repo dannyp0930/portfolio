@@ -7,9 +7,9 @@ import { timeToDate } from "utils";
 
 export default function ProjectCard({ project }) {
   return (
-    <div className="box-border flex flex-col justify-center w-5/6 h-full gap-5 p-5 bg-white rounded-2xl md:h-5/6 md:p-12 lg:w-11/12">
+    <div className="box-border flex flex-col justify-center w-5/6 gap-5 p-5 bg-white h-4/5 rounded-2xl md:h-5/6 md:p-12 lg:w-11/12">
       <h1 className="flex flex-col md:flex-row lg:justify-between lg:items-center">{project.title}<span className="text-base">{project.organization}</span></h1>
-      <h4 className="break-all">{project.intro}</h4>
+      <h4 className="break-keep">{project.intro}</h4>
       <p>
         {timeToDate(project.startDate)} ~ {project.endDate ? timeToDate(project.endDate) : null}
       </p>
