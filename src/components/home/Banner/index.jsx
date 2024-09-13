@@ -5,19 +5,19 @@ import BannerMobile from "assets/images/banner-mobile.webp";
 
 export default function Banner() {
   return (
-    <section className="flex flex-col justify-center items-center w-full h-dvh relative text-center gap-7">
-      <picture className="w-full h-full absolute top-0 left-0 z-10 opacity-40">
+    <section id="banner" className="relative flex flex-col items-center justify-center w-full text-center h-dvh gap-7">
+      <picture className="absolute top-0 left-0 z-10 w-full h-full opacity-40">
         <source media="(min-width: 1280px)" srcSet={BannerDesktop} />
         <source media="(min-width: 768px)" srcSet={BannerTablet} />
-        <img className="w-full h-full object-cover" src={BannerMobile} alt="banner" />
+        <img className="object-cover w-full h-full" src={BannerMobile} alt="banner" />
       </picture>
-      <div className="content z-20">
+      <div className="z-20 content">
         <h1>
           프론트엔드 엔지니어
           <br />
           박상훈 입니다.
         </h1>
-        <p className="mt-10 px-5 break-keep">
+        <p className="px-5 mt-10 break-keep">
           저는 계획을 세우는 것을 좋아합니다.
           <br />
           그리고 일을 마칠때 까지 깊이 몰두합니다.

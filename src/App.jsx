@@ -18,7 +18,7 @@ function App() {
   }, []);
 
   return (
-    <div className="app bg-bg min-w-80">
+    <div className="app bg-peach-fuzz min-w-80">
       <Header />
       <main>
         <Routes>

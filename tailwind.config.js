@@ -10,7 +10,7 @@ module.exports = {
       colors: {
         "theme": "#ffdab9",
         "theme-sub": "#522a28",
-        "bg": "#ffdab9",
+        "peach-fuzz": "#ffdab9",
       },
       height: {
         "header": "6.25rem",

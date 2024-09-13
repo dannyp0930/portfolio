@@ -29,7 +29,6 @@
   html {
     @apply scroll-smooth font-kbo text-theme-sub;
   }
-
   h1 {
     @apply text-4xl font-bold;
   }
