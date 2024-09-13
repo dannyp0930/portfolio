@@ -48,9 +48,9 @@ export default function Skills() {
     { title: "MUI", image: muiSvg, content: "", level: 4 },
   ];
   return (
-    <section className="box-border flex flex-col items-center justify-center gap-5 py-12 bg-white md:pt-36 lg:pt-48 md:gap-12">
+    <section className="box-border flex flex-col items-center justify-center gap-5 py-12 bg-white md:pt-36 md:py-16 lg:py-28">
       <h1>SKILLS</h1>
-      <div className="box-border grid items-center grid-cols-4 gap-4 p-5 bg-slate-100 lg:grid-cols-6 md:grid-cols-5 w-72 md:w-11/12 lg:w-3/5 lg:p-14 rounded-2xl md:gap-12">
+      <div className="box-border grid items-center grid-cols-4 gap-4 p-5 shadow-xl bg-stone-200 lg:grid-cols-6 md:grid-cols-5 w-72 md:w-11/12 lg:w-3/5 lg:p-14 rounded-2xl md:gap-12">
         {skills.map((skill, idx) => (
           <div className="relative transition-transform cursor-pointer hover:-translate-y-5 group" key={idx}>
             <div className="absolute top-0 z-50 hidden w-40 p-3 max-h-40 md:max-h-auto overflow-y-auto -translate-x-1/2 bg-white border border-solid rounded-lg skill-detail border-theme-sub md:w-48 lg:w-72 left-1/2 md:p-5 hover:md:-translate-y-5 group-hover:block group-hover:-translate-y-[calc(100%+5px)] md:group-hover:-translate-y-[calc(100%+20px)]">

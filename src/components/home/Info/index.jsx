@@ -43,7 +43,7 @@ export default function Info() {
   }, [selectItemIdx]);
 
   return (
-    <section className="flex items-center justify-center py-12 md:pt-36 lg:pt-52">
+    <section className="flex items-center justify-center py-12 md:py-16 lg:py-28">
       {selectItemIdx ? (
         <ModalContainer closeModal={closeModal} children={selectItem} />
       ) : null}
