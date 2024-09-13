@@ -9,6 +9,7 @@ export default function Info() {
     setSelectItemIdx(0);
     document.body.style.removeProperty("overflow");
     document.body.style.removeProperty("padding-right");
+    document.body.style.removeProperty("touch-action");
   }
 
   function scrollWidth() {
@@ -32,6 +33,7 @@ export default function Info() {
       item.querySelector("ul").classList.remove("hidden");
       if (item) {
         document.body.style.overflow = "hidden";
+        document.body.style.touchAction = "pan-x";
         document.body.style.paddingRight = `${scrollWidth()}px`
         setSelectItem(item.innerHTML);
       } else {
@@ -41,17 +43,17 @@ export default function Info() {
   }, [selectItemIdx]);
 
   return (
-    <section className="flex justify-center items-center pt-24 md:pt-36 lg:pt-52">
+    <section className="flex items-center justify-center pt-24 md:pt-36 lg:pt-52">
       {selectItemIdx ? (
         <ModalContainer closeModal={closeModal} children={selectItem} />
       ) : null}
-      <div className="w-72 grid grid-cols-1 grid-rows-6 gap-5 md:w-3/4 md:grid-cols-2 md:grid-rows-3 md:gap-10 lg:w-1/2">
+      <div className="grid grid-cols-1 grid-rows-6 gap-5 w-72 md:w-3/4 md:grid-cols-2 md:grid-rows-3 md:gap-10 lg:w-1/2">
         <div
-          className="content-wrap p-5 flex flex-col bg-white box-border rounded-lg lg:transition-transform shadow-lg cursor-pointer lg:hover:-translate-y-5"
+          className="box-border flex flex-col p-5 bg-white rounded-lg shadow-lg cursor-pointer content-wrap lg:transition-transform lg:hover:-translate-y-5"
           onClick={() => setSelectItemIdx(1)}
         >
           <h3 className="text-center">CONTACT</h3>
-          <ul className="mt-3 hidden">
+          <ul className="hidden mt-3">
             <li>
               <h4>E-mail</h4>
               <p>
@@ -69,11 +71,11 @@ export default function Info() {
           </ul>
         </div>
         <div
-          className="content-wrap p-5 flex flex-col bg-white box-border rounded-lg lg:transition-transform shadow-lg cursor-pointer lg:hover:-translate-y-5"
+          className="box-border flex flex-col p-5 bg-white rounded-lg shadow-lg cursor-pointer content-wrap lg:transition-transform lg:hover:-translate-y-5"
           onClick={() => setSelectItemIdx(2)}
         >
           <h3 className="text-center">EDUCATION</h3>
-          <ul className="mt-3 hidden">
+          <ul className="hidden mt-3">
             <li>
               <h4>광주 금호고등학교</h4>
               <p>2011.03 ~ 2014.02</p>
@@ -85,11 +87,11 @@ export default function Info() {
           </ul>
         </div>
         <div
-          className="content-wrap p-5 flex flex-col bg-white box-border rounded-lg lg:transition-transform shadow-lg cursor-pointer lg:hover:-translate-y-5"
+          className="box-border flex flex-col p-5 bg-white rounded-lg shadow-lg cursor-pointer content-wrap lg:transition-transform lg:hover:-translate-y-5"
           onClick={() => setSelectItemIdx(3)}
         >
           <h3 className="text-center">EXPERIENCE</h3>
-          <ul className="mt-3 hidden">
+          <ul className="hidden mt-3">
             <li>
               <h4>삼성청년SW아카데미(SSAFY)</h4>
               <p>
@@ -101,11 +103,11 @@ export default function Info() {
           </ul>
         </div>
         <div
-          className="content-wrap p-5 flex flex-col bg-white box-border rounded-lg lg:transition-transform shadow-lg cursor-pointer lg:hover:-translate-y-5"
+          className="box-border flex flex-col p-5 bg-white rounded-lg shadow-lg cursor-pointer content-wrap lg:transition-transform lg:hover:-translate-y-5"
           onClick={() => setSelectItemIdx(4)}
         >
           <h3 className="text-center">CAREER</h3>
-          <ul className="mt-3 hidden">
+          <ul className="hidden mt-3">
             <li>
               <h4>한국교통안전공단 인턴</h4>
               <p>
@@ -129,11 +131,11 @@ export default function Info() {
           </ul>
         </div>
         <div
-          className="content-wrap p-5 flex flex-col bg-white box-border rounded-lg lg:transition-transform shadow-lg cursor-pointer lg:hover:-translate-y-5"
+          className="box-border flex flex-col p-5 bg-white rounded-lg shadow-lg cursor-pointer content-wrap lg:transition-transform lg:hover:-translate-y-5"
           onClick={() => setSelectItemIdx(5)}
         >
           <h3 className="text-center">LANGUAGE</h3>
-          <ul className="mt-3 hidden">
+          <ul className="hidden mt-3">
             <li>
               <h4>TOEIC 885</h4>
               <p>2023.11.12 YBM시사</p>
@@ -145,11 +147,11 @@ export default function Info() {
           </ul>
         </div>
         <div
-          className="content-wrap p-5 flex flex-col bg-white box-border rounded-lg lg:transition-transform shadow-lg cursor-pointer lg:hover:-translate-y-5"
+          className="box-border flex flex-col p-5 bg-white rounded-lg shadow-lg cursor-pointer content-wrap lg:transition-transform lg:hover:-translate-y-5"
           onClick={() => setSelectItemIdx(6)}
         >
           <h3 className="text-center">CERTIFICATE</h3>
-          <ul className="mt-3 hidden">
+          <ul className="hidden mt-3">
             <li>
               <h4>한자능력검정시험 2급</h4>
               <p>2008.09.02 (사)한국어문회</p>
