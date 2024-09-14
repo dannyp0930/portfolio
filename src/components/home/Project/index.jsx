@@ -8,7 +8,7 @@ export default function Project() {
   const [total, setTotal] = useState(0);
 
   async function getProjects() {
-    const projects = await api.getDataList("project");
+    const projects = await api.getDataList("project", "startDate");
     setProjects(projects);
     setTotal(projects.length);
   }

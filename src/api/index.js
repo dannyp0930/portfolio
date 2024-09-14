@@ -2,9 +2,14 @@ import { db } from "db";
 import { collection, doc, getDoc, getDocs, orderBy, query } from "firebase/firestore";
 
 export default {
-  getDataList: async function (type) {
-    const projects = await getDocs(query(collection(db, type), orderBy("startDate", "desc")));
-    return projects.docs.map((doc) => {
+  getDataList: async function (type, sortBy = null, sortDir = "desc") {
+    let datas;
+    if (sortBy) {
+      datas = await getDocs(query(collection(db, type), orderBy(sortBy, sortDir)));
+    } else {
+      datas = await getDocs(query(collection(db, type)));
+    }
+    return datas.docs.map((doc) => {
       return Object.assign(doc.data(), { id: doc.id });
     });
   },
