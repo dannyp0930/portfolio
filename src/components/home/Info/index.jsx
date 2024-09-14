@@ -43,10 +43,11 @@ export default function Info() {
   }, [selectItemIdx]);
 
   return (
-    <section id="info" className="flex items-center justify-center py-12 md:py-16 lg:py-28">
+    <section id="info" className="flex flex-col items-center justify-center gap-5 py-12 md:py-16 lg:py-28">
       {selectItemIdx ? (
         <ModalContainer closeModal={closeModal} children={selectItem} />
       ) : null}
+      <h1>Info</h1>
       <div className="grid grid-cols-1 grid-rows-6 gap-5 w-72 md:w-3/4 md:grid-cols-2 md:grid-rows-3 md:gap-10 lg:w-1/2">
         <div
           className="box-border flex flex-col p-5 bg-white rounded-lg shadow-lg cursor-pointer content-wrap lg:transition-transform lg:hover:-translate-y-5"

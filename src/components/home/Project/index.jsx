@@ -30,7 +30,8 @@ export default function Project() {
   }, []);
 
   return (
-    <section id="project" className="flex items-center justify-center py-12 md:py-16 lg:py-28">
+    <section id="project" className="flex flex-col items-center justify-center py-12 md:py-16 lg:py-28">
+      <h1>Project</h1>
       <div className="w-11/12 lg:w-[1280px] h-[500px] m-auto relative overflow-hidden">
         <div className="absolute z-50 flex justify-between w-full -translate-y-1/2 top-1/2">
           <button className={["text-5xl font-bold text-sub cursor-pointer after:content-['<']", !select && "opacity-60"].join(" ")} onClick={goPrev}></button>

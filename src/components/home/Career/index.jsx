@@ -14,7 +14,7 @@ export default function Career() {
   }, []);
 
   return (
-    <section id="career" className="flex flex-col items-center justify-center gap-12 py-12 md:py-16 lg:py-28 bg-pale-beige">
+    <section id="career" className="flex flex-col items-center justify-center gap-5 py-12 md:py-16 lg:py-28 bg-pale-beige">
       <h1>Career</h1>
       <ul className="flex flex-col gap-12 p-5">
         {careers.map(career => <li key={career.id}>
