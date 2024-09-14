@@ -99,7 +99,8 @@ module.exports = {
     new CopyWebpackPlugin({
       patterns: [
         { from: "public", to: "", globOptions: { ignore: ["**/index.html"] } },
-        { from: "public/icons", to: "icons" }
+        { from: "public/icons", to: "icons" },
+        { from: "public/site.webmanifest", to: "site.webmanifest" },
       ],
     }),
     new CleanWebpackPlugin(),
