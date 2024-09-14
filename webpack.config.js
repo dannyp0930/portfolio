@@ -87,6 +87,7 @@ module.exports = {
   plugins: [
     new HtmlWebpackPlugin({
       template: path.join(__dirname, "public", "index.html"),
+      favicon: path.join(__dirname, "public", "favicon.ico"),
       minify:
         webpackMode === "production"
           ? {
@@ -94,6 +95,12 @@ module.exports = {
               removeComments: true,
             }
           : false,
+    }),
+    new CopyWebpackPlugin({
+      patterns: [
+        { from: "public", to: "", globOptions: { ignore: ["**/index.html"] } },
+        { from: "public/icons", to: "icons" }
+      ],
     }),
     new CleanWebpackPlugin(),
     new webpack.HotModuleReplacementPlugin(),
