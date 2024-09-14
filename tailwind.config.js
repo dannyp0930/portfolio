@@ -11,6 +11,8 @@ module.exports = {
         "theme": "#ffdab9",
         "theme-sub": "#522a28",
         "peach-fuzz": "#ffdab9",
+        "pale-beige": "#f5f5dc",
+        "linen": "#faf0e6",
       },
       height: {
         "header": "6.25rem",

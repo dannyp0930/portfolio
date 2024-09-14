@@ -71,7 +71,7 @@ export default function Info() {
           </ul>
         </div>
         <div
-          className="box-border flex flex-col p-5 bg-white rounded-lg shadow-lg cursor-pointer content-wrap lg:transition-transform lg:hover:-translate-y-5"
+          className="box-border flex flex-col p-5 bg-white rounded-lg shadow-lg cursor-pointer rouded-lg content-wrap lg:transition-transform lg:hover:-translate-y-5"
           onClick={() => setSelectItemIdx(2)}
         >
           <h3 className="text-center">EDUCATION</h3>

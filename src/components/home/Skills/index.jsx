@@ -48,7 +48,7 @@ export default function Skills() {
     { title: "MUI", image: muiSvg, content: "", level: 4 },
   ];
   return (
-    <section id="skills" className="box-border flex flex-col items-center justify-center gap-5 py-12 md:pt-36 md:py-16 lg:py-28">
+    <section id="skills" className="box-border flex flex-col items-center justify-center gap-5 py-12 md:pt-36 md:py-16 lg:py-28 bg-pale-beige">
       <h1>SKILLS</h1>
       <div className="box-border grid items-center grid-cols-4 gap-4 p-5 bg-white shadow-lg lg:grid-cols-6 md:grid-cols-5 w-72 md:w-11/12 lg:w-3/5 lg:p-14 rounded-2xl md:gap-12">
         {skills.map((skill, idx) => (
