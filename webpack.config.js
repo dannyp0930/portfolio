@@ -89,6 +89,7 @@ module.exports = {
     new HtmlWebpackPlugin({
       template: path.join(__dirname, "public", "index.html"),
       favicon: path.join(__dirname, "public", "favicon.ico"),
+      manifest: path.join(__dirname, "public", "manifest.json"),
       minify:
         webpackMode === "production"
           ? {
@@ -101,7 +102,6 @@ module.exports = {
       patterns: [
         { from: "public", to: "", globOptions: { ignore: ["**/index.html"] } },
         { from: "public/icons", to: "icons" },
-        { from: "public/manifest.json", to: "manifest.json" },
       ],
     }),
     new CleanWebpackPlugin(),
