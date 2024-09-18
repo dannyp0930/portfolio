@@ -1,7 +1,7 @@
 const path = require("path");
 const webpack = require("webpack");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
-const CopyWebpackPlugin = require('copy-webpack-plugin');
+const CopyWebpackPlugin = require("copy-webpack-plugin");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 const TerserPlugin = require("terser-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
@@ -62,7 +62,7 @@ module.exports = {
         test: /.css?$/,
         use: [
           webpackMode === "production"
-          ? MiniCssExtractPlugin.loader
+            ? MiniCssExtractPlugin.loader
             : "style-loader",
           "css-loader",
           "postcss-loader",
@@ -88,8 +88,6 @@ module.exports = {
   plugins: [
     new HtmlWebpackPlugin({
       template: path.join(__dirname, "public", "index.html"),
-      favicon: path.join(__dirname, "public", "favicon.ico"),
-      manifest: path.join(__dirname, "public", "manifest.json"),
       minify:
         webpackMode === "production"
           ? {
@@ -100,9 +98,10 @@ module.exports = {
     }),
     new CopyWebpackPlugin({
       patterns: [
-        { from: "public", to: "", globOptions: { ignore: ["**/index.html"] } },
-        { from: "public/icons", to: "icons" },
-        { from: "public/manifest.json", to: "manifest.json" },
+        { from: "public", to: "" },
+        // { from: "public", to: "", globOptions: { ignore: ["**/index.html"] } },
+        // { from: "public/icons", to: "icons" },
+        // { from: "public/manifest.json", to: "manifest.json" },
       ],
     }),
     new CleanWebpackPlugin(),
@@ -113,12 +112,13 @@ module.exports = {
           ? "[name].[contenthash].css"
           : "[name].min.css",
     }),
-    webpackMode === "development" ?
-      new Dotenv({
-        path: ".env",
-      }) : new webpack.DefinePlugin({
-        "process.env": JSON.stringify(process.env),
-      }),
+    webpackMode === "development"
+      ? new Dotenv({
+          path: ".env",
+        })
+      : new webpack.DefinePlugin({
+          "process.env": JSON.stringify(process.env),
+        }),
   ],
   devServer: {
     historyApiFallback: true,
