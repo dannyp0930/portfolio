@@ -98,10 +98,10 @@ module.exports = {
     }),
     new CopyWebpackPlugin({
       patterns: [
-        { from: "public", to: "" },
-        // { from: "public", to: "", globOptions: { ignore: ["**/index.html"] } },
-        // { from: "public/icons", to: "icons" },
-        // { from: "public/manifest.json", to: "manifest.json" },
+        { from: "public", to: "", globOptions: { ignore: ["**/index.html"] } },
+        { from: "public/icons", to: "icons" },
+        { from: "public/favicon.ico", to: "favicon.ico" },
+        { from: "public/manifest.json", to: "manifest.json" },
       ],
     }),
     new CleanWebpackPlugin(),
