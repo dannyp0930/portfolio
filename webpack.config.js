@@ -101,7 +101,7 @@ module.exports = {
       patterns: [
         { from: "public", to: "", globOptions: { ignore: ["**/index.html"] } },
         { from: "public/icons", to: "icons" },
-        { from: "public/site.webmanifest", to: "site.webmanifest" },
+        { from: "public/manifest.json", to: "manifest.json" },
       ],
     }),
     new CleanWebpackPlugin(),
