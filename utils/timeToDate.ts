@@ -1,7 +1,5 @@
-import { Timestamp } from "firebase/firestore";
-
-export default function timeToDate(timestamp: Timestamp) {
-  const date = timestamp.toDate();
+export default function timeToDate(timestamp: string) {
+  const date = new Date(timestamp);
   const YYYY = date.getFullYear();
   const MM = date.getMonth() + 1;
   const DD = date.getDate();

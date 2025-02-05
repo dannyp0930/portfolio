@@ -1,8 +1,24 @@
 import { Timestamp } from "firebase/firestore"
 
 declare global {
+  interface ProjectListPros {
+    projects: Project[]
+  }
+
   interface ProjectCardProps {
     project: Project
+  }
+
+  interface RawProject {
+    id: string
+    title: string
+    intro: string
+    organization: string
+    startDate: Timestamp
+    endDate: Timestamp
+    github: string
+    homepage: string
+    notion: string
   }
   
   interface Project {
@@ -10,8 +26,8 @@ declare global {
     title: string
     intro: string
     organization: string
-    startDate: Timestamp
-    endDate: Timestamp
+    startDate: string
+    endDate: string
     github: string
     homepage: string
     notion: string

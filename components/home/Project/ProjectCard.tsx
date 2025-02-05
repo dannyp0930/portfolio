@@ -25,7 +25,7 @@ export default function ProjectCard({ project }: ProjectCardProps) {
         )}
         {project.notion && (
           <a className="w-12 h-12 text-theme-sub" href={project.notion} target="_blank">
-            <img className="w-full h-full" src={notionSvg} alt="" />
+            <img className="w-full h-full" src={notionSvg.src} alt="" />
           </a>
         )}
       </div>
