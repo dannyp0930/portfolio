@@ -1,8 +1,8 @@
 import Banner from "@/components/home/Banner";
 import Info from "@/components/home/Info";
 import Skills from "@/components/home/Skills";
-// import Project from "@/components/home/Project";
-// import Career from "@/components/home/Career";
+import Project from "@/components/home/Project";
+import Career from "@/components/home/Career";
 
 export default function Home() {
   return (
@@ -10,8 +10,8 @@ export default function Home() {
       <Banner />
       <Info />
       <Skills />
-      {/* <Project />
-      <Career /> */}
+      <Project />
+      <Career />
     </article>
   );
 }

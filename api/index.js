@@ -1,8 +1,8 @@
-import { db } from "db";
+import { db } from "@/db";
 import { collection, doc, getDoc, getDocs, orderBy, query } from "firebase/firestore";
 
 export default {
-  getDataList: async function (type, sortBy = null, sortDir = "desc") {
+  getDataList: async function (type, sortBy = '', sortDir = "desc") {
     let datas;
     if (sortBy) {
       datas = await getDocs(query(collection(db, type), orderBy(sortBy, sortDir)));

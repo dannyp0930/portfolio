@@ -1,11 +1,13 @@
+'use client'
+
 import { useEffect, useState } from 'react'
 import api from "@/api";
 
 export default function Career() {
-  const [careers, setCareers] = useState([]);
+  const [careers, setCareers] = useState<Career[]>([]);
 
   async function getCareers() {
-    const careers = await api.getDataList("career");
+    const careers: Career[] = await api.getDataList("career") as Career[];
     setCareers(careers);
   }
 
@@ -14,7 +16,7 @@ export default function Career() {
   }, []);
 
   return (
-    <section id="career" className="flex flex-col items-center justify-center gap-5 py-12 md:py-16 lg:py-28 bg-pale-beige">
+    <section id="career" className="flex flex-col gap-5 justify-center items-center py-12 md:py-16 lg:py-28 bg-pale-beige">
       <h1>Career</h1>
       <ul className="flex flex-col gap-12 p-5">
         {careers.map(career => <li key={career.id}>
