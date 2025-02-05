@@ -56,12 +56,12 @@ export default function Skills() {
               <h3 className="text-lg md:text-2xl">
                 {skill.title}
               </h3>
-              <div className="pt-3">
-                {Array(skill.level).fill().map((_, idx) => <FontAwesomeIcon key={idx} icon={faStar} style={{color: "#FFD43B"}} />)}
+              <div className="flex t-3">
+                {Array(skill.level).fill(null).map((_, idx) => <FontAwesomeIcon className="w-5" key={idx} icon={faStar} style={{color: "#FFD43B"}} />)}
               </div>
-              {skill.content ? <p className="mt-3 whitespace-pre-wrap break-keep">{skill.content}</p> : null}
+              {skill.content ?? <p className="mt-3 whitespace-pre-wrap break-keep">{skill.content}</p>}
             </div>
-            <img className="object-cover w-full h-full" src={skill.image} alt={skill.title} />
+            <img className="object-cover w-full h-full" src={skill.image.src} alt={skill.title} />
           </div>
         ))}
       </div>
