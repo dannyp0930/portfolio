@@ -2,20 +2,49 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@layer base {
+  @font-face {
+    font-family: "Parisienne";
+    src: url("./fonts/Parisienne-Regular.woff2");
   }
-}
 
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  @font-face {
+    font-family: "KBO Dia Gothic";
+    font-weight: 100;
+    src: url("./fonts/KBO-Dia-Gothic-light.woff");
+  }
+  
+  @font-face {
+    font-family: "KBO Dia Gothic";
+    font-weight: 400;
+    src: url("./fonts/KBO-Dia-Gothic-medium.woff");
+  }
+  
+  @font-face {
+    font-family: "KBO Dia Gothic";
+    font-weight: 700;
+    src: url("./fonts/KBO-Dia-Gothic-bold.woff");
+  }
+
+  html {
+    @apply scroll-smooth font-kbo text-theme-sub;
+  }
+  h1 {
+    @apply text-4xl font-bold;
+  }
+  h2 {
+    @apply text-3xl font-bold;
+  }
+  h3 {
+    @apply text-2xl font-bold;
+  }
+  h4 {
+    @apply text-xl font-bold;
+  }
+  h5 {
+    @apply text-lg font-bold;
+  }
+  h6 {
+    @apply text-base font-bold;
+  }
 }
