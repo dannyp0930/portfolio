@@ -1,3 +1,5 @@
+import { Timestamp } from "firebase/firestore"
+
 interface ProjectCardProps {
   project: Project
 }
@@ -6,8 +8,8 @@ interface Project {
   title: string
   intro: string
   organization: string
-  startDate: Date
-  endDate: Date
+  startDate: Timestamp
+  endDate: Timestamp
   github: string
   homepage: string
   notion: string
