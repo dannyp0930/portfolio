@@ -48,7 +48,11 @@ export default function ProjectCard({ project }: ProjectCardProps) {
 						href={project.notion}
 						target="_blank"
 					>
-						<Image src={notionSvg.src} fill={true} alt="notion" />
+						<Image
+							className="w-full h-full"
+							src={notionSvg.src}
+							alt="notion"
+						/>
 					</a>
 				)}
 			</div>
