@@ -2,7 +2,6 @@ import api from "@/api";
 import ProjectList from "./ProjectList";
 
 function convertTimestamps(project: RawProject) {
-  console.log(project.startDate)
   return {
     ...project,
     startDate: project.startDate.toDate().toISOString(),

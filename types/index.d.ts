@@ -1,4 +1,5 @@
 import { Timestamp } from "firebase/firestore"
+import { ReactNode } from "react"
 
 declare global {
   interface ProjectListPros {
@@ -7,6 +8,15 @@ declare global {
 
   interface ProjectCardProps {
     project: Project
+  }
+
+  interface CareerListProps {
+    careers: Career[]
+  }
+
+  interface ModalContainerProps {
+    closeModal: function
+    children: ReactNode
   }
 
   interface RawProject {
