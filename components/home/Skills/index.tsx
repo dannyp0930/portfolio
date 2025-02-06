@@ -169,6 +169,8 @@ export default function Skills() {
 						</div>
 						<Image
 							className="object-cover w-full h-full"
+							width={150}
+							height={150}
 							src={skill.image.src}
 							alt={skill.title}
 						/>

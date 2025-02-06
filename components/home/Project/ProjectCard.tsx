@@ -50,6 +50,8 @@ export default function ProjectCard({ project }: ProjectCardProps) {
 					>
 						<Image
 							className="w-full h-full"
+							width={150}
+							height={150}
 							src={notionSvg.src}
 							alt="notion"
 						/>
