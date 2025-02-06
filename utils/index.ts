@@ -1,3 +1,3 @@
-import timeToDate from "./timeToDate";
+import timeToDate from './timeToDate';
 
 export { timeToDate };

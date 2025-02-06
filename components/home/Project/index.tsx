@@ -1,16 +1,19 @@
-import api from "@/api";
-import ProjectList from "./ProjectList";
+import api from '@/api';
+import ProjectList from './ProjectList';
 
 function convertTimestamps(project: RawProject) {
-  return {
-    ...project,
-    startDate: project.startDate.toDate().toISOString(),
-    endDate: project.endDate?.toDate().toISOString()
-  }
+	return {
+		...project,
+		startDate: project.startDate.toDate().toISOString(),
+		endDate: project.endDate?.toDate().toISOString(),
+	};
 }
 
 export default async function Project() {
-  const rawProjects = await api.getDataList("project", "startDate") as RawProject[];
-  const projects = rawProjects.map(convertTimestamps) as Project[];
-  return <ProjectList projects={projects} />;
+	const rawProjects = (await api.getDataList(
+		'project',
+		'startDate'
+	)) as RawProject[];
+	const projects = rawProjects.map(convertTimestamps) as Project[];
+	return <ProjectList projects={projects} />;
 }
