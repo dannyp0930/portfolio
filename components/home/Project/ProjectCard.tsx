@@ -6,7 +6,7 @@ import { timeToDate } from '@/utils';
 
 export default function ProjectCard({ project }: ProjectCardProps) {
 	return (
-		<div className="box-border flex flex-col gap-5 justify-center p-5 w-5/6 h-4/5 bg-white rounded-2xl shadow-lg md:h-5/6 md:p-12 lg:w-11/12">
+		<div className="box-border flex flex-col justify-center w-5/6 gap-5 p-5 bg-white shadow-lg h-4/5 rounded-2xl md:h-5/6 md:p-12 lg:w-11/12">
 			<h1 className="flex flex-col md:flex-row lg:justify-between lg:items-center">
 				{project.title}
 				<span className="text-base">{project.organization}</span>
@@ -16,7 +16,7 @@ export default function ProjectCard({ project }: ProjectCardProps) {
 				{timeToDate(project.startDate)} ~{' '}
 				{project.endDate ? timeToDate(project.endDate) : null}
 			</p>
-			<div className="flex gap-5 items-center mt-3 lg:gap-12">
+			<div className="flex items-center gap-5 mt-3 lg:gap-12">
 				{project.github && (
 					<a
 						className="w-12 h-12 text-theme-sub"
@@ -50,7 +50,7 @@ export default function ProjectCard({ project }: ProjectCardProps) {
 						<img
 							className="w-full h-full"
 							src={notionSvg.src}
-							alt=""
+							alt="notion"
 						/>
 					</a>
 				)}
