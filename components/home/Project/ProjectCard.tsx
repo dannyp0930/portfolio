@@ -3,6 +3,7 @@ import { faGithub } from '@fortawesome/free-brands-svg-icons';
 import { faHome } from '@fortawesome/free-solid-svg-icons';
 import notionSvg from '@/assets/images/icons/notion.svg';
 import { timeToDate } from '@/utils';
+import Image from 'next/image';
 
 export default function ProjectCard({ project }: ProjectCardProps) {
 	return (
@@ -47,11 +48,7 @@ export default function ProjectCard({ project }: ProjectCardProps) {
 						href={project.notion}
 						target="_blank"
 					>
-						<img
-							className="w-full h-full"
-							src={notionSvg.src}
-							alt="notion"
-						/>
+						<Image src={notionSvg.src} fill={true} alt="notion" />
 					</a>
 				)}
 			</div>
