@@ -21,6 +21,7 @@ import bootstrapSvg from '@/assets/images/icons/bootstrap.svg';
 import muiSvg from '@/assets/images/icons/mui.svg';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faStar } from '@fortawesome/free-solid-svg-icons';
+import Image from 'next/image';
 
 export default function Skills() {
 	const skills = [
@@ -166,7 +167,7 @@ export default function Skills() {
 								</p>
 							)}
 						</div>
-						<img
+						<Image
 							className="object-cover w-full h-full"
 							src={skill.image.src}
 							alt={skill.title}
