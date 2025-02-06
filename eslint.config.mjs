@@ -20,9 +20,7 @@ const eslintConfig = [
       'prettier/prettier': 'error'
     }
   },
-  {
-    extends: ['plugin:prettier/recommended']
-  }
+  ...compat.config({ extends: ['plugin:prettier/recommended'] })
 ];
 
 export default eslintConfig;
