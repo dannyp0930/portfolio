@@ -18,9 +18,13 @@ jobs:
                   sudo apt-get update
                   sudo apt-get install -y docker-compose
 
+            - name: Add SSH key to agent
+              uses: webfactory/ssh-agent@v0.7.0
+              with:
+                ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
             - name: Deploy with Docker Compose
               run: |
-                  ssh -o StrictHostKeyChecking=no -i ${{ secrets.SSH_PRIVATE_KEY }} ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} "
+                  ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} "
                     cd /srv/porfolio
                     sudo git pull origin master
                     sudo docker-compose up -d --build
