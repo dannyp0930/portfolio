@@ -24,7 +24,7 @@ export default function ProjectList({ projects }: ProjectListPros) {
 			className="flex flex-col justify-center items-center py-12 md:py-16 lg:py-28"
 		>
 			<h1>Project</h1>
-			<div className="w-11/12 lg:w-[1280px] h-[500px] m-auto relative overflow-hidden">
+			<div className="w-11/12 lg:w-[1280px] lg:max-w-[90%] h-[500px] m-auto relative overflow-hidden">
 				<div className="flex absolute top-1/2 z-50 justify-between w-full -translate-y-1/2">
 					<button
 						className={[

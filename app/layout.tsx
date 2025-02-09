@@ -14,7 +14,7 @@ export default function RootLayout({
 }>) {
 	return (
 		<html lang="en">
-			<body className="bg-peach-fuzz min-w-80">
+			<body className="bg-peach-fuzz">
 				<Header />
 				<main>{children}</main>
 				<Footer />

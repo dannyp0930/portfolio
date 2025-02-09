@@ -1,6 +1,7 @@
 {
 	"name": "SH Portpolio",
 	"short_name": "SH",
+	"title": "SH Portpolio",
 	"icons": [
 		{
 			"src": "icons/android-icon-36x36.png",
