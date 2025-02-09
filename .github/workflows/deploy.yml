@@ -16,7 +16,12 @@ jobs:
             - name: Execute remote ssh
               uses: appleboy/ssh-action@master
               with:
-                host: ${{ secrets.SSH_HOST }}
-                username: ${{ secrets.SSH_USERNAME }}
-                key: ${{ secrets.SSH_PRIVATE_KEY }}
+                  host: ${{ secrets.SSH_HOST }}
+                  username: ${{ secrets.SSH_USERNAME }}
+                  key: ${{ secrets.SSH_PRIVATE_KEY }}
 
+            - name: Deploy with Docker Compose
+              run: |
+                  cd /srv/porfolio
+                  git pull origin master
+                  docker-compose up -d --build
