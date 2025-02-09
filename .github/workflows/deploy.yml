@@ -13,10 +13,17 @@ jobs:
             - name: Checkout repository
               uses: actions/checkout@v4
 
+            - name: Cache node_modules
+              uses: actions/cache@v3
+              with:
+                path: node_modules
+                key: node-modules-${{ hashFiles('yarn.lock') }}
+
+            - name: Install dependencies
+              run: yarn install
+
             - name: Set up Docker Compose
-              run: |
-                  sudo apt-get update
-                  sudo apt-get install -y docker-compose
+              uses: docker/compose-action@v2
 
             - name: Deploy with Docker Compose
               run: |
