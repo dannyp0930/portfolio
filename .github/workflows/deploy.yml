@@ -21,4 +21,9 @@ jobs:
 
             - name: Deploy with Docker Compose
               run: |
-                  ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} "echo 'SSH connection successful!'"
+                  ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} "
+                    hostname -I
+                    cd /srv/porfolio
+                    sudo git pull origin master
+                    sudo docker-compose up -d --build
+                  "
