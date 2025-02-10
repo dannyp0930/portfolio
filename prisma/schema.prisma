@@ -1,0 +1,40 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+  shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
+}
+
+model Project {
+  id          String   @id @default(cuid())
+  title       String
+  intro       String
+  organization String?
+  startDate   DateTime
+  endDate     DateTime?
+  github      String?
+  homepage    String?
+  notion      String?
+}
+
+model Career {
+  id          String   @id @default(cuid())
+  companyName String
+  period      String
+  description String
+  position    String
+  duty        String
+  content     String
+  careerDetails CareerDetail[]
+}
+
+model CareerDetail {
+  id        Int     @id @default(autoincrement())
+  careerId  String
+  title     String
+  content   String
+  career    Career  @relation(fields: [careerId], references: [id])
+}

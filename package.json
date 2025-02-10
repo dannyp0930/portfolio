@@ -9,7 +9,7 @@
 		"start": "next start",
 		"lint": "next lint",
 		"docker": "docker compose --env-file .env -f docker/docker-compose.yml up -d --build",
-		"docker:db": "docker compose --env-file .env -f docker/docker-compose.yml up -d db"
+		"docker:db": "docker compose --env-file .env -f docker/docker-compose.yml up -d db shadow_db"
 	},
 	"husky": {
 		"hooks": {
@@ -28,6 +28,7 @@
 		"@fortawesome/free-brands-svg-icons": "^6.7.2",
 		"@fortawesome/free-solid-svg-icons": "^6.7.2",
 		"@fortawesome/react-fontawesome": "^0.2.2",
+		"@prisma/client": "6.3.1",
 		"firebase": "^11.2.0",
 		"next": "15.1.6",
 		"react": "^19.0.0",
@@ -45,6 +46,7 @@
 		"lint-staged": "^15.4.3",
 		"postcss": "^8",
 		"prettier": "^3.4.2",
+		"prisma": "^6.3.1",
 		"tailwindcss": "^3.4.1",
 		"typescript": "^5"
 	},
