@@ -5,11 +5,14 @@ services:
     build: 
       context: ..
       dockerfile: docker/Dockerfile
+    volumes:
+      - ..:/app
+      - /app/node_modules
+      - /app/.next
     image: porfolio
     container_name: portfolio_app
     mem_limit: 512m
-    memswap_limit: 1024m 
-    restart: always
+    memswap_limit: 1024m
     ports:
       - "3000:3000"
     depends_on:
@@ -40,6 +43,8 @@ services:
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     volumes:
       - shadow_db_data:/var/lib/mysql
+    depends_on:
+      - db
 
 volumes:
   db_data:
