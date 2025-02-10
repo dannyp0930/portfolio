@@ -22,6 +22,5 @@ jobs:
                   script: |
                       cd /srv/portfolio
                       sudo git pull origin master
-                      corepack enable
-                      yarn docker
-                      yarn migrate
+                      sudo docker compose --env-file .env -f docker/docker-compose.yml up -d --build"
+                      sudo npx prisma migrate dev --name init
