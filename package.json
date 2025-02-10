@@ -3,11 +3,12 @@
 	"version": "0.1.0",
 	"private": true,
 	"scripts": {
-    "prepare": "husky",
+		"prepare": "husky",
 		"dev": "next dev --turbopack",
 		"build": "next build",
 		"start": "next start",
-		"lint": "next lint"
+		"lint": "next lint",
+		"db": "docker compose up -d db"
 	},
 	"husky": {
 		"hooks": {
