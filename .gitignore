@@ -87,6 +87,4 @@ build
 # package-lock
 package-lock.json
 
-prisma/migrations
-
 # End of https://www.toptal.com/developers/gitignore/api/visualstudiocode,react
