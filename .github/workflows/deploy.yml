@@ -22,5 +22,8 @@ jobs:
                   script: |
                       cd /srv/portfolio
                       sudo git pull origin master
-                      sudo docker compose --env-file .env -f docker/docker-compose.yml up -d --build
-                      sudo npx prisma migrate dev --name init
+                      export NVM_DIR="$HOME/.nvm"
+                      [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+                      nvm use 22
+                      sudo yarn docker
+                      sudo yarn migrate
