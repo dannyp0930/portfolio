@@ -22,5 +22,5 @@ jobs:
                   script: |
                       cd /srv/portfolio
                       sudo git pull origin master
-                      sudo yarn docker
-                      sudo yarn migrate
+                      yarn docker
+                      yarn migrate
