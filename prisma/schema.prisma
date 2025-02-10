@@ -8,8 +8,56 @@ datasource db {
   shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
 }
 
+model Contact {
+  id     Int    @id @default(autoincrement())
+  type   String
+  value  String
+  label  String
+}
+
+model Education {
+  id               Int      @id @default(autoincrement())
+  institutionName  String
+  degreeProgram    String
+  startDate        DateTime
+  endDate          DateTime
+}
+
+model Experience {
+  id            Int      @id @default(autoincrement())
+  organization  String
+  role          String
+  startDate     DateTime
+  endDate       DateTime
+  description   String
+}
+
+model CareerOverview {
+  id            Int      @id @default(autoincrement())
+  organization  String
+  position      String
+  startDate     DateTime
+  endDate       DateTime
+  description   String
+}
+
+model Language {
+  id            Int      @id @default(autoincrement())
+  languageName  String
+  proficiency   String
+  examDate      DateTime
+  institution   String
+}
+
+model Certificate {
+  id                  Int      @id @default(autoincrement())
+  certificateName     String
+  issueDate           DateTime
+  issuingOrganization String
+}
+
 model Project {
-  id          String   @id @default(cuid())
+  id          Int   @id @default(autoincrement())
   title       String
   intro       String
   organization String?
@@ -23,7 +71,7 @@ model Project {
 }
 
 model Career {
-  id          String   @id @default(cuid())
+  id          Int   @id @default(autoincrement())
   companyName String
   period      String
   description String
@@ -37,14 +85,14 @@ model Career {
 
 model CareerDetail {
   id        Int     @id @default(autoincrement())
-  careerId  String
+  careerId  Int
   title     String
   content   String
   career    Career  @relation(fields: [careerId], references: [id])
 }
 
 model Skill {
-  id            String   @id @default(cuid())
+  id            Int   @id @default(autoincrement())
   title         String
   description   String
   level         Int
