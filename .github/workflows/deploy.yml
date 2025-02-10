@@ -22,4 +22,4 @@ jobs:
                   script: |
                       cd /srv/portfolio
                       sudo git pull origin master
-                      sudo docker compose up -d --build
+                      sudo yarn docker
