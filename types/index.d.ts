@@ -2,6 +2,10 @@ import { Timestamp } from 'firebase/firestore';
 import { ReactNode } from 'react';
 
 declare global {
+	interface InfoProps {
+		contacts: Contact[];
+	}
+
 	interface ProjectListPros {
 		projects: Project[];
 	}
@@ -17,6 +21,13 @@ declare global {
 	interface ModalContainerProps {
 		closeModal: function;
 		children: ReactNode;
+	}
+
+	interface Contact {
+		id: number;
+		type: string;
+		value: string;
+		label: string;
 	}
 
 	interface RawProject {

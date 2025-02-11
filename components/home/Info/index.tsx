@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { ModalContainer } from '@/components/common/ModalContainer';
 
-export default function Info() {
+export default function Info({ contacts }: InfoProps) {
 	const [selectItemIdx, setSelectItemIdx] = useState<number>(0);
 	const [selectItem, setSelectItem] = useState<string>('');
 
@@ -61,24 +61,14 @@ export default function Info() {
 				>
 					<h3 className="text-center">CONTACT</h3>
 					<ul className="hidden mt-3">
-						<li>
-							<h4>E-mail</h4>
-							<p>
-								<a href="mailto:dannyp0930@gmail.com">
-									dannyp0930@gmail.com
+						{contacts.map((contact) => (
+							<li key={contact.id}>
+								<h4>{contact.label}</h4>
+								<a href={`${contact.type}:${contact.value}`}>
+									{contact.value}
 								</a>
-								<br />
-								<a href="mailto:dannyp0930@daum.net">
-									dannyp0930@daum.net
-								</a>
-							</p>
-						</li>
-						<li>
-							<h4>Phone</h4>
-							<p>
-								<a href="tel:010-8890-9708">010-8890-9708</a>
-							</p>
-						</li>
+							</li>
+						))}
 					</ul>
 				</div>
 				<div
