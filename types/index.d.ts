@@ -4,6 +4,7 @@ import { ReactNode } from 'react';
 declare global {
 	interface InfoProps {
 		contacts: Contact[];
+		educations: Education[];
 	}
 
 	interface ProjectListPros {
@@ -28,6 +29,14 @@ declare global {
 		type: string;
 		value: string;
 		label: string;
+	}
+
+	interface Education {
+		id: number;
+		institutionName: string;
+		degreeStatus: string;
+		startDate: DateTime;
+		endDate: DateTime;
 	}
 
 	interface RawProject {

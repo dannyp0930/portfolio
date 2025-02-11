@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { ModalContainer } from '@/components/common/ModalContainer';
 
-export default function Info({ contacts }: InfoProps) {
+export default function Info({ contacts, educations }: InfoProps) {
 	const [selectItemIdx, setSelectItemIdx] = useState<number>(0);
 	const [selectItem, setSelectItem] = useState<string>('');
 
@@ -77,14 +77,17 @@ export default function Info({ contacts }: InfoProps) {
 				>
 					<h3 className="text-center">EDUCATION</h3>
 					<ul className="hidden mt-3">
-						<li>
-							<h4>광주 금호고등학교</h4>
-							<p>2011.03 ~ 2014.02</p>
-						</li>
-						<li>
-							<h4>중앙대학교 기계공학부 기계공학전공</h4>
-							<p>2014.03 ~ 2020.02</p>
-						</li>
+						{educations.map((education) => (
+							<li key={education.id}>
+								<h4>
+									{education.institutionName}{' '}
+									{education.degreeStatus}
+								</h4>
+								<p>
+									{education.startDate} ~ {education.endDate}
+								</p>
+							</li>
+						))}
 					</ul>
 				</div>
 				<div

@@ -7,11 +7,12 @@ import prisma from '@/lib/prisma';
 
 export default async function Home() {
 	const contacts = await prisma.contact.findMany();
+	const educations = await prisma.education.findMany();
+
 	return (
 		<article>
-			{contacts.map((contact) => contact.id)}
 			<Banner />
-			<Info contacts={contacts} />
+			<Info contacts={contacts} educations={educations} />
 			<Skills />
 			<Project />
 			<Career />
