@@ -33,6 +33,6 @@ jobs:
                       sudo yarn migrate:prod
                       sudo yarn build
 
-                      sudo pm2 start "yarn start" --name portfolio
-                      sudo pm2 save
-                      sudo pm2 restart portfolio
+                      pm2 start "yarn start" --name portfolio
+                      pm2 save
+                      pm2 restart portfolio
