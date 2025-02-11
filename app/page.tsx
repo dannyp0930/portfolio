@@ -8,11 +8,22 @@ import prisma from '@/lib/prisma';
 export default async function Home() {
 	const contacts = await prisma.contact.findMany();
 	const educations = await prisma.education.findMany();
+	const experiences = await prisma.experience.findMany();
+	const careerOverviews = await prisma.careerOverview.findMany();
+	const languages = await prisma.language.findMany();
+	const certificates = await prisma.certificate.findMany();
 
 	return (
 		<article>
 			<Banner />
-			<Info contacts={contacts} educations={educations} />
+			<Info
+				contacts={contacts}
+				educations={educations}
+				experiences={experiences}
+				careerOverviews={careerOverviews}
+				languages={languages}
+				certificates={certificates}
+			/>
 			<Skills />
 			<Project />
 			<Career />

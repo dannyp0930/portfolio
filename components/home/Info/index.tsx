@@ -4,7 +4,14 @@ import { useEffect, useState } from 'react';
 import { ModalContainer } from '@/components/common/ModalContainer';
 import dayjs from 'dayjs';
 
-export default function Info({ contacts, educations }: InfoProps) {
+export default function Info({
+	contacts,
+	educations,
+	experiences,
+	careerOverviews,
+	languages,
+	certificates,
+}: InfoProps) {
 	const [selectItemIdx, setSelectItemIdx] = useState<number>(0);
 	const [selectItem, setSelectItem] = useState<string>('');
 
@@ -86,12 +93,10 @@ export default function Info({ contacts, educations }: InfoProps) {
 								</h4>
 								<p>
 									{dayjs(education.startDate).format(
-										'YYYY.MM.DD'
+										'YYYY.MM'
 									)}{' '}
 									~{' '}
-									{dayjs(education.endDate).format(
-										'YYYY.MM.DD'
-									)}
+									{dayjs(education.endDate).format('YYYY.MM')}
 								</p>
 							</li>
 						))}
@@ -103,14 +108,22 @@ export default function Info({ contacts, educations }: InfoProps) {
 				>
 					<h3 className="text-center">EXPERIENCE</h3>
 					<ul className="hidden mt-3">
-						<li>
-							<h4>삼성청년SW아카데미(SSAFY)</h4>
-							<p>
-								2021.07 ~ 2022.06
-								<br />
-								프로젝트 중심의 학습 및 실습
-							</p>
-						</li>
+						{experiences.map((experience) => (
+							<li key={experience.id}>
+								<h4>{experience.organization}</h4>
+								<p>
+									{dayjs(experience.startDate).format(
+										'YYYY.MM.DD'
+									)}{' '}
+									~
+									{dayjs(experience.endDate).format(
+										'YYYY.MM.DD'
+									)}
+									<br />
+									{experience.description}
+								</p>
+							</li>
+						))}
 					</ul>
 				</div>
 				<div
@@ -119,26 +132,22 @@ export default function Info({ contacts, educations }: InfoProps) {
 				>
 					<h3 className="text-center">CAREER</h3>
 					<ul className="hidden mt-3">
-						<li>
-							<h4>한국교통안전공단 인턴</h4>
-							<p>
-								2018.09.20 ~ 2018.12.31
-								<br />
-								서울본부안전사업2처
-								<br />
-								기계식주차장검사업무보조
-							</p>
-						</li>
-						<li>
-							<h4>온오프믹스</h4>
-							<p>
-								2023.02.22 ~
-								<br />
-								개발팀
-								<br />
-								프론트엔드엔지니어
-							</p>
-						</li>
+						{careerOverviews.map((career) => (
+							<li key={career.id}>
+								<h4>{career.organization}</h4>
+								<p>
+									{dayjs(career.startDate).format(
+										'YYYY.MM.DD'
+									)}{' '}
+									~
+									{dayjs(career.endDate).format('YYYY.MM.DD')}
+									<br />
+									{career.position}
+									<br />
+									{career.description}
+								</p>
+							</li>
+						))}
 					</ul>
 				</div>
 				<div
@@ -147,14 +156,20 @@ export default function Info({ contacts, educations }: InfoProps) {
 				>
 					<h3 className="text-center">LANGUAGE</h3>
 					<ul className="hidden mt-3">
-						<li>
-							<h4>TOEIC 885</h4>
-							<p>2023.11.12 YBM시사</p>
-						</li>
-						<li>
-							<h4>JLPT N1</h4>
-							<p>2021.08.09 국제교류기금</p>
-						</li>
+						{languages.map((language) => (
+							<li key={language.id}>
+								<h4>
+									{language.languageName}{' '}
+									{language.proficiency}
+								</h4>
+								<p>
+									{dayjs(language.examDate).format(
+										'YYYY.MM.DD'
+									)}{' '}
+									{language.institution}
+								</p>
+							</li>
+						))}
 					</ul>
 				</div>
 				<div
@@ -163,30 +178,17 @@ export default function Info({ contacts, educations }: InfoProps) {
 				>
 					<h3 className="text-center">CERTIFICATE</h3>
 					<ul className="hidden mt-3">
-						<li>
-							<h4>한자능력검정시험 2급</h4>
-							<p>2008.09.02 (사)한국어문회</p>
-						</li>
-						<li>
-							<h4>한국사능력검정시험 1급</h4>
-							<p>2016.08.30 국사편찬위원회</p>
-						</li>
-						<li>
-							<h4>컴퓨터활용능력 1급</h4>
-							<p>2017.04.07 대한상공회의소</p>
-						</li>
-						<li>
-							<h4>일반기계기사</h4>
-							<p>2018.08.17 한국산업인력공단</p>
-						</li>
-						<li>
-							<h4>SQLD(SQL 개발자)</h4>
-							<p>2021.10.01 한국데이터산업진흥원</p>
-						</li>
-						<li>
-							<h4>정보처리기사</h4>
-							<p>2022.09.02 한국산업인력공단</p>
-						</li>
+						{certificates.map((certificate) => (
+							<li key={certificate.id}>
+								<h4>{certificate.certificateName}</h4>
+								<p>
+									{dayjs(certificate.issueDate).format(
+										'YYYY.MM.DD'
+									)}{' '}
+									{certificate.issuingOrganization}
+								</p>
+							</li>
+						))}
 					</ul>
 				</div>
 			</div>

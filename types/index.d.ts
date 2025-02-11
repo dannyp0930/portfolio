@@ -5,6 +5,10 @@ declare global {
 	interface InfoProps {
 		contacts: Contact[];
 		educations: Education[];
+		experiences: Experience[];
+		careerOverviews: CareerOverview[];
+		languages: Language[];
+		certificates: Certificate[];
 	}
 
 	interface ProjectListPros {
@@ -37,6 +41,38 @@ declare global {
 		degreeStatus: string;
 		startDate: DateTime;
 		endDate: DateTime;
+	}
+
+	interface Experience {
+		id: number;
+		organization: string;
+		startDate: DateTime;
+		endDate: DateTime;
+		description: string;
+	}
+
+	interface CareerOverview {
+		id: number;
+		organization: string;
+		position: string;
+		startDate: DateTime;
+		endDate: DateTime;
+		description: string;
+	}
+
+	interface Language {
+		id: number;
+		languageName: string;
+		proficiency: string;
+		examDate: DateTime;
+		institution: string;
+	}
+
+	interface Certificate {
+		id: number;
+		certificateName: string;
+		issueDate: DateTime;
+		issuingOrganization: string;
 	}
 
 	interface RawProject {
