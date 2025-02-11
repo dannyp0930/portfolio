@@ -1,39 +1,3 @@
-/*
-  Warnings:
-
-  - The primary key for the `Career` table will be changed. If it partially fails, the table could be left without primary key constraint.
-  - You are about to alter the column `id` on the `Career` table. The data in that column could be lost. The data in that column will be cast from `VarChar(191)` to `Int`.
-  - You are about to alter the column `careerId` on the `CareerDetail` table. The data in that column could be lost. The data in that column will be cast from `VarChar(191)` to `Int`.
-  - The primary key for the `Project` table will be changed. If it partially fails, the table could be left without primary key constraint.
-  - You are about to alter the column `id` on the `Project` table. The data in that column could be lost. The data in that column will be cast from `VarChar(191)` to `Int`.
-  - The primary key for the `Skill` table will be changed. If it partially fails, the table could be left without primary key constraint.
-  - You are about to alter the column `id` on the `Skill` table. The data in that column could be lost. The data in that column will be cast from `VarChar(191)` to `Int`.
-
-*/
--- DropForeignKey
-ALTER TABLE `CareerDetail` DROP FOREIGN KEY `CareerDetail_careerId_fkey`;
-
--- DropIndex
-DROP INDEX `CareerDetail_careerId_fkey` ON `CareerDetail`;
-
--- AlterTable
-ALTER TABLE `Career` DROP PRIMARY KEY,
-    MODIFY `id` INTEGER NOT NULL AUTO_INCREMENT,
-    ADD PRIMARY KEY (`id`);
-
--- AlterTable
-ALTER TABLE `CareerDetail` MODIFY `careerId` INTEGER NOT NULL;
-
--- AlterTable
-ALTER TABLE `Project` DROP PRIMARY KEY,
-    MODIFY `id` INTEGER NOT NULL AUTO_INCREMENT,
-    ADD PRIMARY KEY (`id`);
-
--- AlterTable
-ALTER TABLE `Skill` DROP PRIMARY KEY,
-    MODIFY `id` INTEGER NOT NULL AUTO_INCREMENT,
-    ADD PRIMARY KEY (`id`);
-
 -- CreateTable
 CREATE TABLE `Contact` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
@@ -48,7 +12,7 @@ CREATE TABLE `Contact` (
 CREATE TABLE `Education` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `institutionName` VARCHAR(191) NOT NULL,
-    `degreeProgram` VARCHAR(191) NOT NULL,
+    `degreeStatus` VARCHAR(191) NOT NULL,
     `startDate` DATETIME(3) NOT NULL,
     `endDate` DATETIME(3) NOT NULL,
 
@@ -96,6 +60,61 @@ CREATE TABLE `Certificate` (
     `certificateName` VARCHAR(191) NOT NULL,
     `issueDate` DATETIME(3) NOT NULL,
     `issuingOrganization` VARCHAR(191) NOT NULL,
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `Project` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `title` VARCHAR(191) NOT NULL,
+    `intro` VARCHAR(191) NOT NULL,
+    `organization` VARCHAR(191) NULL,
+    `startDate` DATETIME(3) NOT NULL,
+    `endDate` DATETIME(3) NULL,
+    `github` VARCHAR(191) NULL,
+    `homepage` VARCHAR(191) NULL,
+    `notion` VARCHAR(191) NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `Career` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `companyName` VARCHAR(191) NOT NULL,
+    `period` VARCHAR(191) NOT NULL,
+    `description` VARCHAR(191) NOT NULL,
+    `position` VARCHAR(191) NOT NULL,
+    `duty` VARCHAR(191) NOT NULL,
+    `content` VARCHAR(191) NOT NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `CareerDetail` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `careerId` INTEGER NOT NULL,
+    `title` VARCHAR(191) NOT NULL,
+    `content` VARCHAR(191) NOT NULL,
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `Skill` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `title` VARCHAR(191) NOT NULL,
+    `description` VARCHAR(191) NOT NULL,
+    `level` INTEGER NOT NULL,
+    `category` VARCHAR(191) NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
