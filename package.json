@@ -9,7 +9,7 @@
 		"start": "next start",
 		"lint": "next lint",
 		"docker": "docker compose --env-file .env -f docker/docker-compose.yml up -d --build",
-		"migrate:prod": "prisma migrate deploy",
+		"migrate:prod": "prisma migrate deploy && prisma generate",
 		"migrate:dev": "prisma migrate dev --name init",
 		"studio": "prisma studio"
 	},
