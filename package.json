@@ -10,7 +10,8 @@
 		"lint": "next lint",
 		"docker": "docker compose --env-file .env -f docker/docker-compose.yml up -d --build",
 		"migrate:prod": "prisma migrate deploy",
-		"migrate:dev": "prisma migrate dev --name init"
+		"migrate:dev": "prisma migrate dev --name init",
+		"studio": "prisma studio"
 	},
 	"husky": {
 		"hooks": {

@@ -84,7 +84,8 @@ export default function Info({ contacts, educations }: InfoProps) {
 									{education.degreeStatus}
 								</h4>
 								<p>
-									{education.startDate} ~ {education.endDate}
+									{education.startDate.toString()} ~{' '}
+									{education.endDate.toString()}
 								</p>
 							</li>
 						))}
