@@ -50,6 +50,7 @@ export default function Info() {
 		>
 			{selectItemIdx ? (
 				<ModalContainer closeModal={closeModal}>
+					test
 					<div dangerouslySetInnerHTML={{ __html: selectItem }}></div>
 				</ModalContainer>
 			) : null}
