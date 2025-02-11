@@ -1,4 +1,4 @@
-name: porfolio
+name: portfolio
 version: '3'
 services:
   db:
