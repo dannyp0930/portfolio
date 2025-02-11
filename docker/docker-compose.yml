@@ -1,23 +1,6 @@
 name: porfolio
 version: '3'
 services:
-  app:
-    build: 
-      context: ..
-      dockerfile: docker/Dockerfile
-    volumes:
-      - ..:/app
-      - /app/node_modules
-      - /app/.next
-    image: porfolio
-    container_name: portfolio_app
-    mem_limit: 512m
-    memswap_limit: 1024m
-    ports:
-      - "3000:3000"
-    depends_on:
-      - db
-
   db:
     image: mysql:latest
     container_name: portfolio_db

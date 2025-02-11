@@ -26,4 +26,7 @@ jobs:
                       [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
                       nvm use 22
                       sudo yarn docker
-                      npx prisma migrate deploy
+                      sudo yarn install
+                      sudo yarn migrate:prod
+                      sudo yarn build
+                      sudo yarn start

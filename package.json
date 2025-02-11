@@ -9,8 +9,8 @@
 		"start": "next start",
 		"lint": "next lint",
 		"docker": "docker compose --env-file .env -f docker/docker-compose.yml up -d --build",
-		"docker:db": "docker compose --env-file .env -f docker/docker-compose.yml up -d db shadow_db",
-		"migrate": "npx prisma migrate dev --name init"
+		"migrate:prod": "prisma migrate deploy",
+		"migrate:dev": "prisma migrate dev --name init"
 	},
 	"husky": {
 		"hooks": {
