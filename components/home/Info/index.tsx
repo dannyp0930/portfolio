@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { ModalContainer } from '@/components/common/ModalContainer';
+import dayjs from 'dayjs';
 
 export default function Info({ contacts, educations }: InfoProps) {
 	const [selectItemIdx, setSelectItemIdx] = useState<number>(0);
@@ -84,8 +85,13 @@ export default function Info({ contacts, educations }: InfoProps) {
 									{education.degreeStatus}
 								</h4>
 								<p>
-									{education.startDate.toString()} ~{' '}
-									{education.endDate.toString()}
+									{dayjs(education.startDate).format(
+										'YYYY.MM.DD'
+									)}{' '}
+									~{' '}
+									{dayjs(education.endDate).format(
+										'YYYY.MM.DD'
+									)}
 								</p>
 							</li>
 						))}
