@@ -33,4 +33,4 @@ jobs:
                       sudo yarn install
                       sudo yarn migrate:prod
                       sudo yarn build
-                      sudo yarn start
+                      nohup yarn start > nohup.out 2>&1 &
