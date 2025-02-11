@@ -25,12 +25,14 @@ jobs:
                       export NVM_DIR="$HOME/.nvm"
                       [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
                       nvm use 22
-                      PID=$(sudo lsof -t -i:3000)
-                      if [ ! -z "$PID" ]; then
-                          sudo kill -9 $PID
-                      fi
-                      sudo yarn docker
+
+                      sudo pm2 stop portfolio || true
+                      sudo pm2 delete portfolio || true
+
                       sudo yarn install
                       sudo yarn migrate:prod
                       sudo yarn build
-                      sudo nohup yarn start > nohup.out 2>&1 &
+
+                      sudo pm2 start "yarn start" --name portfolio
+                      sudo pm2 save
+                      sudo pm2 restart portfolio
