@@ -23,6 +23,10 @@ export default {
 				header: '6.25rem',
 				footer: '12.5rem',
 			},
+			spacing: {
+				header: '6.25rem',
+				footer: '12.5rem',
+			},
 		},
 	},
 	plugins: [],
