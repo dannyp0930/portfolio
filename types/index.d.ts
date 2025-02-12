@@ -11,6 +11,10 @@ declare global {
 		certificates: Certificate[];
 	}
 
+	interface SkillsProps {
+		skills: Skill[];
+	}
+
 	interface ProjectListPros {
 		projects: Project[];
 	}
@@ -73,6 +77,15 @@ declare global {
 		certificateName: string;
 		issueDate: DateTime;
 		issuingOrganization: string;
+	}
+
+	interface Skill {
+		id: number;
+		title: string;
+		description: string;
+		level: number;
+		imageUrl: string;
+		category?: string;
 	}
 
 	interface RawProject {

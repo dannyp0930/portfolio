@@ -26,6 +26,8 @@
 		]
 	},
 	"dependencies": {
+		"@aws-sdk/client-s3": "^3.744.0",
+		"@aws-sdk/s3-request-presigner": "^3.744.0",
 		"@fortawesome/fontawesome-svg-core": "^6.7.2",
 		"@fortawesome/free-brands-svg-icons": "^6.7.2",
 		"@fortawesome/free-solid-svg-icons": "^6.7.2",

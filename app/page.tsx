@@ -12,6 +12,7 @@ export default async function Home() {
 	const careerOverviews = await prisma.careerOverview.findMany();
 	const languages = await prisma.language.findMany();
 	const certificates = await prisma.certificate.findMany();
+	const skills = await prisma.skill.findMany();
 
 	return (
 		<article>
@@ -24,7 +25,7 @@ export default async function Home() {
 				languages={languages}
 				certificates={certificates}
 			/>
-			<Skills />
+			<Skills skills={skills} />
 			<Project />
 			<Career />
 		</article>

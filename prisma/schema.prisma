@@ -36,7 +36,7 @@ model CareerOverview {
   organization  String
   position      String
   startDate     DateTime
-  endDate       DateTime
+  endDate       DateTime?
   description   String
 }
 
@@ -72,7 +72,8 @@ model Project {
 model Career {
   id          Int   @id @default(autoincrement())
   companyName String
-  period      String
+  startDate     DateTime
+  endDate       DateTime?
   description String
   position    String
   duty        String
@@ -95,6 +96,7 @@ model Skill {
   title         String
   description   String
   level         Int
+  imageUrl      String
   category      String?
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
