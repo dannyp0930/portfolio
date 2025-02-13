@@ -18,7 +18,13 @@ export async function POST(req: Request) {
 
 		if (user) {
 			return NextResponse.json(
-				{ user: { id: user.id, email: user.email } },
+				{
+					user: {
+						id: user.id,
+						email: user.email,
+						isAdmin: user.isAdmin,
+					},
+				},
 				{ status: 200 }
 			);
 		} else {
