@@ -1,7 +1,5 @@
 import type { Metadata } from 'next';
 import './globals.css';
-import Header from '@/components/Layout/Header';
-import Footer from '@/components/Layout/Footer';
 
 export const metadata: Metadata = {
 	manifest: '/manifest.json',
@@ -15,9 +13,7 @@ export default function RootLayout({
 	return (
 		<html lang="en">
 			<body className="bg-peach-fuzz">
-				<Header />
 				<main>{children}</main>
-				<Footer />
 			</body>
 		</html>
 	);

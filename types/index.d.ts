@@ -32,6 +32,11 @@ declare global {
 		children: ReactNode;
 	}
 
+	interface User {
+		id: string;
+		email: string;
+	}
+
 	interface Contact {
 		id: number;
 		type: string;

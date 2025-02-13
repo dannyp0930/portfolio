@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 
 const Dashboard = () => {
 	const router = useRouter();
-	const [user, setUser] = useState(null);
+	const [user, setUser] = useState<User | null>(null);
 
 	useEffect(() => {
 		const token = localStorage.getItem('token');
