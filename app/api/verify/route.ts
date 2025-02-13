@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client';
-import jwt from 'jsonwebtoken';
+import jwt, { JwtPayload } from 'jsonwebtoken';
 import { NextResponse } from 'next/server';
 
 const prisma = new PrismaClient();
@@ -8,7 +8,10 @@ export async function POST(req: Request) {
 	const { token } = await req.json();
 
 	try {
-		const decoded = jwt.verify(token, process.env.JWT_SECRET!);
+		const decoded = jwt.verify(
+			token,
+			process.env.JWT_SECRET!
+		) as JwtPayload;
 		const user = await prisma.user.findUnique({
 			where: { id: decoded.userId },
 		});
