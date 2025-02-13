@@ -17,7 +17,10 @@ export async function POST(req: Request) {
 		});
 
 		if (user) {
-			return NextResponse.json({ user }, { status: 200 });
+			return NextResponse.json(
+				{ user: { id: user.id, email: user.email } },
+				{ status: 200 }
+			);
 		} else {
 			return NextResponse.json(
 				{ error: 'User not found' },

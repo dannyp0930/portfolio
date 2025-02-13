@@ -2,13 +2,15 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useCookies } from 'next-client-cookies';
 
-const Login = () => {
+export default function Login() {
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
 	const router = useRouter();
+	const cookieStore = useCookies();
 
-	const handleLogin = async (e: React.FormEvent) => {
+	async function handleLogin(e: React.FormEvent) {
 		e.preventDefault();
 
 		const response = await fetch('/api/login', {
@@ -19,15 +21,15 @@ const Login = () => {
 			body: JSON.stringify({ email, password }),
 		});
 
-		const data = await response.json();
+		await response.json();
+		const token = cookieStore.get('access-token');
 
-		if (data.token) {
-			localStorage.setItem('token', data.token);
+		if (token) {
 			router.push('/dashboard');
 		} else {
 			alert('Login failed');
 		}
-	};
+	}
 
 	return (
 		<article className="h-[100vh] pt-header">
@@ -49,6 +51,4 @@ const Login = () => {
 			</form>
 		</article>
 	);
-};
-
-export default Login;
+}

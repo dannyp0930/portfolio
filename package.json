@@ -38,6 +38,7 @@
 		"firebase": "^11.2.0",
 		"jsonwebtoken": "^9.0.2",
 		"next": "15.1.6",
+		"next-client-cookies": "^2.0.1",
 		"react": "^19.0.0",
 		"react-dom": "^19.0.0"
 	},

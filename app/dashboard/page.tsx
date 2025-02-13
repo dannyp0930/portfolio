@@ -2,18 +2,19 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useCookies } from 'next-client-cookies';
 
-const Dashboard = () => {
+export default function Dashboard() {
 	const router = useRouter();
 	const [user, setUser] = useState<User | null>(null);
+	const cookieStore = useCookies();
 
 	useEffect(() => {
-		const token = localStorage.getItem('token');
+		const token = cookieStore.get('access-token');
 
 		if (!token) {
 			router.push('/login');
 		} else {
-			// 토큰 검증 및 사용자 정보 가져오기
 			fetch('/api/verify', {
 				method: 'POST',
 				headers: {
@@ -30,7 +31,7 @@ const Dashboard = () => {
 					}
 				});
 		}
-	}, [router]);
+	}, [router, cookieStore]);
 
 	return (
 		<div>
@@ -38,6 +39,4 @@ const Dashboard = () => {
 			{user && <p>Welcome, {user.email}</p>}
 		</div>
 	);
-};
-
-export default Dashboard;
+}
