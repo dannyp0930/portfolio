@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useCookies } from 'next-client-cookies';
 import Link from 'next/link';
+import instance from '../api/instance';
 
 export default function Dashboard({
 	children,
@@ -15,28 +16,25 @@ export default function Dashboard({
 	const cookieStore = useCookies();
 
 	useEffect(() => {
-		const token = cookieStore.get('access-token');
+		async function getVerify() {
+			const token = cookieStore.get('access-token');
 
-		if (!token) {
-			router.push('/login');
-		} else {
-			fetch('/api/verify', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify({ token }),
-			})
-				.then((response) => response.json())
-				.then((data) => {
-					if (data.user && data.user.isAdmin) {
-						setUser(data.user);
-					} else {
-						router.push('/login');
-					}
-				});
+			if (!token) {
+				router.push('/login');
+			} else {
+				const body = { token };
+				const {
+					data: { user },
+				} = await instance.post('/api/verify', body);
+				if (user && user.isAdmin) {
+					setUser(user);
+				} else {
+					router.push('/login');
+				}
+			}
 		}
-	}, [router, cookieStore]);
+		getVerify();
+	}, [cookieStore, router]);
 
 	return (
 		<div>

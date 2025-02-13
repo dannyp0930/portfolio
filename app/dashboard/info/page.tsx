@@ -1,5 +1,6 @@
 'use client';
 
+import instance from '@/app/api/instance';
 import { FormEvent, useState } from 'react';
 
 export default function Info() {
@@ -10,13 +11,8 @@ export default function Info() {
 	async function createContact(e: FormEvent<HTMLFormElement>) {
 		e.preventDefault();
 		try {
-			const res = await fetch('/api/info/contact', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify({ type, value, label }),
-			});
+			const body = { type, value, label };
+			const res = await instance.post('/api/info/contact', body);
 			console.log(res);
 		} catch {
 			console.log(123);

@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useCookies } from 'next-client-cookies';
+import instance from '../api/instance';
 
 export default function Login() {
 	const [email, setEmail] = useState('');
@@ -12,18 +13,9 @@ export default function Login() {
 
 	async function handleLogin(e: React.FormEvent) {
 		e.preventDefault();
-
-		const response = await fetch('/api/login', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify({ email, password }),
-		});
-
-		await response.json();
+		const body = { email, password };
+		await instance.post('/api/login', body);
 		const token = cookieStore.get('access-token');
-
 		if (token) {
 			router.push('/dashboard');
 		} else {

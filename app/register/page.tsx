@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import instance from '../api/instance';
 
 export default function Register() {
 	const [email, setEmail] = useState('');
@@ -10,17 +11,11 @@ export default function Register() {
 
 	const handleRegister = async (e: React.FormEvent) => {
 		e.preventDefault();
-
-		const response = await fetch('/api/register', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify({ email, password }),
-		});
-
-		const data = await response.json();
-		console.log(data);
+		const body = {
+			email,
+			password,
+		};
+		const { data } = await instance.post('/api/register', body);
 		if (data.userId) {
 			router.push('/login');
 		} else {
