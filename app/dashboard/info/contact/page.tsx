@@ -60,7 +60,7 @@ export default function Contact() {
 	}
 
 	function handleDeleteContact(contactId: number) {
-		return async (e: FormEvent<HTMLFormElement>) => {
+		return async (e: MouseEvent<HTMLButtonElement>) => {
 			setLoad(true);
 			e.preventDefault();
 			try {
@@ -83,7 +83,7 @@ export default function Contact() {
 	}
 
 	function selectUpdateContact(contact?: Contact) {
-		return (e: MouseEvent<HTMLElement>) => {
+		return (e: MouseEvent<HTMLButtonElement>) => {
 			e.preventDefault();
 			if (contact) {
 				setUpdateContactId(contact.id);
