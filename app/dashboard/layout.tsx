@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useCookies } from 'next-client-cookies';
 import Link from 'next/link';
 import instance from '../api/instance';
+import jwt from 'jsonwebtoken';
 
 export default function Dashboard({
 	children,
@@ -15,25 +16,76 @@ export default function Dashboard({
 	const [user, setUser] = useState<User | null>(null);
 	const cookieStore = useCookies();
 
-	useEffect(() => {
-		async function getVerify() {
-			const token = cookieStore.get('access-token');
+	async function verifyToken(accessToken: string) {
+		try {
+			const { data } = await instance.post('/api/verify', {
+				accessToken,
+			});
+			return data.user;
+		} catch {
+			return null;
+		}
+	}
 
-			if (!token) {
+	useEffect(() => {
+		async function refreshAccessToken() {
+			try {
+				const refreshToken = cookieStore.get('refresh-token');
+				if (!refreshToken) {
+					router.push('/login');
+					return;
+				}
+
+				const response = await instance.post('/api/refresh', {
+					refreshToken,
+				});
+				const { accessToken } = response.data;
+
+				cookieStore.set('access-token', accessToken);
+				return accessToken;
+			} catch {
 				router.push('/login');
-			} else {
-				const body = { token };
-				const {
-					data: { user },
-				} = await instance.post('/api/verify', body);
-				if (user && user.isAdmin) {
+			}
+		}
+
+		async function checkAndRefreshToken() {
+			const accessToken = cookieStore.get('access-token');
+			if (!accessToken) {
+				router.push('/login');
+				return;
+			}
+
+			// Access token 디코딩하여 만료 시간 확인
+			const decoded = jwt.decode(accessToken) as { exp: number } | null;
+			if (!decoded) {
+				router.push('/login');
+				return;
+			}
+
+			// 만료 5분 전에 refresh
+			const expirationTime = decoded.exp * 1000;
+			const currentTime = Date.now();
+			const timeUntilExpiration = expirationTime - currentTime;
+
+			let validToken = accessToken;
+
+			if (timeUntilExpiration < 5 * 60 * 1000) {
+				// 5분 이내 만료
+				validToken = await refreshAccessToken();
+			}
+
+			if (validToken) {
+				const user = await verifyToken(validToken);
+				if (user) {
 					setUser(user);
 				} else {
 					router.push('/login');
 				}
 			}
 		}
-		getVerify();
+		checkAndRefreshToken();
+		const interval = setInterval(checkAndRefreshToken, 5 * 60 * 1000); // 1분마다 체크
+		return () => clearInterval(interval);
 	}, [cookieStore, router]);
 
 	return (

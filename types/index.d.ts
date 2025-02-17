@@ -36,6 +36,7 @@ declare global {
 		id: string;
 		email: string;
 		isAdmin: boolean;
+		refreshToken: string;
 	}
 
 	interface Contact {

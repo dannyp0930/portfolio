@@ -28,13 +28,35 @@ export async function POST(req: Request) {
 			);
 		}
 
-		const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET!, {
-			expiresIn: '1h',
+		const accessToken = jwt.sign(
+			{ userId: user.id },
+			process.env.JWT_SECRET!,
+			{
+				expiresIn: '1h',
+			}
+		);
+		const refreshToken = jwt.sign(
+			{ userId: user.id },
+			process.env.JWT_REFRESH_SECRET!,
+			{
+				expiresIn: '7d',
+			}
+		);
+
+		await prisma.user.update({
+			where: { id: user.id },
+			data: { refreshToken },
 		});
 		const cookieStore = await cookies();
-		cookieStore.set('access-token', token);
+		cookieStore.set('access-token', accessToken);
+		cookieStore.set('refresh-token', refreshToken, {
+			httpOnly: true,
+			secure: process.env.NODE_ENV === 'production',
+			path: '/',
+			maxAge: 60 * 60 * 24 * 7,
+		});
 
-		return NextResponse.json({ token }, { status: 200 });
+		return NextResponse.json({ accessToken }, { status: 200 });
 	} catch {
 		return NextResponse.json(
 			{ error: 'Something went wrong' },
