@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useCookies } from 'next-client-cookies';
 import instance from '../api/instance';
 import useAuthCheck from '@/hooks/useAuthCheck';
+import Link from 'next/link';
 
 export default function Login() {
 	const [email, setEmail] = useState('');
@@ -27,10 +28,10 @@ export default function Login() {
 	}
 
 	return (
-		<article className="h-[100vh] pt-header">
-			<div className="m-auto w-96 bg-white p-10 rounded-xl flex flex-col gap-4">
+		<article className="h-[100vh] flex justify-center items-center">
+			<div className="w-96 h-fit bg-white p-10 rounded-xl flex flex-col gap-4">
 				<h1>Login</h1>
-				<form onSubmit={handleLogin} className="flex flex-col gap-2">
+				<form onSubmit={handleLogin} className="flex flex-col gap-3">
 					<div className="flex flex-col gap-1">
 						<label className="text-xs" htmlFor="email">
 							Email
@@ -39,7 +40,7 @@ export default function Login() {
 							id="email"
 							className="border border-theme-sub rounded py-2 px-3 focus:outline-theme"
 							type="email"
-							placeholder="Email"
+							placeholder="example@example.com"
 							required
 							value={email}
 							onChange={(e) => setEmail(e.target.value)}
@@ -59,8 +60,18 @@ export default function Login() {
 							onChange={(e) => setPassword(e.target.value)}
 						/>
 					</div>
-					<button type="submit">Login</button>
+					<button
+						className="bg-theme-sub text-theme w-full p-2 rounded mt-4"
+						type="submit"
+					>
+						Login
+					</button>
 				</form>
+				<div>
+					<Link className="text-sm hover:underline" href="/register">
+						회원가입
+					</Link>
+				</div>
 			</div>
 		</article>
 	);
