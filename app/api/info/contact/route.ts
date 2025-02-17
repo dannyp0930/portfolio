@@ -7,14 +7,13 @@ export async function POST(req: Request) {
 	const { type, value, label } = await req.json();
 
 	try {
-		const contact = await prisma.contact.create({
+		await prisma.contact.create({
 			data: {
 				type,
 				value,
 				label,
 			},
 		});
-		console.log(contact);
 		return NextResponse.json({ message: 'OK' }, { status: 200 });
 	} catch {
 		return NextResponse.json(

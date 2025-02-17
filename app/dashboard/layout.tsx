@@ -84,7 +84,7 @@ export default function Dashboard({
 			}
 		}
 		checkAndRefreshToken();
-		const interval = setInterval(checkAndRefreshToken, 5 * 60 * 1000); // 1분마다 체크
+		const interval = setInterval(checkAndRefreshToken, 5 * 60 * 1000);
 		return () => clearInterval(interval);
 	}, [cookieStore, router]);
 
