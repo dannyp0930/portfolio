@@ -50,7 +50,7 @@ export async function POST(req: Request) {
 		const cookieStore = await cookies();
 		cookieStore.set('access-token', accessToken);
 		cookieStore.set('refresh-token', refreshToken, {
-			httpOnly: true,
+			httpOnly: process.env.NODE_ENV === 'production',
 			secure: process.env.NODE_ENV === 'production',
 			path: '/',
 			maxAge: 60 * 60 * 24 * 7,

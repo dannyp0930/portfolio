@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useCookies } from 'next-client-cookies';
 import instance from '../api/instance';
+import useAuthCheck from '@/hooks/useAuthCheck';
 
 export default function Login() {
 	const [email, setEmail] = useState('');
@@ -11,12 +12,14 @@ export default function Login() {
 	const router = useRouter();
 	const cookieStore = useCookies();
 
+	useAuthCheck();
+
 	async function handleLogin(e: React.FormEvent) {
 		e.preventDefault();
 		const body = { email, password };
 		await instance.post('/api/login', body);
-		const token = cookieStore.get('access-token');
-		if (token) {
+		const accessToken = cookieStore.get('access-token');
+		if (accessToken) {
 			router.push('/dashboard');
 		} else {
 			alert('Login failed');

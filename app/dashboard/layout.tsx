@@ -54,15 +54,11 @@ export default function Dashboard({
 				router.push('/login');
 				return;
 			}
-
-			// Access token 디코딩하여 만료 시간 확인
 			const decoded = jwt.decode(accessToken) as { exp: number } | null;
 			if (!decoded) {
 				router.push('/login');
 				return;
 			}
-
-			// 만료 5분 전에 refresh
 			const expirationTime = decoded.exp * 1000;
 			const currentTime = Date.now();
 			const timeUntilExpiration = expirationTime - currentTime;
@@ -70,7 +66,6 @@ export default function Dashboard({
 			let validToken = accessToken;
 
 			if (timeUntilExpiration < 5 * 60 * 1000) {
-				// 5분 이내 만료
 				validToken = await refreshAccessToken();
 			}
 
