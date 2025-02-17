@@ -28,7 +28,7 @@ export default function Login() {
 	}
 
 	return (
-		<article className="h-[100vh] flex justify-center items-center">
+		<article className="h-dvh flex justify-center items-center">
 			<div className="w-96 h-fit bg-white p-10 rounded-xl flex flex-col gap-4">
 				<h1>Login</h1>
 				<form onSubmit={handleLogin} className="flex flex-col gap-3">
@@ -47,7 +47,7 @@ export default function Login() {
 						/>
 					</div>
 					<div className="flex flex-col gap-1">
-						<label className="text-sm" htmlFor="password">
+						<label className="text-xs" htmlFor="password">
 							Password
 						</label>
 						<input

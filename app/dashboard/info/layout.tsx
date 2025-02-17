@@ -10,7 +10,7 @@ export default function Dashboard({
 			<nav className="flex w-44">
 				<Link href="/dashboard/info/contact">Contact</Link>
 			</nav>
-			<div className="flex">{children}</div>
+			<div className="p-4">{children}</div>
 		</div>
 	);
 }

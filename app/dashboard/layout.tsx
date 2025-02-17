@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useCookies } from 'next-client-cookies';
 import Link from 'next/link';
-import instance from '../api/instance';
+import instance from '@/app/api/instance';
 import jwt from 'jsonwebtoken';
 
 export default function Dashboard({
@@ -84,15 +84,17 @@ export default function Dashboard({
 	}, [cookieStore, router]);
 
 	return (
-		<div>
-			<Link href="/">Home</Link>
-			{user && <p>Welcome, {user.email}</p>}
-			<div className="flex">
-				<nav className="flex flex-col w-44">
+		<div className="min-h-dvh flex flex-col">
+			<div>
+				<Link href="/">Home</Link>
+				{user && <p>Welcome, {user.email}</p>}
+			</div>
+			<div className="flex flex-grow">
+				<nav className="flex flex-col bg-white w-44 p-4">
 					<Link href="/dashboard">dashboard</Link>
-					<Link href="/dashboard/info">info</Link>
+					<Link href="/dashboard/info/contact">info</Link>
 				</nav>
-				<div className="flex-grow">{children}</div>
+				<div className="flex-grow p-4">{children}</div>
 			</div>
 		</div>
 	);

@@ -22,6 +22,26 @@ export async function POST(req: Request) {
 		);
 	}
 }
+export async function PUT(req: Request) {
+	const { id, type, value, label } = await req.json();
+
+	try {
+		await prisma.contact.update({
+			where: { id: Number(id) },
+			data: {
+				type,
+				value,
+				label,
+			},
+		});
+		return NextResponse.json({ message: 'OK' }, { status: 200 });
+	} catch {
+		return NextResponse.json(
+			{ error: 'Something went wrong' },
+			{ status: 500 }
+		);
+	}
+}
 export async function GET(req: Request) {
 	const { searchParams } = new URL(req.url);
 	const id = searchParams.get('id');
@@ -30,6 +50,21 @@ export async function GET(req: Request) {
 			? await prisma.contact.findUnique({ where: { id: Number(id) } })
 			: await prisma.contact.findMany();
 		return NextResponse.json({ data: contact }, { status: 200 });
+	} catch {
+		return NextResponse.json(
+			{ error: 'Something went wrong' },
+			{ status: 500 }
+		);
+	}
+}
+export async function DELETE(req: Request) {
+	const { id } = await req.json();
+
+	try {
+		await prisma.contact.delete({
+			where: { id: Number(id) },
+		});
+		return NextResponse.json({ message: 'OK' }, { status: 200 });
 	} catch {
 		return NextResponse.json(
 			{ error: 'Something went wrong' },
