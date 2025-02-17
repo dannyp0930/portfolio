@@ -28,22 +28,40 @@ export default function Login() {
 
 	return (
 		<article className="h-[100vh] pt-header">
-			<h1>Login</h1>
-			<form onSubmit={handleLogin}>
-				<input
-					type="email"
-					placeholder="Email"
-					value={email}
-					onChange={(e) => setEmail(e.target.value)}
-				/>
-				<input
-					type="password"
-					placeholder="Password"
-					value={password}
-					onChange={(e) => setPassword(e.target.value)}
-				/>
-				<button type="submit">Login</button>
-			</form>
+			<div className="m-auto w-96 bg-white p-10 rounded-xl flex flex-col gap-4">
+				<h1>Login</h1>
+				<form onSubmit={handleLogin} className="flex flex-col gap-2">
+					<div className="flex flex-col gap-1">
+						<label className="text-xs" htmlFor="email">
+							Email
+						</label>
+						<input
+							id="email"
+							className="border border-theme-sub rounded py-2 px-3 focus:outline-theme"
+							type="email"
+							placeholder="Email"
+							required
+							value={email}
+							onChange={(e) => setEmail(e.target.value)}
+						/>
+					</div>
+					<div className="flex flex-col gap-1">
+						<label className="text-sm" htmlFor="password">
+							Password
+						</label>
+						<input
+							id="password"
+							className="border border-theme-sub rounded py-2 px-3 focus:outline-theme"
+							type="password"
+							placeholder="Password"
+							required
+							value={password}
+							onChange={(e) => setPassword(e.target.value)}
+						/>
+					</div>
+					<button type="submit">Login</button>
+				</form>
+			</div>
 		</article>
 	);
 }
