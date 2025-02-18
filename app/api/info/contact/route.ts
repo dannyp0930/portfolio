@@ -45,11 +45,21 @@ export async function PUT(req: Request) {
 export async function GET(req: Request) {
 	const { searchParams } = new URL(req.url);
 	const id = searchParams.get('id');
+	const page = parseInt(searchParams.get('page') as string);
+	const take = parseInt(searchParams.get('take') as string);
 	try {
-		const contact = id
-			? await prisma.contact.findUnique({ where: { id: Number(id) } })
-			: await prisma.contact.findMany();
-		return NextResponse.json({ data: contact }, { status: 200 });
+		if (id) {
+			const contact = await prisma.contact.findUnique({
+				where: { id: Number(id) },
+			});
+			return NextResponse.json({ data: contact }, { status: 200 });
+		}
+		const contacts = await prisma.contact.findMany({
+			skip: (page - 1) * take,
+			take,
+		});
+		const totalCnt = await prisma.contact.count();
+		return NextResponse.json({ data: contacts, totalCnt }, { status: 200 });
 	} catch {
 		return NextResponse.json(
 			{ error: 'Something went wrong' },

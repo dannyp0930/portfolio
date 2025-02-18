@@ -1,17 +1,23 @@
 'use client';
 
 import instance from '@/app/api/instance';
+import AdminPagination from '@/components/dashboard/AdminPagination';
 import { Button } from '@/components/ui/button';
+import { useSearchParams } from 'next/navigation';
 import { ChangeEvent, Fragment, MouseEvent, useEffect, useState } from 'react';
 
 export default function Contact() {
+	const searchParams = useSearchParams();
 	const [load, setLoad] = useState<boolean>(true);
 	const [type, setType] = useState<string>('');
 	const [value, setValue] = useState<string>('');
 	const [label, setLabel] = useState<string>('');
+	const [selectPage, setSelectPage] = useState<number>(1);
 	const [contacts, setContacts] = useState<Contact[]>([]);
+	const [totalCnt, setTotalCnt] = useState<number>(0);
 	const [updateContactId, setUpdateContactId] = useState<number | null>();
 	const [updateContact, setUpdateContact] = useState<Contact | null>();
+	const take = 20;
 
 	async function handleCreateContact(e: MouseEvent<HTMLButtonElement>) {
 		e.preventDefault();
@@ -100,18 +106,30 @@ export default function Contact() {
 
 	useEffect(() => {
 		async function getContact() {
+			const params = {
+				page: selectPage,
+				take,
+			};
 			try {
 				const {
-					data: { data },
-				} = await instance.get('/api/info/contact');
+					data: { data, totalCnt },
+				} = await instance.get('/api/info/contact', { params });
 				setContacts(data);
+				setTotalCnt(totalCnt);
 				setLoad(false);
 			} catch (error) {
 				console.log(error);
 			}
 		}
 		getContact();
-	}, [load]);
+	}, [load, selectPage]);
+
+	useEffect(() => {
+		const parmasPage = searchParams.get('page');
+		if (parmasPage) {
+			setSelectPage(parseInt(parmasPage));
+		}
+	}, [searchParams]);
 
 	return (
 		<div className="py-10 rounded-lg bg-white">
@@ -256,6 +274,11 @@ export default function Contact() {
 					))}
 				</tbody>
 			</table>
+			<AdminPagination
+				page={selectPage}
+				totalCnt={totalCnt}
+				take={take}
+			/>
 		</div>
 	);
 }
