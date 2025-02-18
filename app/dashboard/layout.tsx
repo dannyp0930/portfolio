@@ -1,11 +1,12 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useCookies } from 'next-client-cookies';
-import Link from 'next/link';
 import instance from '@/app/api/instance';
 import jwt from 'jsonwebtoken';
+import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
+import AdminSidebar from '@/components/dashboard/AdminSidebar';
 
 export default function Dashboard({
 	children,
@@ -13,7 +14,6 @@ export default function Dashboard({
 	children: React.ReactNode;
 }>) {
 	const router = useRouter();
-	const [user, setUser] = useState<User | null>(null);
 	const cookieStore = useCookies();
 
 	async function verifyToken(accessToken: string) {
@@ -71,9 +71,7 @@ export default function Dashboard({
 
 			if (validToken) {
 				const user = await verifyToken(validToken);
-				if (user) {
-					setUser(user);
-				} else {
+				if (!user) {
 					router.push('/login');
 				}
 			}
@@ -84,18 +82,12 @@ export default function Dashboard({
 	}, [cookieStore, router]);
 
 	return (
-		<div className="min-h-dvh flex flex-col">
+		<SidebarProvider>
+			<AdminSidebar />
 			<div>
-				<Link href="/">Home</Link>
-				{user && <p>Welcome, {user.email}</p>}
+				<SidebarTrigger />
+				{children}
 			</div>
-			<div className="flex flex-grow">
-				<nav className="flex flex-col bg-white w-44 p-4 flex-shrink-0">
-					<Link href="/dashboard">dashboard</Link>
-					<Link href="/dashboard/info/contact">info</Link>
-				</nav>
-				<div className="flex-grow p-4">{children}</div>
-			</div>
-		</div>
+		</SidebarProvider>
 	);
 }

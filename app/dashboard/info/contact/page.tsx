@@ -1,6 +1,7 @@
 'use client';
 
 import instance from '@/app/api/instance';
+import { Button } from '@/components/ui/button';
 import { ChangeEvent, Fragment, MouseEvent, useEffect, useState } from 'react';
 
 export default function Contact() {
@@ -156,12 +157,9 @@ export default function Contact() {
 						</td>
 						<td>
 							<div className="flex justify-center">
-								<button
-									className="text-sm bg-theme-sub text-theme px-2 py-1 rounded"
-									onClick={handleCreateContact}
-								>
+								<Button size="sm" onClick={handleCreateContact}>
 									추가
-								</button>
+								</Button>
 							</div>
 						</td>
 					</tr>
@@ -209,18 +207,19 @@ export default function Contact() {
 									</td>
 									<td>
 										<div className="flex gap-2 justify-center">
-											<button
-												className="text-sm bg-theme-sub text-theme px-2 py-1 rounded"
+											<Button
+												size="sm"
 												onClick={handleUpdateContact}
 											>
 												저장
-											</button>
-											<button
-												className="text-sm bg-gray-300 text-theme-sub px-2 py-1 rounded"
+											</Button>
+											<Button
+												variant="secondary"
+												size="sm"
 												onClick={selectUpdateContact()}
 											>
 												취소
-											</button>
+											</Button>
 										</div>
 									</td>
 								</Fragment>
@@ -232,22 +231,23 @@ export default function Contact() {
 									<td>{contact.label}</td>
 									<td>
 										<div className="flex gap-2 justify-center">
-											<button
-												className="text-sm bg-theme-sub text-theme px-2 py-1 rounded"
+											<Button
+												size="sm"
 												onClick={selectUpdateContact(
 													contact
 												)}
 											>
 												수정
-											</button>
-											<button
-												className="text-sm bg-red-500 text-white px-2 py-1 rounded"
+											</Button>
+											<Button
+												variant="destructive"
+												size="sm"
 												onClick={handleDeleteContact(
 													contact.id
 												)}
 											>
 												삭제
-											</button>
+											</Button>
 										</div>
 									</td>
 								</Fragment>

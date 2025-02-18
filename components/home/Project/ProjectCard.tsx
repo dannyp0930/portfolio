@@ -2,7 +2,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faGithub } from '@fortawesome/free-brands-svg-icons';
 import { faHome } from '@fortawesome/free-solid-svg-icons';
 import notionSvg from '@/assets/images/icons/notion.svg';
-import { timeToDate } from '@/utils';
+import { timeToDate } from '@/lib/utils';
 import Image from 'next/image';
 
 export default function ProjectCard({ project }: ProjectCardProps) {
