@@ -90,7 +90,7 @@ export default function Dashboard({
 				{user && <p>Welcome, {user.email}</p>}
 			</div>
 			<div className="flex flex-grow">
-				<nav className="flex flex-col bg-white w-44 p-4">
+				<nav className="flex flex-col bg-white w-44 p-4 flex-shrink-0">
 					<Link href="/dashboard">dashboard</Link>
 					<Link href="/dashboard/info/contact">info</Link>
 				</nav>
