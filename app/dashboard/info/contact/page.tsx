@@ -1,14 +1,7 @@
 'use client';
 
 import instance from '@/app/api/instance';
-import {
-	ChangeEvent,
-	FormEvent,
-	Fragment,
-	MouseEvent,
-	useEffect,
-	useState,
-} from 'react';
+import { ChangeEvent, Fragment, MouseEvent, useEffect, useState } from 'react';
 
 export default function Contact() {
 	const [load, setLoad] = useState<boolean>(true);
@@ -19,7 +12,7 @@ export default function Contact() {
 	const [updateContactId, setUpdateContactId] = useState<number | null>();
 	const [updateContact, setUpdateContact] = useState<Contact | null>();
 
-	async function handleCreateContact(e: FormEvent<HTMLFormElement>) {
+	async function handleCreateContact(e: MouseEvent<HTMLButtonElement>) {
 		e.preventDefault();
 		setLoad(true);
 		try {
@@ -38,9 +31,9 @@ export default function Contact() {
 		}
 	}
 
-	async function handleUpdateContact(e: FormEvent<HTMLFormElement>) {
-		setLoad(true);
+	async function handleUpdateContact(e: MouseEvent<HTMLButtonElement>) {
 		e.preventDefault();
+		setLoad(true);
 		try {
 			const body = { ...updateContact };
 			const { data, status } = await instance.put(
@@ -61,8 +54,8 @@ export default function Contact() {
 
 	function handleDeleteContact(contactId: number) {
 		return async (e: MouseEvent<HTMLButtonElement>) => {
-			setLoad(true);
 			e.preventDefault();
+			setLoad(true);
 			try {
 				const body = { id: contactId };
 				const { data, status } = await instance.delete(
@@ -106,6 +99,7 @@ export default function Contact() {
 
 	useEffect(() => {
 		async function getContact() {
+			console.log('loading');
 			try {
 				const {
 					data: { data },
@@ -120,148 +114,149 @@ export default function Contact() {
 	}, [load]);
 
 	return (
-		<div className="bg-white">
-			<div className="flex border-b-2">
-				<div className="flex-grow w-full p-2 text-center border-r">
-					ID
-				</div>
-				<div className="flex-grow w-full p-2 text-center border-r">
-					타입
-				</div>
-				<div className="flex-grow w-full p-2 text-center border-r">
-					값
-				</div>
-				<div className="flex-grow w-full p-2 text-center border-r">
-					라벨
-				</div>
-				<div className="flex-grow w-full p-2 text-center"></div>
-			</div>
-			<form className="flex border-b-2" onSubmit={handleCreateContact}>
-				<div className="flex-grow w-full border-r p-2"></div>
-				<div className="flex items-center flex-grow w-full border-r p-2">
-					<input
-						className="w-full focus:outline-none"
-						type="text"
-						value={type}
-						required
-						onChange={(e) => setType(e.target.value)}
-					/>
-				</div>
-				<div className="flex items-center flex-grow w-full border-r p-2">
-					<input
-						className="w-full focus:outline-none"
-						type="text"
-						value={value}
-						required
-						onChange={(e) => setValue(e.target.value)}
-					/>
-				</div>
-				<div className="flex items-center flex-grow w-full border-r p-2">
-					<input
-						className="w-full focus:outline-none"
-						type="text"
-						value={label}
-						required
-						onChange={(e) => setLabel(e.target.value)}
-					/>
-				</div>
-				<div className="flex-grow w-full p-2 flex justify-center">
-					<button
-						className="block text-sm bg-theme-sub text-theme px-2 py-1 rounded"
-						type="submit"
-					>
-						추가
-					</button>
-				</div>
-			</form>
-			<div>
-				{contacts.map((contact) => (
-					<Fragment key={contact.id}>
-						{contact.id === updateContactId ? (
-							<form
-								className="flex border-b ring-inset ring-2 ring-theme-sub box-border"
-								onSubmit={handleUpdateContact}
-							>
-								<div className="flex-grow w-full p-2 border-r text-center">
-									{contact.id}
-								</div>
-								<div className="flex-grow w-full border-r p-2">
-									<input
-										className="w-full focus:outline-none"
-										onChange={changeSelectUpdateContact(
-											'type'
-										)}
-										type="text"
-										value={updateContact?.type}
-									/>
-								</div>
-								<div className="flex-grow w-full border-r p-2">
-									<input
-										className="w-full focus:outline-none"
-										onChange={changeSelectUpdateContact(
-											'value'
-										)}
-										type="text"
-										value={updateContact?.value}
-									/>
-								</div>
-								<div className="flex-grow w-full border-r p-2">
-									<input
-										className="w-full focus:outline-none"
-										onChange={changeSelectUpdateContact(
-											'label'
-										)}
-										type="text"
-										value={updateContact?.label}
-									/>
-								</div>
-								<div className="flex-grow w-full p-2 flex justify-center gap-4">
-									<button className="text-sm" type="submit">
-										저장
-									</button>
-									<button
-										className="text-sm"
-										onClick={selectUpdateContact()}
-									>
-										취소
-									</button>
-								</div>
-							</form>
-						) : (
-							<div className="flex border-b">
-								<div className="flex-grow w-full p-2 border-r text-center">
-									{contact.id}
-								</div>
-								<div className="flex-grow w-full p-2 border-r">
-									{contact.type}
-								</div>
-								<div className="flex-grow w-full p-2 border-r">
-									{contact.value}
-								</div>
-								<div className="flex-grow w-full p-2 border-r">
-									{contact.label}
-								</div>
-								<div className="flex-grow w-full p-2 flex justify-center gap-4">
-									<button
-										className="text-sm"
-										onClick={selectUpdateContact(contact)}
-									>
-										수정
-									</button>
-									<button
-										className="text-sm"
-										onClick={handleDeleteContact(
-											contact.id
-										)}
-									>
-										삭제
-									</button>
-								</div>
+		<div className="py-10 rounded-lg bg-white">
+			<table className="w-full border-collapse table-fixed [&_th]:border [&_th]:px-2 [&_th]:py-1 [&_td]:border [&_td]:px-2 [&_td]:py-1 [&_td]:overflow-auto">
+				<thead>
+					<tr>
+						<th>ID</th>
+						<th>타입</th>
+						<th>값</th>
+						<th>라벨</th>
+						<th></th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td></td>
+						<td>
+							<input
+								className="w-full focus:outline-none"
+								type="text"
+								value={type}
+								required
+								onChange={(e) => setType(e.target.value)}
+							/>
+						</td>
+						<td>
+							<input
+								className="w-full focus:outline-none"
+								type="text"
+								value={value}
+								required
+								onChange={(e) => setValue(e.target.value)}
+							/>
+						</td>
+						<td>
+							<input
+								className="w-full focus:outline-none"
+								type="text"
+								value={label}
+								required
+								onChange={(e) => setLabel(e.target.value)}
+							/>
+						</td>
+						<td>
+							<div className="flex justify-center">
+								<button
+									className="text-sm bg-theme-sub text-theme px-2 py-1 rounded"
+									onClick={handleCreateContact}
+								>
+									추가
+								</button>
 							</div>
-						)}
-					</Fragment>
-				))}
-			</div>
+						</td>
+					</tr>
+					{contacts.map((contact) => (
+						<tr
+							key={contact.id}
+							className={
+								contact.id === updateContactId
+									? 'ring-inset ring-2 ring-theme-sub'
+									: ''
+							}
+						>
+							{contact.id === updateContactId ? (
+								<Fragment>
+									<td>{contact.id}</td>
+									<td>
+										<input
+											className="w-full focus:outline-none"
+											onChange={changeSelectUpdateContact(
+												'type'
+											)}
+											type="text"
+											value={updateContact?.type}
+										/>
+									</td>
+									<td>
+										<input
+											className="w-full focus:outline-none"
+											onChange={changeSelectUpdateContact(
+												'value'
+											)}
+											type="text"
+											value={updateContact?.value}
+										/>
+									</td>
+									<td>
+										<input
+											className="w-full focus:outline-none"
+											onChange={changeSelectUpdateContact(
+												'label'
+											)}
+											type="text"
+											value={updateContact?.label}
+										/>
+									</td>
+									<td>
+										<div className="flex gap-2 justify-center">
+											<button
+												className="text-sm bg-theme-sub text-theme px-2 py-1 rounded"
+												onClick={handleUpdateContact}
+											>
+												저장
+											</button>
+											<button
+												className="text-sm bg-gray-300 text-theme-sub px-2 py-1 rounded"
+												onClick={selectUpdateContact()}
+											>
+												취소
+											</button>
+										</div>
+									</td>
+								</Fragment>
+							) : (
+								<Fragment>
+									<td>{contact.id}</td>
+									<td>{contact.type}</td>
+									<td>{contact.value}</td>
+									<td>{contact.label}</td>
+									<td>
+										<div className="flex gap-2 justify-center">
+											<button
+												className="text-sm bg-theme-sub text-theme px-2 py-1 rounded"
+												onClick={selectUpdateContact(
+													contact
+												)}
+											>
+												수정
+											</button>
+											<button
+												className="text-sm bg-red-500 text-white px-2 py-1 rounded"
+												onClick={handleDeleteContact(
+													contact.id
+												)}
+											>
+												삭제
+											</button>
+										</div>
+									</td>
+								</Fragment>
+							)}
+						</tr>
+					))}
+				</tbody>
+			</table>
 		</div>
 	);
 }
