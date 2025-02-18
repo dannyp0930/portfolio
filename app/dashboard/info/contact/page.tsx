@@ -99,7 +99,6 @@ export default function Contact() {
 
 	useEffect(() => {
 		async function getContact() {
-			console.log('loading');
 			try {
 				const {
 					data: { data },
