@@ -1,6 +1,7 @@
 import {
 	Pagination,
 	PaginationContent,
+	PaginationEllipsis,
 	PaginationItem,
 	PaginationLink,
 	PaginationNext,
@@ -9,50 +10,73 @@ import {
 import { useEffect, useState } from 'react';
 
 interface AdminPaginationProps {
+	className?: string;
 	page: number;
 	totalCnt: number;
 	take: number;
+	size?: number;
 }
 
 export default function AdminPagination({
+	className,
 	page,
 	totalCnt,
 	take,
+	size = 5,
 }: AdminPaginationProps) {
 	const totalPages = Math.ceil(totalCnt / take);
 	const [pagesArray, setPagesArray] = useState<number[]>([]);
 	useEffect(() => {
-		if (totalPages > 5) {
-			let startPage = Math.max(1, page - 2);
-			let endPage = Math.min(totalPages, page + 2);
+		if (totalPages > size) {
+			let startPage = Math.max(1, page - Math.floor(size / 2));
+			let endPage = Math.min(totalPages, page + Math.floor(size / 2));
 			if (startPage === 1) {
-				endPage = 5;
+				endPage = size;
 			} else if (endPage === totalPages) {
-				startPage = totalPages - 4;
+				startPage = totalPages - (size - 1);
 			}
-			setPagesArray(Array.from({ length: 5 }, (_, i) => startPage + i));
+			setPagesArray(
+				Array.from({ length: size }, (_, i) => startPage + i)
+			);
 		} else {
 			setPagesArray(Array.from({ length: totalPages }, (_, i) => i + 1));
 		}
-	}, [totalPages, page]);
+	}, [totalPages, page, size]);
 	return (
-		<Pagination>
+		<Pagination className={className}>
 			<PaginationContent>
 				<PaginationItem>
-					{page > 1 && (
+					{totalPages > size && page > 1 ? (
 						<PaginationPrevious href={`?page=${page - 1}`} />
+					) : (
+						<PaginationPrevious aria-disabled="true" />
 					)}
 				</PaginationItem>
-				{pagesArray.map((page) => (
-					<PaginationItem key={page}>
-						<PaginationLink href={`?page=${page}`}>
-							{page}
+				{pagesArray[0] !== 1 && (
+					<PaginationItem>
+						<PaginationEllipsis />
+					</PaginationItem>
+				)}
+				{pagesArray.map((item) => (
+					<PaginationItem key={item}>
+						<PaginationLink
+							isActive={page === item}
+							href={`?page=${item}`}
+						>
+							{item}
 						</PaginationLink>
 					</PaginationItem>
 				))}
+				{totalPages > size && pagesArray[size - 1] !== totalPages && (
+					<PaginationItem>
+						<PaginationEllipsis />
+					</PaginationItem>
+				)}
 				<PaginationItem>
-					{page < totalPages && (
+					{page < totalPages ? (
 						<PaginationNext href={`?page=${page + 1}`} />
+					) : (
+						<PaginationNext aria-disabled="true" />
 					)}
 				</PaginationItem>
 			</PaginationContent>

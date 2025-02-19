@@ -275,9 +275,11 @@ export default function Contact() {
 				</tbody>
 			</table>
 			<AdminPagination
+				className="mt-10"
 				page={selectPage}
 				totalCnt={totalCnt}
 				take={take}
+				size={5}
 			/>
 		</div>
 	);
