@@ -1,4 +1,11 @@
 import Link from 'next/link';
+import {
+	NavigationMenu,
+	NavigationMenuItem,
+	NavigationMenuLink,
+	NavigationMenuList,
+	navigationMenuTriggerStyle,
+} from '@/components/ui/navigation-menu';
 
 export default function Dashboard({
 	children,
@@ -6,11 +13,25 @@ export default function Dashboard({
 	children: React.ReactNode;
 }>) {
 	return (
-		<div>
-			<nav className="flex w-44">
-				<Link href="/dashboard/info/contact">Contact</Link>
-			</nav>
-			<div className="p-4">{children}</div>
+		<div className="p-6">
+			<NavigationMenu>
+				<NavigationMenuList>
+					<NavigationMenuItem>
+						<Link
+							href="/dashboard/info/contact"
+							legacyBehavior
+							passHref
+						>
+							<NavigationMenuLink
+								className={navigationMenuTriggerStyle()}
+							>
+								Contact
+							</NavigationMenuLink>
+						</Link>
+					</NavigationMenuItem>
+				</NavigationMenuList>
+			</NavigationMenu>
+			<div className="mt-5">{children}</div>
 		</div>
 	);
 }

@@ -85,7 +85,9 @@ export default function Dashboard({
 		<SidebarProvider>
 			<AdminSidebar />
 			<div>
-				<SidebarTrigger />
+				<div className="bg-zinc-50 px-6 py-4">
+					<SidebarTrigger className="[&_svg]:w-full [&_svg]:h-full" />
+				</div>
 				{children}
 			</div>
 		</SidebarProvider>
