@@ -26,13 +26,8 @@ jobs:
                       [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
                       nvm use 22
 
-                      pm2 stop portfolio || true
-                      pm2 delete portfolio || true
-
                       sudo yarn install
                       sudo yarn migrate:prod
                       sudo yarn build
 
-                      pm2 start "yarn start" --name portfolio
-                      pm2 save
                       pm2 restart portfolio
