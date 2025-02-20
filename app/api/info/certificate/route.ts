@@ -7,7 +7,7 @@ export async function POST(req: Request) {
 	const data = await req.json();
 
 	try {
-		await prisma.contact.create({ data });
+		await prisma.certificate.create({ data });
 		return NextResponse.json({ message: 'OK' }, { status: 200 });
 	} catch {
 		return NextResponse.json(
@@ -20,7 +20,10 @@ export async function PUT(req: Request) {
 	const data = await req.json();
 
 	try {
-		await prisma.contact.update({ where: { id: Number(data.id) }, data });
+		await prisma.certificate.update({
+			where: { id: Number(data.id) },
+			data,
+		});
 		return NextResponse.json({ message: 'OK' }, { status: 200 });
 	} catch {
 		return NextResponse.json(
@@ -36,17 +39,20 @@ export async function GET(req: Request) {
 	const take = parseInt(searchParams.get('take') as string);
 	try {
 		if (id) {
-			const contact = await prisma.contact.findUnique({
+			const certificate = await prisma.certificate.findUnique({
 				where: { id: Number(id) },
 			});
-			return NextResponse.json({ data: contact }, { status: 200 });
+			return NextResponse.json({ data: certificate }, { status: 200 });
 		}
-		const contacts = await prisma.contact.findMany({
+		const certificates = await prisma.certificate.findMany({
 			skip: (page - 1) * take,
 			take,
 		});
-		const totalCnt = await prisma.contact.count();
-		return NextResponse.json({ data: contacts, totalCnt }, { status: 200 });
+		const totalCnt = await prisma.certificate.count();
+		return NextResponse.json(
+			{ data: certificates, totalCnt },
+			{ status: 200 }
+		);
 	} catch {
 		return NextResponse.json(
 			{ error: 'Something went wrong' },
@@ -58,7 +64,7 @@ export async function DELETE(req: Request) {
 	const { id } = await req.json();
 
 	try {
-		await prisma.contact.delete({
+		await prisma.certificate.delete({
 			where: { id: Number(id) },
 		});
 		return NextResponse.json({ message: 'OK' }, { status: 200 });
