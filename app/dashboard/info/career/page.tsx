@@ -1,5 +1,5 @@
 'use client';
 
-export default function Education() {
-	return <div>Education</div>;
+export default function Career() {
+	return <div>Career</div>;
 }

@@ -55,6 +55,22 @@ declare global {
 		homepage: string;
 		notion: string;
 	}
+
+	interface Career {
+		id: string;
+		companyName: string;
+		period: string;
+		description: string;
+		position: string;
+		duty: string;
+		content: string;
+		detail: CareerDetail[];
+	}
+
+	interface CareerDetail {
+		title: string;
+		content: string[];
+	}
 }
 
 export {};
