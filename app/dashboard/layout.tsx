@@ -73,6 +73,8 @@ export default function Dashboard({
 				const user = await verifyToken(validToken);
 				if (!user) {
 					router.push('/login');
+				} else if (!user.isAdmin) {
+					router.push('/');
 				}
 			}
 		}
