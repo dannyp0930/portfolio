@@ -21,7 +21,16 @@ export default function Login() {
 		await instance.post('/api/login', body);
 		const accessToken = cookieStore.get('access-token');
 		if (accessToken) {
-			router.push('/dashboard');
+			const {
+				data: {
+					user: { isAdmin },
+				},
+			} = await instance.post('/api/verify', { accessToken });
+			if (isAdmin) {
+				router.push('/dashboard');
+			} else {
+				router.push('/');
+			}
 		} else {
 			alert('Login failed');
 		}

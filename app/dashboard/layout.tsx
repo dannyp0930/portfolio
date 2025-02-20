@@ -18,10 +18,12 @@ export default function Dashboard({
 
 	async function verifyToken(accessToken: string) {
 		try {
-			const { data } = await instance.post('/api/verify', {
+			const {
+				data: { user },
+			} = await instance.post('/api/verify', {
 				accessToken,
 			});
-			return data.user;
+			return user;
 		} catch {
 			return null;
 		}
