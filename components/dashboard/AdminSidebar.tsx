@@ -13,10 +13,30 @@ import {
 } from '@/components/ui/sidebar';
 
 export default function AdminSidebar() {
-	const infoNav = [
+	const routes = [
 		{
 			title: 'Contact',
 			url: '/dashboard/info/contact',
+		},
+		{
+			title: 'Education',
+			url: '/dashboard/info/education',
+		},
+		{
+			title: 'Experience',
+			url: '/dashboard/info/experience',
+		},
+		{
+			title: 'Career',
+			url: '/dashboard/info/career',
+		},
+		{
+			title: 'Language',
+			url: '/dashboard/info/language',
+		},
+		{
+			title: 'Certificate',
+			url: '/dashboard/info/certificate',
 		},
 	];
 	return (
@@ -46,10 +66,12 @@ export default function AdminSidebar() {
 					<SidebarGroupLabel>Info</SidebarGroupLabel>
 					<SidebarGroupContent>
 						<SidebarMenu>
-							{infoNav.map((nav) => (
-								<SidebarMenuItem key={nav.title}>
+							{routes.map((route) => (
+								<SidebarMenuItem key={route.title}>
 									<SidebarMenuButton asChild>
-										<Link href={nav.url}>{nav.title}</Link>
+										<Link href={route.url}>
+											{route.title}
+										</Link>
 									</SidebarMenuButton>
 								</SidebarMenuItem>
 							))}

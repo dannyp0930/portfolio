@@ -32,69 +32,6 @@ declare global {
 		children: ReactNode;
 	}
 
-	interface User {
-		id: string;
-		email: string;
-		isAdmin: boolean;
-		refreshToken: string;
-	}
-
-	interface Contact {
-		id: number;
-		type: string;
-		value: string;
-		label: string;
-	}
-
-	interface Education {
-		id: number;
-		institutionName: string;
-		degreeStatus: string;
-		startDate: DateTime;
-		endDate: DateTime;
-	}
-
-	interface Experience {
-		id: number;
-		organization: string;
-		startDate: DateTime;
-		endDate: DateTime;
-		description: string;
-	}
-
-	interface CareerOverview {
-		id: number;
-		organization: string;
-		position: string;
-		startDate: DateTime;
-		endDate: DateTime;
-		description: string;
-	}
-
-	interface Language {
-		id: number;
-		languageName: string;
-		proficiency: string;
-		examDate: DateTime;
-		institution: string;
-	}
-
-	interface Certificate {
-		id: number;
-		certificateName: string;
-		issueDate: DateTime;
-		issuingOrganization: string;
-	}
-
-	interface Skill {
-		id: number;
-		title: string;
-		description: string;
-		level: number;
-		imageUrl: string;
-		category?: string;
-	}
-
 	interface RawProject {
 		id: string;
 		title: string;
@@ -117,22 +54,6 @@ declare global {
 		github: string;
 		homepage: string;
 		notion: string;
-	}
-
-	interface Career {
-		id: string;
-		companyName: string;
-		period: string;
-		description: string;
-		position: string;
-		duty: string;
-		content: string;
-		detail: CareerDetail[];
-	}
-
-	interface CareerDetail {
-		title: string;
-		content: string[];
 	}
 }
 

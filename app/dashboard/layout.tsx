@@ -84,7 +84,7 @@ export default function Dashboard({
 	return (
 		<SidebarProvider>
 			<AdminSidebar />
-			<div>
+			<div className="flex-grow">
 				<div className="bg-zinc-50 px-6 py-4">
 					<SidebarTrigger className="[&_svg]:w-full [&_svg]:h-full" />
 				</div>
