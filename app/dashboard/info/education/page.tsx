@@ -37,6 +37,10 @@ export default function Education() {
 			);
 			if (status === 200) {
 				alert(data.message);
+				setInstitutionName('');
+				setDegreeStatus('');
+				setStartDate('');
+				setEndDate('');
 			}
 		} catch {
 			console.log(123);

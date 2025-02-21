@@ -30,6 +30,9 @@ export default function Contact() {
 			);
 			if (status === 200) {
 				alert(data.message);
+				setType('');
+				setValue('');
+				setLabel('');
 			}
 		} catch {
 			console.log(123);
