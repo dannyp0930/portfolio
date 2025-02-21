@@ -30,4 +30,8 @@ jobs:
                       sudo yarn migrate:prod
                       sudo yarn build
 
-                      pm2 restart portfolio
+                      if pm2 describe portfolio > /dev/null 2>&1; then
+                        pm2 restart portfolio
+                      else
+                        pm2 start "yarn start" --name portfolio
+                      fi
