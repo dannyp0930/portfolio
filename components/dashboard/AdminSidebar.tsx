@@ -1,3 +1,5 @@
+'use client';
+
 import Link from 'next/link';
 import {
 	Sidebar,
@@ -11,6 +13,7 @@ import {
 	SidebarMenuButton,
 	SidebarMenuItem,
 } from '@/components/ui/sidebar';
+import { usePathname } from 'next/navigation';
 
 export default function AdminSidebar() {
 	const routes = [
@@ -39,6 +42,7 @@ export default function AdminSidebar() {
 			url: '/dashboard/info/certificate',
 		},
 	];
+	const pathname = usePathname();
 	return (
 		<Sidebar>
 			<SidebarHeader>
@@ -55,7 +59,10 @@ export default function AdminSidebar() {
 					<SidebarGroupContent>
 						<SidebarMenu>
 							<SidebarMenuItem>
-								<SidebarMenuButton asChild>
+								<SidebarMenuButton
+									asChild
+									isActive={pathname === '/dashboard'}
+								>
 									<Link href="/dashboard">Dashboard</Link>
 								</SidebarMenuButton>
 							</SidebarMenuItem>
@@ -68,7 +75,10 @@ export default function AdminSidebar() {
 						<SidebarMenu>
 							{routes.map((route) => (
 								<SidebarMenuItem key={route.title}>
-									<SidebarMenuButton asChild>
+									<SidebarMenuButton
+										asChild
+										isActive={pathname === route.url}
+									>
 										<Link href={route.url}>
 											{route.title}
 										</Link>
