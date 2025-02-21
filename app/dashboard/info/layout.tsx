@@ -40,7 +40,7 @@ export default function Dashboard({
 	];
 	return (
 		<div className="p-6">
-			<NavigationMenu>
+			<NavigationMenu className="z-0">
 				<NavigationMenuList>
 					{routes.map((route) => (
 						<NavigationMenuItem key={route.title}>
