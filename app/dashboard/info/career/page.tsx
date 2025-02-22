@@ -5,7 +5,14 @@ import AdminPagination from '@/components/dashboard/AdminPagination';
 import { Button } from '@/components/ui/button';
 import dayjs from 'dayjs';
 import { useSearchParams } from 'next/navigation';
-import { ChangeEvent, Fragment, MouseEvent, useEffect, useState } from 'react';
+import {
+	ChangeEvent,
+	Fragment,
+	MouseEvent,
+	useCallback,
+	useEffect,
+	useState,
+} from 'react';
 
 export default function Career() {
 	const searchParams = useSearchParams();
@@ -24,7 +31,6 @@ export default function Career() {
 
 	async function handleCreateCareer(e: MouseEvent<HTMLButtonElement>) {
 		e.preventDefault();
-		setLoad(true);
 		try {
 			const body = {
 				organization,
@@ -45,16 +51,15 @@ export default function Career() {
 				setStartDate('');
 				setEndDate('');
 			}
-		} catch {
-			console.log(123);
+		} catch (err) {
+			console.error(err);
 		} finally {
-			setLoad(false);
+			setLoad(true);
 		}
 	}
 
 	async function handleUpdateCareer(e: MouseEvent<HTMLButtonElement>) {
 		e.preventDefault();
-		setLoad(true);
 		try {
 			const body = {
 				...updateCareer,
@@ -70,17 +75,16 @@ export default function Career() {
 				setUpdateCareerId(null);
 				setUpdateCareer(null);
 			}
-		} catch {
-			console.log(123);
+		} catch (err) {
+			console.error(err);
 		} finally {
-			setLoad(false);
+			setLoad(true);
 		}
 	}
 
 	function handleDeleteCareer(careerId: number) {
 		return async (e: MouseEvent<HTMLButtonElement>) => {
 			e.preventDefault();
-			setLoad(true);
 			try {
 				const body = { id: careerId };
 				const { data, status } = await instance.delete(
@@ -92,10 +96,10 @@ export default function Career() {
 					setUpdateCareerId(null);
 					setUpdateCareer(null);
 				}
-			} catch {
-				console.log(123);
+			} catch (err) {
+				console.error(err);
 			} finally {
-				setLoad(false);
+				setLoad(true);
 			}
 		};
 	}
@@ -122,25 +126,28 @@ export default function Career() {
 		};
 	}
 
-	useEffect(() => {
-		async function getCareer() {
-			const params = {
-				page: selectPage,
-				take,
-			};
-			try {
-				const {
-					data: { data, totalCnt },
-				} = await instance.get('/api/info/career', { params });
-				setCareers(data);
-				setTotalCnt(totalCnt);
-				setLoad(false);
-			} catch (error) {
-				console.log(error);
-			}
+	const getCareer = useCallback(async () => {
+		const params = {
+			page: selectPage,
+			take,
+		};
+		try {
+			const {
+				data: { data, totalCnt },
+			} = await instance.get('/api/info/career', { params });
+			setCareers(data);
+			setTotalCnt(totalCnt);
+			setLoad(false);
+		} catch (err) {
+			console.error(err);
 		}
-		getCareer();
-	}, [load, selectPage]);
+	}, [selectPage, take]);
+
+	useEffect(() => {
+		if (load) {
+			getCareer();
+		}
+	}, [load, getCareer]);
 
 	useEffect(() => {
 		const parmasPage = searchParams.get('page');

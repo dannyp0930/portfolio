@@ -4,7 +4,14 @@ import instance from '@/app/api/instance';
 import AdminPagination from '@/components/dashboard/AdminPagination';
 import { Button } from '@/components/ui/button';
 import { useSearchParams } from 'next/navigation';
-import { ChangeEvent, Fragment, MouseEvent, useEffect, useState } from 'react';
+import {
+	ChangeEvent,
+	Fragment,
+	MouseEvent,
+	useCallback,
+	useEffect,
+	useState,
+} from 'react';
 
 export default function Contact() {
 	const searchParams = useSearchParams();
@@ -21,7 +28,6 @@ export default function Contact() {
 
 	async function handleCreateContact(e: MouseEvent<HTMLButtonElement>) {
 		e.preventDefault();
-		setLoad(true);
 		try {
 			const body = { type, value, label };
 			const { data, status } = await instance.post(
@@ -34,16 +40,15 @@ export default function Contact() {
 				setValue('');
 				setLabel('');
 			}
-		} catch {
-			console.log(123);
+		} catch (err) {
+			console.error(err);
 		} finally {
-			setLoad(false);
+			setLoad(true);
 		}
 	}
 
 	async function handleUpdateContact(e: MouseEvent<HTMLButtonElement>) {
 		e.preventDefault();
-		setLoad(true);
 		try {
 			const body = { ...updateContact };
 			const { data, status } = await instance.put(
@@ -55,17 +60,16 @@ export default function Contact() {
 				setUpdateContactId(null);
 				setUpdateContact(null);
 			}
-		} catch {
-			console.log(123);
+		} catch (err) {
+			console.error(err);
 		} finally {
-			setLoad(false);
+			setLoad(true);
 		}
 	}
 
 	function handleDeleteContact(contactId: number) {
 		return async (e: MouseEvent<HTMLButtonElement>) => {
 			e.preventDefault();
-			setLoad(true);
 			try {
 				const body = { id: contactId };
 				const { data, status } = await instance.delete(
@@ -77,10 +81,10 @@ export default function Contact() {
 					setUpdateContactId(null);
 					setUpdateContact(null);
 				}
-			} catch {
-				console.log(123);
+			} catch (err) {
+				console.error(err);
 			} finally {
-				setLoad(false);
+				setLoad(true);
 			}
 		};
 	}
@@ -107,25 +111,28 @@ export default function Contact() {
 		};
 	}
 
-	useEffect(() => {
-		async function getContact() {
-			const params = {
-				page: selectPage,
-				take,
-			};
-			try {
-				const {
-					data: { data, totalCnt },
-				} = await instance.get('/api/info/contact', { params });
-				setContacts(data);
-				setTotalCnt(totalCnt);
-				setLoad(false);
-			} catch (error) {
-				console.log(error);
-			}
+	const getContact = useCallback(async () => {
+		const params = {
+			page: selectPage,
+			take,
+		};
+		try {
+			const {
+				data: { data, totalCnt },
+			} = await instance.get('/api/info/contact', { params });
+			setContacts(data);
+			setTotalCnt(totalCnt);
+			setLoad(false);
+		} catch (err) {
+			console.error(err);
 		}
-		getContact();
-	}, [load, selectPage]);
+	}, [selectPage, take]);
+
+	useEffect(() => {
+		if (load) {
+			getContact();
+		}
+	}, [load, getContact]);
 
 	useEffect(() => {
 		const parmasPage = searchParams.get('page');

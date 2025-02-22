@@ -85,6 +85,21 @@ export async function GET(req: Request) {
 			});
 			return NextResponse.json({ data: skill }, { status: 200 });
 		}
+		if (take === -1) {
+			const skills = await prisma.skill.findMany();
+			const groupedSkills = skills.reduce(
+				(acc, skill) => {
+					const category = skill.category || 'Uncategorized';
+					if (!acc[category]) {
+						acc[category] = [];
+					}
+					acc[category].push(skill);
+					return acc;
+				},
+				{} as Record<string, typeof skills>
+			);
+			return NextResponse.json({ data: groupedSkills }, { status: 200 });
+		}
 		const skills = await prisma.skill.findMany({
 			skip: (page - 1) * take,
 			take,

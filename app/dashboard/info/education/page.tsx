@@ -5,7 +5,14 @@ import AdminPagination from '@/components/dashboard/AdminPagination';
 import { Button } from '@/components/ui/button';
 import dayjs from 'dayjs';
 import { useSearchParams } from 'next/navigation';
-import { ChangeEvent, Fragment, MouseEvent, useEffect, useState } from 'react';
+import {
+	ChangeEvent,
+	Fragment,
+	MouseEvent,
+	useCallback,
+	useEffect,
+	useState,
+} from 'react';
 
 export default function Education() {
 	const searchParams = useSearchParams();
@@ -23,7 +30,6 @@ export default function Education() {
 
 	async function handleCreateEducation(e: MouseEvent<HTMLButtonElement>) {
 		e.preventDefault();
-		setLoad(true);
 		try {
 			const body = {
 				institutionName,
@@ -42,16 +48,15 @@ export default function Education() {
 				setStartDate('');
 				setEndDate('');
 			}
-		} catch {
-			console.log(123);
+		} catch (err) {
+			console.error(err);
 		} finally {
-			setLoad(false);
+			setLoad(true);
 		}
 	}
 
 	async function handleUpdateEducation(e: MouseEvent<HTMLButtonElement>) {
 		e.preventDefault();
-		setLoad(true);
 		try {
 			const body = {
 				...updateEducation,
@@ -67,17 +72,16 @@ export default function Education() {
 				setUpdateEducationId(null);
 				setUpdateEducation(null);
 			}
-		} catch {
-			console.log(123);
+		} catch (err) {
+			console.error(err);
 		} finally {
-			setLoad(false);
+			setLoad(true);
 		}
 	}
 
 	function handleDeleteEducation(educationId: number) {
 		return async (e: MouseEvent<HTMLButtonElement>) => {
 			e.preventDefault();
-			setLoad(true);
 			try {
 				const body = { id: educationId };
 				const { data, status } = await instance.delete(
@@ -89,10 +93,10 @@ export default function Education() {
 					setUpdateEducationId(null);
 					setUpdateEducation(null);
 				}
-			} catch {
-				console.log(123);
+			} catch (err) {
+				console.error(err);
 			} finally {
-				setLoad(false);
+				setLoad(true);
 			}
 		};
 	}
@@ -119,25 +123,28 @@ export default function Education() {
 		};
 	}
 
-	useEffect(() => {
-		async function getEducation() {
-			const params = {
-				page: selectPage,
-				take,
-			};
-			try {
-				const {
-					data: { data, totalCnt },
-				} = await instance.get('/api/info/education', { params });
-				setEducations(data);
-				setTotalCnt(totalCnt);
-				setLoad(false);
-			} catch (error) {
-				console.log(error);
-			}
+	const getEducation = useCallback(async () => {
+		const params = {
+			page: selectPage,
+			take,
+		};
+		try {
+			const {
+				data: { data, totalCnt },
+			} = await instance.get('/api/info/education', { params });
+			setEducations(data);
+			setTotalCnt(totalCnt);
+			setLoad(false);
+		} catch (err) {
+			console.error(err);
 		}
-		getEducation();
-	}, [load, selectPage]);
+	}, [selectPage, take]);
+
+	useEffect(() => {
+		if (load) {
+			getEducation();
+		}
+	}, [load, getEducation]);
 
 	useEffect(() => {
 		const parmasPage = searchParams.get('page');

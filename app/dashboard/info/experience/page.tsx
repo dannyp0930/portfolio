@@ -5,7 +5,14 @@ import AdminPagination from '@/components/dashboard/AdminPagination';
 import { Button } from '@/components/ui/button';
 import dayjs from 'dayjs';
 import { useSearchParams } from 'next/navigation';
-import { ChangeEvent, Fragment, MouseEvent, useEffect, useState } from 'react';
+import {
+	ChangeEvent,
+	Fragment,
+	MouseEvent,
+	useCallback,
+	useEffect,
+	useState,
+} from 'react';
 
 export default function Experience() {
 	const searchParams = useSearchParams();
@@ -26,7 +33,6 @@ export default function Experience() {
 
 	async function handleCreateExperience(e: MouseEvent<HTMLButtonElement>) {
 		e.preventDefault();
-		setLoad(true);
 		try {
 			const body = {
 				organization,
@@ -45,16 +51,15 @@ export default function Experience() {
 				setStartDate('');
 				setEndDate('');
 			}
-		} catch {
-			console.log(123);
+		} catch (err) {
+			console.error(err);
 		} finally {
-			setLoad(false);
+			setLoad(true);
 		}
 	}
 
 	async function handleUpdateExperience(e: MouseEvent<HTMLButtonElement>) {
 		e.preventDefault();
-		setLoad(true);
 		try {
 			const body = {
 				...updateExperience,
@@ -70,17 +75,16 @@ export default function Experience() {
 				setUpdateExperienceId(null);
 				setUpdateExperience(null);
 			}
-		} catch {
-			console.log(123);
+		} catch (err) {
+			console.error(err);
 		} finally {
-			setLoad(false);
+			setLoad(true);
 		}
 	}
 
 	function handleDeleteExperience(experienceId: number) {
 		return async (e: MouseEvent<HTMLButtonElement>) => {
 			e.preventDefault();
-			setLoad(true);
 			try {
 				const body = { id: experienceId };
 				const { data, status } = await instance.delete(
@@ -92,10 +96,10 @@ export default function Experience() {
 					setUpdateExperienceId(null);
 					setUpdateExperience(null);
 				}
-			} catch {
-				console.log(123);
+			} catch (err) {
+				console.error(err);
 			} finally {
-				setLoad(false);
+				setLoad(true);
 			}
 		};
 	}
@@ -122,25 +126,28 @@ export default function Experience() {
 		};
 	}
 
-	useEffect(() => {
-		async function getExperience() {
-			const params = {
-				page: selectPage,
-				take,
-			};
-			try {
-				const {
-					data: { data, totalCnt },
-				} = await instance.get('/api/info/experience', { params });
-				setExperiences(data);
-				setTotalCnt(totalCnt);
-				setLoad(false);
-			} catch (error) {
-				console.log(error);
-			}
+	const getExperience = useCallback(async () => {
+		const params = {
+			page: selectPage,
+			take,
+		};
+		try {
+			const {
+				data: { data, totalCnt },
+			} = await instance.get('/api/info/experience', { params });
+			setExperiences(data);
+			setTotalCnt(totalCnt);
+			setLoad(false);
+		} catch (err) {
+			console.error(err);
 		}
-		getExperience();
-	}, [load, selectPage]);
+	}, [selectPage, take]);
+
+	useEffect(() => {
+		if (load) {
+			getExperience();
+		}
+	}, [load, getExperience]);
 
 	useEffect(() => {
 		const parmasPage = searchParams.get('page');

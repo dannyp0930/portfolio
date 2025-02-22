@@ -31,8 +31,8 @@ export default function useAuthCheck() {
 								}
 							}
 						}
-					} catch (error) {
-						console.error('Token refresh failed:', error);
+					} catch (err) {
+						console.error('Token refresh failed:', err);
 						router.push('/login');
 					}
 				}
@@ -49,8 +49,8 @@ export default function useAuthCheck() {
 						router.push('/');
 					}
 				}
-			} catch (error) {
-				console.error('Token verification failed:', error);
+			} catch (err) {
+				console.error('Token verification failed:', err);
 			}
 		}
 

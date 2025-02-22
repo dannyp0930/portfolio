@@ -157,11 +157,15 @@ export default function Skill() {
 			const {
 				data: { data, totalCnt },
 			} = await instance.get('/api/skill', { params });
+			const test = await instance.get('/api/skill', {
+				params: { take: -1 },
+			});
+			console.log(test);
 			setSkills(data);
 			setTotalCnt(totalCnt);
 			setLoad(false);
-		} catch (error) {
-			console.log(error);
+		} catch (err) {
+			console.log(err);
 		} finally {
 			setLoad(false);
 		}

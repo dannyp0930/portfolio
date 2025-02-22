@@ -19,8 +19,8 @@ export default async function deleteFromS3(imageUrl: string) {
 				Key: key,
 			})
 		);
-	} catch (error) {
-		console.error('Failed to delete image from S3:', error);
-		throw error;
+	} catch (err) {
+		console.error('Failed to delete image from S3:', err);
+		throw err;
 	}
 }

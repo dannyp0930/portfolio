@@ -32,8 +32,8 @@ export async function POST(req: Request) {
 				{ status: 404 }
 			);
 		}
-	} catch (error) {
-		if (error instanceof jwt.TokenExpiredError && refreshToken) {
+	} catch (err) {
+		if (err instanceof jwt.TokenExpiredError && refreshToken) {
 			try {
 				const decodedRefresh = jwt.verify(
 					refreshToken,
