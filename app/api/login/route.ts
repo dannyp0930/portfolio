@@ -48,15 +48,23 @@ export async function POST(req: Request) {
 			data: { refreshToken },
 		});
 		const cookieStore = await cookies();
-		cookieStore.set('access-token', accessToken);
+		cookieStore.set('access-token', accessToken, {
+			httpOnly: true,
+			secure: true,
+			path: '/',
+			maxAge: 60 * 60,
+		});
 		cookieStore.set('refresh-token', refreshToken, {
-			httpOnly: process.env.NODE_ENV === 'production',
-			secure: process.env.NODE_ENV === 'production',
+			httpOnly: true,
+			secure: true,
 			path: '/',
 			maxAge: 60 * 60 * 24 * 7,
 		});
 
-		return NextResponse.json({ accessToken }, { status: 200 });
+		return NextResponse.json(
+			{ user: { email: user.email, isAdmin: user.isAdmin } },
+			{ status: 200 }
+		);
 	} catch {
 		return NextResponse.json(
 			{ error: 'Something went wrong' },

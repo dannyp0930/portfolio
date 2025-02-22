@@ -1,11 +1,16 @@
 import { PrismaClient } from '@prisma/client';
 import jwt, { JwtPayload } from 'jsonwebtoken';
+import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
 
 const prisma = new PrismaClient();
 
-export async function POST(req: Request) {
-	const { refreshToken } = await req.json();
+export async function POST() {
+	const cookieStore = await cookies();
+	const refreshToken = cookieStore.get('refresh-token')?.value;
+	if (!refreshToken) {
+		return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+	}
 
 	try {
 		const decoded = jwt.verify(
@@ -23,12 +28,16 @@ export async function POST(req: Request) {
 				process.env.JWT_SECRET!,
 				{ expiresIn: '1h' }
 			);
+			cookieStore.set('access-token', newAccessToken, {
+				httpOnly: true,
+				secure: true,
+				path: '/',
+				maxAge: 60 * 60,
+			});
 
 			return NextResponse.json(
 				{
-					accessToken: newAccessToken,
 					user: {
-						id: user.id,
 						email: user.email,
 						isAdmin: user.isAdmin,
 					},
