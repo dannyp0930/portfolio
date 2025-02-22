@@ -14,6 +14,7 @@ export default async function uploadToS3(
 	fileName: string
 ) {
 	try {
+		const mode = process.env.NODE_ENV ?? 'development';
 		const extension = fileName.split('.').pop()?.toLowerCase();
 		const contentTypeMap: Record<string, string> = {
 			jpg: 'image/jpeg',
@@ -21,11 +22,11 @@ export default async function uploadToS3(
 			png: 'image/png',
 			gif: 'image/gif',
 			webp: 'image/webp',
-			svg: 'image/svg',
+			svg: 'image/svg+xml',
 		};
 		const params = {
 			Bucket: process.env.S3_BUCKET_NAME,
-			Key: `${dir}/${fileName}`,
+			Key: `${mode}/${dir}/${fileName}`,
 			Body: file,
 			ContentType: extension
 				? contentTypeMap[extension]

@@ -9,6 +9,7 @@ export async function POST(req: Request) {
 	const formData = await req.formData();
 	const image = formData.get('image') as File;
 	const data = Object.fromEntries(formData.entries());
+
 	try {
 		const imageBuffer = Buffer.from(await image.arrayBuffer());
 		const imageUrl = await uploadToS3(
@@ -37,7 +38,6 @@ export async function PUT(req: Request) {
 	const formData = await req.formData();
 	const image = formData.get('image') as File | null;
 	const data = Object.fromEntries(formData.entries());
-
 	try {
 		let imageUrl: string | undefined;
 		const existingSkill = await prisma.skill.findUnique({

@@ -6,7 +6,14 @@ import AdminPagination from '@/components/dashboard/AdminPagination';
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
 import { useSearchParams } from 'next/navigation';
-import { ChangeEvent, Fragment, MouseEvent, useEffect, useState } from 'react';
+import {
+	ChangeEvent,
+	Fragment,
+	MouseEvent,
+	useCallback,
+	useEffect,
+	useState,
+} from 'react';
 
 export default function Skill() {
 	const searchParams = useSearchParams();
@@ -26,7 +33,6 @@ export default function Skill() {
 
 	async function handleCreateSkill(e: MouseEvent<HTMLButtonElement>) {
 		e.preventDefault();
-		setLoad(true);
 		try {
 			const formData = new FormData();
 			formData.append('title', title);
@@ -56,24 +62,24 @@ export default function Skill() {
 		} catch {
 			console.log(123);
 		} finally {
-			setLoad(false);
+			setLoad(true);
 		}
 	}
 
 	async function handleUpdateSkill(e: MouseEvent<HTMLButtonElement>) {
 		e.preventDefault();
-		setLoad(true);
 		try {
 			const formData = new FormData();
 			if (updateSkill) {
+				formData.append('id', String(updateSkill.id));
 				if (updateSkill.title)
 					formData.append('title', updateSkill.title);
 				if (updateSkill.description)
 					formData.append('description', updateSkill.description);
 				if (updateSkill.level)
-					formData.append('title', String(updateSkill.level));
+					formData.append('level', String(updateSkill.level));
 				if (updateSkill.category)
-					formData.append('title', updateSkill.category);
+					formData.append('category', updateSkill.category);
 				if (newImage) formData.append('image', newImage);
 			}
 			const { data, status } = await instance.put(
@@ -90,24 +96,23 @@ export default function Skill() {
 				setUpdateSkillId(null);
 				setUpdateSkill(null);
 				setNewImage(null);
+				console.log('update 완료', load);
 			}
 		} catch {
 			console.log(123);
 		} finally {
-			setLoad(false);
+			setLoad(true);
 		}
 	}
 
 	function handleDeleteSkill(skillId: number) {
 		return async (e: MouseEvent<HTMLButtonElement>) => {
 			e.preventDefault();
-			setLoad(true);
 			try {
 				const body = { id: skillId };
-				const { data, status } = await instance.delete(
-					'/api/info/skill',
-					{ data: body }
-				);
+				const { data, status } = await instance.delete('/api/skill', {
+					data: body,
+				});
 				if (status === 200) {
 					alert(data.message);
 					setUpdateSkillId(null);
@@ -116,7 +121,7 @@ export default function Skill() {
 			} catch {
 				console.log(123);
 			} finally {
-				setLoad(false);
+				setLoad(true);
 			}
 		};
 	}
@@ -143,25 +148,30 @@ export default function Skill() {
 		};
 	}
 
-	useEffect(() => {
-		async function getSkill() {
-			const params = {
-				page: selectPage,
-				take,
-			};
-			try {
-				const {
-					data: { data, totalCnt },
-				} = await instance.get('/api/skill', { params });
-				setSkills(data);
-				setTotalCnt(totalCnt);
-				setLoad(false);
-			} catch (error) {
-				console.log(error);
-			}
+	const getSkill = useCallback(async () => {
+		const params = {
+			page: selectPage,
+			take,
+		};
+		try {
+			const {
+				data: { data, totalCnt },
+			} = await instance.get('/api/skill', { params });
+			setSkills(data);
+			setTotalCnt(totalCnt);
+			setLoad(false);
+		} catch (error) {
+			console.log(error);
+		} finally {
+			setLoad(false);
 		}
-		getSkill();
-	}, [load, selectPage]);
+	}, [selectPage, take]);
+
+	useEffect(() => {
+		if (load) {
+			getSkill();
+		}
+	}, [load, getSkill]);
 
 	useEffect(() => {
 		const parmasPage = searchParams.get('page');
@@ -285,7 +295,7 @@ export default function Skill() {
 									</td>
 									<td>
 										<ImageInput
-											id="image"
+											id={`image-${skill.id}`}
 											imageUrl={updateSkill?.imageUrl}
 											onChange={setNewImage}
 										/>
