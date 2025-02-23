@@ -1,12 +1,6 @@
-import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Button } from '../ui/button';
 import Image from 'next/image';
-
-interface ImageInputProps {
-	id: string;
-	imageUrl?: string;
-	onChange: Dispatch<SetStateAction<File | null | undefined>>;
-}
 
 export default function ImageInput({
 	id,

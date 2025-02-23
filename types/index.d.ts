@@ -1,5 +1,4 @@
 import { Timestamp } from 'firebase/firestore';
-import { ReactNode } from 'react';
 
 declare global {
 	interface InfoProps {
@@ -25,11 +24,6 @@ declare global {
 
 	interface CareerListProps {
 		careers: Career[];
-	}
-
-	interface ModalContainerProps {
-		closeModal: function;
-		children: ReactNode;
 	}
 
 	interface RawProject {

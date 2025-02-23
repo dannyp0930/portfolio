@@ -7,6 +7,8 @@ import {
 	Language as PrismaLanguage,
 	Certificate as PrismaCertificate,
 	Project as PrismaProject,
+	ProjectDetail as PrismaProjectDetail,
+	ProjectImage as PrismaProjectImage,
 	Career as PrismaCareer,
 	CareerDetail as PrismaCareerDetail,
 	Skill as PrismaSkill,
@@ -21,6 +23,8 @@ declare global {
 	type Language = PrismaLanguage;
 	type Certificate = PrismaCertificate;
 	type Project = PrismaProject;
+	type ProjectDetail = PrismaProjectDetail;
+	type ProjectImage = PrismaProjectImage;
 	type Career = PrismaCareer;
 	type CareerDetail = PrismaCareerDetail;
 	type Skill = PrismaSkill;

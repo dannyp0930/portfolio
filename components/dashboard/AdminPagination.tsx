@@ -9,14 +9,6 @@ import {
 } from '@/components/ui/pagination';
 import { useEffect, useState } from 'react';
 
-interface AdminPaginationProps {
-	className?: string;
-	page: number;
-	totalCnt: number;
-	take: number;
-	size?: number;
-}
-
 export default function AdminPagination({
 	className,
 	page,

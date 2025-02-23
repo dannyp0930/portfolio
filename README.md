@@ -54,7 +54,8 @@
 |          | 이력 상세                   | ☐      |
 |          | 이력서                      | ☐      |
 | 기타     | 로그인 쿠키 강화            | ☑      |
-|          | POST, PUT, DELETE 권한 설정 | ☐      |
+|          | POST, PUT, DELETE 권한 설정 | ☑      |
+|          | Grafana 등 추적 로깅        | ☐      |
 |          | Firebase 제거               | ☐      |
 
 ### Front
