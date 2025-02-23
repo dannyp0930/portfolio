@@ -68,8 +68,8 @@ function SkillComponent() {
 				setImage(null);
 				setCategory('');
 			}
-		} catch {
-			console.log(123);
+		} catch (err) {
+			console.error(err);
 		} finally {
 			setLoad(true);
 		}
@@ -107,8 +107,8 @@ function SkillComponent() {
 				setNewImage(null);
 				console.log('update 완료', load);
 			}
-		} catch {
-			console.log(123);
+		} catch (err) {
+			console.error(err);
 		} finally {
 			setLoad(true);
 		}
@@ -127,8 +127,8 @@ function SkillComponent() {
 					setUpdateSkillId(null);
 					setUpdateSkill(null);
 				}
-			} catch {
-				console.log(123);
+			} catch (err) {
+				console.error(err);
 			} finally {
 				setLoad(true);
 			}
