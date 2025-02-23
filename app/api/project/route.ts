@@ -111,7 +111,20 @@ export async function GET(req: NextRequest) {
 			const project = await prisma.project.findUnique({
 				where: { id: Number(id) },
 			});
-			return NextResponse.json({ data: project }, { status: 200 });
+			const projectDetail = await prisma.projectDetail.findUnique({
+				where: { projectId: Number(id) },
+			});
+			const projectImages = await prisma.projectImage.findMany({
+				where: { projectDetailId: Number(projectDetail?.id) },
+			});
+			return NextResponse.json(
+				{
+					...project,
+					projectDetail,
+					projectImages,
+				},
+				{ status: 200 }
+			);
 		}
 		const projects = await prisma.project.findMany({
 			skip: (page - 1) * take,
