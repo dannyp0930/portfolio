@@ -9,12 +9,21 @@ import {
 	ChangeEvent,
 	Fragment,
 	MouseEvent,
+	Suspense,
 	useCallback,
 	useEffect,
 	useState,
 } from 'react';
 
 export default function Experience() {
+	return (
+		<Suspense>
+			<ExperienceContent />
+		</Suspense>
+	);
+}
+
+function ExperienceContent() {
 	const searchParams = useSearchParams();
 	const [load, setLoad] = useState<boolean>(true);
 	const [organization, setOrganization] = useState<string>('');

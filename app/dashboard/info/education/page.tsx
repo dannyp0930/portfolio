@@ -9,12 +9,21 @@ import {
 	ChangeEvent,
 	Fragment,
 	MouseEvent,
+	Suspense,
 	useCallback,
 	useEffect,
 	useState,
 } from 'react';
 
 export default function Education() {
+	return (
+		<Suspense>
+			<EducationContent />
+		</Suspense>
+	);
+}
+
+function EducationContent() {
 	const searchParams = useSearchParams();
 	const [load, setLoad] = useState<boolean>(true);
 	const [institutionName, setInstitutionName] = useState<string>('');

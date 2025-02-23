@@ -10,12 +10,21 @@ import {
 	ChangeEvent,
 	Fragment,
 	MouseEvent,
+	Suspense,
 	useCallback,
 	useEffect,
 	useState,
 } from 'react';
 
 export default function Skill() {
+	return (
+		<Suspense>
+			<SkillComponent />
+		</Suspense>
+	);
+}
+
+function SkillComponent() {
 	const searchParams = useSearchParams();
 	const [load, setLoad] = useState<boolean>(true);
 	const [title, setTitle] = useState<string>('');

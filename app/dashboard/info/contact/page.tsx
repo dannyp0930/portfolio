@@ -8,12 +8,21 @@ import {
 	ChangeEvent,
 	Fragment,
 	MouseEvent,
+	Suspense,
 	useCallback,
 	useEffect,
 	useState,
 } from 'react';
 
 export default function Contact() {
+	return (
+		<Suspense>
+			<ContactContent />
+		</Suspense>
+	);
+}
+
+function ContactContent() {
 	const searchParams = useSearchParams();
 	const [load, setLoad] = useState<boolean>(true);
 	const [type, setType] = useState<string>('');

@@ -9,12 +9,21 @@ import {
 	ChangeEvent,
 	Fragment,
 	MouseEvent,
+	Suspense,
 	useCallback,
 	useEffect,
 	useState,
 } from 'react';
 
 export default function Language() {
+	return (
+		<Suspense>
+			<LanguageContent />
+		</Suspense>
+	);
+}
+
+function LanguageContent() {
 	const searchParams = useSearchParams();
 	const [load, setLoad] = useState<boolean>(true);
 	const [languageName, setLanguageName] = useState<string>('');

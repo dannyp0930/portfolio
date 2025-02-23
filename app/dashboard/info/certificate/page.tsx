@@ -9,12 +9,21 @@ import {
 	ChangeEvent,
 	Fragment,
 	MouseEvent,
+	Suspense,
 	useCallback,
 	useEffect,
 	useState,
 } from 'react';
 
 export default function Certificate() {
+	return (
+		<Suspense>
+			<CertificateContent />
+		</Suspense>
+	);
+}
+
+function CertificateContent() {
 	const searchParams = useSearchParams();
 	const [load, setLoad] = useState<boolean>(true);
 	const [certificateName, setCertificateName] = useState<string>('');

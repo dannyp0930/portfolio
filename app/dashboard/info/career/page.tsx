@@ -9,12 +9,21 @@ import {
 	ChangeEvent,
 	Fragment,
 	MouseEvent,
+	Suspense,
 	useCallback,
 	useEffect,
 	useState,
 } from 'react';
 
 export default function Career() {
+	return (
+		<Suspense>
+			<CareerContent />
+		</Suspense>
+	);
+}
+
+function CareerContent() {
 	const searchParams = useSearchParams();
 	const [load, setLoad] = useState<boolean>(true);
 	const [organization, setOrganization] = useState<string>('');
