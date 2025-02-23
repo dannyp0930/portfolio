@@ -1,11 +1,15 @@
 import deleteFromS3 from '@/lib/deleteFromS3';
+import { isAdmin } from '@/lib/isAdmin';
 import uploadToS3 from '@/lib/uploadToS3';
 import { PrismaClient } from '@prisma/client';
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 
 const prisma = new PrismaClient();
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
+	if (!isAdmin(req)) {
+		return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+	}
 	const formData = await req.formData();
 	const image = formData.get('image') as File;
 	const data = Object.fromEntries(formData.entries());
@@ -34,10 +38,15 @@ export async function POST(req: Request) {
 		);
 	}
 }
-export async function PUT(req: Request) {
+
+export async function PUT(req: NextRequest) {
+	if (!isAdmin(req)) {
+		return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+	}
 	const formData = await req.formData();
 	const image = formData.get('image') as File | null;
 	const data = Object.fromEntries(formData.entries());
+
 	try {
 		let imageUrl: string | undefined;
 		const existingSkill = await prisma.skill.findUnique({
@@ -72,7 +81,8 @@ export async function PUT(req: Request) {
 		);
 	}
 }
-export async function GET(req: Request) {
+
+export async function GET(req: NextRequest) {
 	const { searchParams } = new URL(req.url);
 	const id = searchParams.get('id');
 	const page = parseInt(searchParams.get('page') as string);
@@ -113,7 +123,11 @@ export async function GET(req: Request) {
 		);
 	}
 }
-export async function DELETE(req: Request) {
+
+export async function DELETE(req: NextRequest) {
+	if (!isAdmin(req)) {
+		return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+	}
 	const { id } = await req.json();
 
 	try {

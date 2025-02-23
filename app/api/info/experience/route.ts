@@ -1,9 +1,13 @@
+import { isAdmin } from '@/lib/isAdmin';
 import { PrismaClient } from '@prisma/client';
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 
 const prisma = new PrismaClient();
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
+	if (!isAdmin(req)) {
+		return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+	}
 	const data = await req.json();
 
 	try {
@@ -16,7 +20,10 @@ export async function POST(req: Request) {
 		);
 	}
 }
-export async function PUT(req: Request) {
+export async function PUT(req: NextRequest) {
+	if (!isAdmin(req)) {
+		return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+	}
 	const data = await req.json();
 
 	try {
@@ -32,11 +39,13 @@ export async function PUT(req: Request) {
 		);
 	}
 }
-export async function GET(req: Request) {
+
+export async function GET(req: NextRequest) {
 	const { searchParams } = new URL(req.url);
 	const id = searchParams.get('id');
 	const page = parseInt(searchParams.get('page') as string);
 	const take = parseInt(searchParams.get('take') as string);
+
 	try {
 		if (id) {
 			const experience = await prisma.experience.findUnique({
@@ -60,7 +69,10 @@ export async function GET(req: Request) {
 		);
 	}
 }
-export async function DELETE(req: Request) {
+export async function DELETE(req: NextRequest) {
+	if (!isAdmin(req)) {
+		return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+	}
 	const { id } = await req.json();
 
 	try {
