@@ -119,9 +119,11 @@ export async function GET(req: NextRequest) {
 			});
 			return NextResponse.json(
 				{
-					...project,
-					projectDetail,
-					projectImages,
+					data: {
+						...project,
+						projectDetail,
+						projectImages,
+					},
 				},
 				{ status: 200 }
 			);
