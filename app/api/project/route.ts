@@ -2,6 +2,7 @@ import deleteFromS3 from '@/lib/deleteFromS3';
 import { isAdmin } from '@/lib/isAdmin';
 import uploadToS3 from '@/lib/uploadToS3';
 import { PrismaClient } from '@prisma/client';
+import dayjs from 'dayjs';
 import { NextRequest, NextResponse } from 'next/server';
 
 const prisma = new PrismaClient();
@@ -10,27 +11,43 @@ export async function POST(req: NextRequest) {
 	if (!isAdmin(req)) {
 		return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
 	}
-	const formData = await req.formData();
-	const images = formData.get('images');
-	const data = Object.fromEntries(formData.entries());
-	console.log(Array(images), data);
 
 	try {
-		// const imageBuffer = Buffer.from(await image.arrayBuffer());
-		// const imageUrl = await uploadToS3(
-		// 	imageBuffer,
-		// 	'project',
-		// 	`${Date.now()}-${image.name}`
-		// );
-		// await prisma.project.create({
-		// 	data: {
-		// 		title: data.title as string,
-		// 		description: data.description as string,
-		// 		level: Number(data.level),
-		// 		category: data.category as string,
-		// 		imageUrl: imageUrl as string,
-		// 	},
-		// });
+		const formData = await req.formData();
+		const images = formData.getAll('images') as File[];
+		const data = Object.fromEntries(formData.entries());
+		const imageUrls = await Promise.all(
+			images.map(async (image) => {
+				const imageBuffer = Buffer.from(await image.arrayBuffer());
+				return await uploadToS3(
+					imageBuffer,
+					'project',
+					`${Date.now()}-${image.name}`
+				);
+			})
+		);
+		await prisma.project.create({
+			data: {
+				title: data.title as string,
+				intro: data.intro as string,
+				organization: data.organization as string,
+				startDate: dayjs(data.startDate as string).toDate(),
+				endDate: dayjs(data.endDate as string).toDate(),
+				github: data.github as string,
+				homepage: data.homepage as string,
+				notion: data.notion as string,
+				projectDetail: {
+					create: {
+						images: {
+							create: imageUrls.map((url) => ({
+								url: url as string,
+							})),
+						},
+						description: data.description as string,
+					},
+				},
+			},
+		});
 		return NextResponse.json({ message: 'OK' }, { status: 200 });
 	} catch {
 		return NextResponse.json(
