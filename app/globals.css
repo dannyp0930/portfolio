@@ -95,7 +95,7 @@
 		--sidebar-ring: 217.2 91.2% 59.8%;
 	}
   * {
-    @apply border-border;
+    @apply border-border outline-ring/50;
 	}
 	body {
 		@apply bg-background text-foreground scroll-smooth font-kbo;
@@ -117,5 +117,16 @@
 	}
 	h6 {
 		@apply text-base font-bold;
+	}
+}
+
+
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+	}
+  body {
+    @apply bg-background text-foreground;
 	}
 }

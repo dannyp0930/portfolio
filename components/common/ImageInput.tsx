@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Button } from '../ui/button';
+import { Button } from '@/components/ui/button';
 import Image from 'next/image';
 
 export default function ImageInput({
@@ -16,7 +16,7 @@ export default function ImageInput({
 		}
 	}, [imageUrl]);
 
-	const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+	const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 		const file = event.target.files?.[0] || undefined;
 		const newUrl = file && URL.createObjectURL(file);
 		onChange(file);
@@ -31,7 +31,7 @@ export default function ImageInput({
 				type="file"
 				accept="image/*"
 				ref={inputRef}
-				onChange={handleFileChange}
+				onChange={handleChange}
 			/>
 			<Button asChild size="icon">
 				<label htmlFor={id}>+</label>

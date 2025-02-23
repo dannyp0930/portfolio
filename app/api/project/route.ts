@@ -11,33 +11,33 @@ export async function POST(req: NextRequest) {
 		return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
 	}
 	const formData = await req.formData();
-	const image = formData.get('image') as File;
+	const images = formData.get('images');
 	const data = Object.fromEntries(formData.entries());
-	console.log(image, data);
+	console.log(Array(images), data);
 
-	// try {
-	// 	const imageBuffer = Buffer.from(await image.arrayBuffer());
-	// 	const imageUrl = await uploadToS3(
-	// 		imageBuffer,
-	// 		'project',
-	// 		`${Date.now()}-${image.name}`
-	// 	);
-	// 	await prisma.project.create({
-	// 		data: {
-	// 			title: data.title as string,
-	// 			description: data.description as string,
-	// 			level: Number(data.level),
-	// 			category: data.category as string,
-	// 			imageUrl: imageUrl as string,
-	// 		},
-	// 	});
-	// 	return NextResponse.json({ message: 'OK' }, { status: 200 });
-	// } catch {
-	// 	return NextResponse.json(
-	// 		{ error: 'Something went wrong' },
-	// 		{ status: 500 }
-	// 	);
-	// }
+	try {
+		// const imageBuffer = Buffer.from(await image.arrayBuffer());
+		// const imageUrl = await uploadToS3(
+		// 	imageBuffer,
+		// 	'project',
+		// 	`${Date.now()}-${image.name}`
+		// );
+		// await prisma.project.create({
+		// 	data: {
+		// 		title: data.title as string,
+		// 		description: data.description as string,
+		// 		level: Number(data.level),
+		// 		category: data.category as string,
+		// 		imageUrl: imageUrl as string,
+		// 	},
+		// });
+		return NextResponse.json({ message: 'OK' }, { status: 200 });
+	} catch {
+		return NextResponse.json(
+			{ error: 'Something went wrong' },
+			{ status: 500 }
+		);
+	}
 }
 
 export async function PUT(req: NextRequest) {
@@ -95,21 +95,6 @@ export async function GET(req: NextRequest) {
 				where: { id: Number(id) },
 			});
 			return NextResponse.json({ data: project }, { status: 200 });
-		}
-		if (take === -1) {
-			const projects = await prisma.project.findMany();
-			const groupedSkills = projects.reduce(
-				(acc, project) => {
-					const category = project.category || 'Uncategorized';
-					if (!acc[category]) {
-						acc[category] = [];
-					}
-					acc[category].push(project);
-					return acc;
-				},
-				{} as Record<string, typeof projects>
-			);
-			return NextResponse.json({ data: groupedSkills }, { status: 200 });
 		}
 		const projects = await prisma.project.findMany({
 			skip: (page - 1) * take,

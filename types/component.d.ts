@@ -12,6 +12,12 @@ declare global {
 		onChange: Dispatch<SetStateAction<File | null | undefined>>;
 	}
 
+	interface ImageInputListProps {
+		id: string;
+		imageUrls?: string[];
+		onChange: Dispatch<SetStateAction<File[] | null | undefined>>;
+	}
+
 	interface AdminPaginationProps {
 		className?: string;
 		page: number;

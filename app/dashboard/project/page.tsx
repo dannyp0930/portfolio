@@ -85,7 +85,7 @@ function ProjectComponent() {
 				<thead>
 					<tr>
 						<th>ID</th>
-						<th>이름</th>
+						<th>제목</th>
 						<th>소개</th>
 						<th>시작일자</th>
 						<th>종료일자</th>
