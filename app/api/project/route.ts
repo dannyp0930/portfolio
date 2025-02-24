@@ -1,3 +1,4 @@
+import deleteFromS3 from '@/lib/deleteFromS3';
 import { isAdmin } from '@/lib/isAdmin';
 import { PrismaClient } from '@prisma/client';
 import dayjs from 'dayjs';
@@ -133,9 +134,21 @@ export async function DELETE(req: NextRequest) {
 	const { id } = await req.json();
 
 	try {
-		// const project = await prisma.project.findUnique({
-		// 	where: { id: Number(id) },
-		// });
+		const projectDetail = await prisma.projectDetail.findUnique({
+			where: { projectId: Number(id) },
+		});
+		const projectImages = await prisma.projectImage.findMany({
+			where: { projectDetailId: Number(projectDetail?.id) },
+		});
+		projectImages.forEach(async (image) => {
+			await deleteFromS3(image.url);
+		});
+		await prisma.projectImage.deleteMany({
+			where: { projectDetailId: Number(projectDetail?.id) },
+		});
+		await prisma.projectDetail.delete({
+			where: { id: Number(projectDetail?.id) },
+		});
 		await prisma.project.delete({
 			where: { id: Number(id) },
 		});

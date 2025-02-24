@@ -3,6 +3,7 @@
 import instance from '@/app/api/instance';
 import AdminPagination from '@/components/dashboard/AdminPagination';
 import { Button } from '@/components/ui/button';
+import dayjs from 'dayjs';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { MouseEvent, Suspense, useCallback, useEffect, useState } from 'react';
@@ -98,11 +99,15 @@ function ProjectComponent() {
 							<td>{project.id}</td>
 							<td>{project.title}</td>
 							<td>{project.intro}</td>
-							<td>{project.startDate}</td>
-							<td>{project.endDate}</td>
+							<td>
+								{dayjs(project.startDate).format('YYYY-MM-DD')}
+							</td>
+							<td>
+								{dayjs(project.endDate).format('YYYY-MM-DD')}
+							</td>
 							<td>
 								<div className="flex gap-2 justify-center">
-									<Button asChild>
+									<Button asChild size="sm">
 										<Link
 											href={`/dashboard/project/${project.id}`}
 										>

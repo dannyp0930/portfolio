@@ -60,6 +60,7 @@ export default function ProjectCreate() {
 			images: [],
 		},
 	});
+
 	async function handleSubmit(values: z.infer<typeof formSchema>) {
 		try {
 			const formData = new FormData();

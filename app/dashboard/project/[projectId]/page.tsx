@@ -93,7 +93,7 @@ export default function ProjectUpdate({ params }: ProjectUpdateParams) {
 						form.setValue(key, images);
 						setProjectImages(images);
 					} else {
-						form.setValue(key, value);
+						form.setValue(key, value ?? '');
 					}
 				});
 			} catch (err) {
