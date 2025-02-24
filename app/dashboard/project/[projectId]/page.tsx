@@ -15,7 +15,8 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { zodResolver } from '@hookform/resolvers/zod';
 import dayjs from 'dayjs';
-import { use, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { use, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
@@ -38,7 +39,7 @@ const formSchema = z.object({
 		.string({ required_error: '프로젝트 설명을 입력하세요.' })
 		.min(1, { message: '프로젝트 설명을 입력하세요.' }),
 	images: z
-		.array(z.instanceof(File), {
+		.array(z.string(), {
 			required_error: '이미지를 최소 한 개 이상 업로드하세요.',
 		})
 		.min(1, '이미지를 최소 한 개 이상 업로드하세요.'),
@@ -48,8 +49,8 @@ type formSchemaType = typeof formSchema.shape;
 
 export default function ProjectUpdate({ params }: ProjectUpdateParams) {
 	const { projectId } = use(params);
-	// const [projectDetail, setProjectDetail] = useState<ProjectDetail>();
-	// const [projectImages, setProjectImages] = useState<ProjectImage[]>();
+	const [projectImages, setProjectImages] = useState<string[]>();
+	const router = useRouter();
 
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
@@ -85,10 +86,12 @@ export default function ProjectUpdate({ params }: ProjectUpdateParams) {
 						);
 					} else if (key === 'description') {
 						form.setValue(key, data.projectDetail.description);
-						// setProjectDetail(data.projectDetail)
 					} else if (key === 'images') {
-						// TODO: 이미지 불러오는 방식 재고
-						// setProjectImages(data.projectImages)
+						const images = data.projectImages.map(
+							(image: ProjectImage) => image.url
+						);
+						form.setValue(key, images);
+						setProjectImages(images);
 					} else {
 						form.setValue(key, value);
 					}
@@ -104,28 +107,28 @@ export default function ProjectUpdate({ params }: ProjectUpdateParams) {
 		try {
 			const formData = new FormData();
 			const keys = Object.keys(values);
+			formData.append('id', projectId);
 			keys.forEach((key) => {
 				const value = values[key as keyof typeof values];
 				if (value) {
 					if (key === 'images' && Array.isArray(value)) {
-						value.forEach((file) => {
-							formData.append(key, file);
+						value.forEach((image) => {
+							formData.append(key, image);
 						});
 					} else if (typeof value === 'string') {
 						formData.append(key, value);
 					}
 				}
 			});
-			const { data, status } = await instance.put(
-				'/api/project',
-				formData,
-				{
-					headers: {
-						'Content-Type': 'multipart/form-data',
-					},
-				}
-			);
-			console.log(data, status);
+			const { status } = await instance.put('/api/project', formData, {
+				headers: {
+					'Content-Type': 'multipart/form-data',
+				},
+			});
+			if (status === 200) {
+				console.log('수정');
+				router.push('/dashboard/project');
+			}
 		} catch (err) {
 			console.error(err);
 		}
@@ -322,8 +325,10 @@ export default function ProjectUpdate({ params }: ProjectUpdateParams) {
 									<FormControl className="w-80">
 										<ImageInputList
 											id="images"
-											onChange={(file) =>
-												field.onChange(file)
+											dir="project"
+											images={projectImages}
+											onChange={(images) =>
+												field.onChange(images)
 											}
 										/>
 									</FormControl>

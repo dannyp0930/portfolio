@@ -32,8 +32,9 @@ export default function ImageInputList({
 						'Content-Type': 'multipart/form-data',
 					},
 				});
-				setNewImages([...newImages, url]);
-				onChange(newImages);
+				const newImageList = [...newImages, url];
+				setNewImages(newImageList);
+				onChange(newImageList);
 			} catch (err) {
 				console.error(err);
 			}

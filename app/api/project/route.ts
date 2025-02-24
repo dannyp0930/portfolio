@@ -1,6 +1,4 @@
-import deleteFromS3 from '@/lib/deleteFromS3';
 import { isAdmin } from '@/lib/isAdmin';
-import uploadToS3 from '@/lib/uploadToS3';
 import { PrismaClient } from '@prisma/client';
 import dayjs from 'dayjs';
 import { NextRequest, NextResponse } from 'next/server';
@@ -51,42 +49,38 @@ export async function PUT(req: NextRequest) {
 	if (!isAdmin(req)) {
 		return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
 	}
-	const formData = await req.formData();
-	const image = formData.get('image') as File | null;
-	const data = Object.fromEntries(formData.entries());
 
 	try {
-		let imageUrl: string | undefined;
-		const existingSkill = await prisma.project.findUnique({
-			where: { id: Number(data.id) },
-		});
-		if (image) {
-			const imageBuffer = Buffer.from(await image.arrayBuffer());
-			imageUrl = await uploadToS3(
-				imageBuffer,
-				'project',
-				`${Date.now()}-${image.name}`
-			);
-			if (existingSkill?.imageUrl) {
-				await deleteFromS3(existingSkill.imageUrl);
-			}
-		}
+		const formData = await req.formData();
+		const images = formData.getAll('images') as string[];
+		const data = Object.fromEntries(formData.entries());
 		await prisma.project.update({
 			where: { id: Number(data.id) },
 			data: {
 				title: data.title as string,
-				description: data.description as string,
-				level: Number(data.level),
-				category: data.category as string,
-				...(imageUrl && { imageUrl }),
+				intro: data.intro as string,
+				organization: data.organization as string,
+				startDate: dayjs(data.startDate as string).toDate(),
+				endDate: dayjs(data.endDate as string).toDate(),
+				github: data.github as string,
+				homepage: data.homepage as string,
+				notion: data.notion as string,
+				projectDetail: {
+					update: {
+						images: {
+							deleteMany: {},
+							create: images.map((image) => ({
+								url: image as string,
+							})),
+						},
+						description: data.description as string,
+					},
+				},
 			},
 		});
 		return NextResponse.json({ message: 'OK' }, { status: 200 });
-	} catch {
-		return NextResponse.json(
-			{ error: 'Something went wrong' },
-			{ status: 500 }
-		);
+	} catch (err) {
+		return NextResponse.json({ error: err }, { status: 500 });
 	}
 }
 
@@ -139,12 +133,9 @@ export async function DELETE(req: NextRequest) {
 	const { id } = await req.json();
 
 	try {
-		const project = await prisma.project.findUnique({
-			where: { id: Number(id) },
-		});
-		if (project?.imageUrl) {
-			await deleteFromS3(project.imageUrl);
-		}
+		// const project = await prisma.project.findUnique({
+		// 	where: { id: Number(id) },
+		// });
 		await prisma.project.delete({
 			where: { id: Number(id) },
 		});
