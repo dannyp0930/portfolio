@@ -14,18 +14,8 @@ export async function POST(req: NextRequest) {
 
 	try {
 		const formData = await req.formData();
-		const images = formData.getAll('images') as File[];
+		const images = formData.getAll('images') as string[];
 		const data = Object.fromEntries(formData.entries());
-		const imageUrls = await Promise.all(
-			images.map(async (image) => {
-				const imageBuffer = Buffer.from(await image.arrayBuffer());
-				return await uploadToS3(
-					imageBuffer,
-					'project',
-					`${Date.now()}-${image.name}`
-				);
-			})
-		);
 		await prisma.project.create({
 			data: {
 				title: data.title as string,
@@ -39,8 +29,8 @@ export async function POST(req: NextRequest) {
 				projectDetail: {
 					create: {
 						images: {
-							create: imageUrls.map((url) => ({
-								url: url as string,
+							create: images.map((image) => ({
+								url: image as string,
 							})),
 						},
 						description: data.description as string,

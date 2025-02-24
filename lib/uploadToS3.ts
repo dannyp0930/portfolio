@@ -36,6 +36,7 @@ export default async function uploadToS3(
 		await s3Client.send(command);
 		return `https://${params.Bucket}.s3.${process.env.AWS_REGION}.amazonaws.com/${params.Key}`;
 	} catch (err) {
+		console.log(process.env);
 		console.error(err);
 	}
 }

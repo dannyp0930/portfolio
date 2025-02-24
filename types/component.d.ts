@@ -14,8 +14,9 @@ declare global {
 
 	interface ImageInputListProps {
 		id: string;
-		imageUrls?: string[];
-		onChange: Dispatch<SetStateAction<File[] | null | undefined>>;
+		images?: string[];
+		dir?: string;
+		onChange: Dispatch<SetStateAction<string[] | null | undefined>>;
 	}
 
 	interface AdminPaginationProps {

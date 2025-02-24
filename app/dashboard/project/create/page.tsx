@@ -14,6 +14,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useRouter } from 'next/router';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
@@ -36,13 +37,14 @@ const formSchema = z.object({
 		.string({ required_error: '프로젝트 설명을 입력하세요.' })
 		.min(1, { message: '프로젝트 설명을 입력하세요.' }),
 	images: z
-		.array(z.instanceof(File), {
+		.array(z.string(), {
 			required_error: '이미지를 최소 한 개 이상 업로드하세요.',
 		})
 		.min(1, '이미지를 최소 한 개 이상 업로드하세요.'),
 });
 
 export default function ProjectCreate() {
+	const router = useRouter();
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
@@ -66,24 +68,23 @@ export default function ProjectCreate() {
 				const value = values[key as keyof typeof values];
 				if (value) {
 					if (key === 'images' && Array.isArray(value)) {
-						value.forEach((file) => {
-							formData.append(key, file);
+						value.forEach((image) => {
+							formData.append(key, image);
 						});
 					} else if (typeof value === 'string') {
 						formData.append(key, value);
 					}
 				}
 			});
-			const { data, status } = await instance.post(
-				'/api/project',
-				formData,
-				{
-					headers: {
-						'Content-Type': 'multipart/form-data',
-					},
-				}
-			);
-			console.log(data, status);
+			const { status } = await instance.post('/api/project', formData, {
+				headers: {
+					'Content-Type': 'multipart/form-data',
+				},
+			});
+			if (status === 200) {
+				console.log('생성');
+				router.push('/dashboard/project');
+			}
 		} catch (err) {
 			console.error(err);
 		}
@@ -280,8 +281,9 @@ export default function ProjectCreate() {
 									<FormControl className="w-80">
 										<ImageInputList
 											id="images"
-											onChange={(file) =>
-												field.onChange(file)
+											dir="project"
+											onChange={(images) =>
+												field.onChange(images)
 											}
 										/>
 									</FormControl>
