@@ -92,37 +92,53 @@ export async function DELETE(req: NextRequest) {
 	if (!isAdmin(req)) {
 		return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
 	}
+
 	const { id } = await req.json();
 
 	try {
 		const projectDetail = await prisma.projectDetail.findUnique({
 			where: { projectId: Number(id) },
 		});
+
 		if (!projectDetail) {
 			return NextResponse.json(
 				{ error: 'Project not found' },
 				{ status: 404 }
 			);
 		}
+
 		const projectImages = await prisma.projectImage.findMany({
-			where: { projectDetailId: Number(projectDetail?.id) },
+			where: { projectDetailId: Number(projectDetail.id) },
 		});
-		await Promise.all(
+
+		const s3DeleteResults = await Promise.allSettled(
 			projectImages.map(async (image) => {
 				await deleteFromS3(image.url);
 			})
 		);
-		await prisma.projectImage.deleteMany({
-			where: { projectDetailId: Number(projectDetail?.id) },
-		});
-		await prisma.$transaction([
-			prisma.projectDetail.delete({
+
+		const s3DeleteFailed = s3DeleteResults.some(
+			(result) => result.status === 'rejected'
+		);
+
+		if (s3DeleteFailed) {
+			throw new Error('Failed to delete some images from S3');
+		}
+
+		await prisma.$transaction(async (prisma) => {
+			await prisma.projectImage.deleteMany({
+				where: { projectDetailId: Number(projectDetail.id) },
+			});
+
+			await prisma.projectDetail.delete({
 				where: { id: Number(projectDetail.id) },
-			}),
-			prisma.project.delete({
+			});
+
+			await prisma.project.delete({
 				where: { id: Number(id) },
-			}),
-		]);
+			});
+		});
+
 		return NextResponse.json({ message: 'OK' }, { status: 200 });
 	} catch {
 		return NextResponse.json(
