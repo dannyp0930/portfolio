@@ -12,30 +12,9 @@ export async function POST(req: NextRequest) {
 	}
 
 	try {
-		const formData = await req.formData();
-		const images = formData.getAll('images') as string[];
-		const data = Object.fromEntries(formData.entries());
-		await prisma.project.create({
-			data: {
-				title: data.title as string,
-				intro: data.intro as string,
-				organization: data.organization as string,
-				startDate: dayjs(data.startDate as string).toDate(),
-				endDate: dayjs(data.endDate as string).toDate(),
-				github: data.github as string,
-				homepage: data.homepage as string,
-				notion: data.notion as string,
-				projectDetail: {
-					create: {
-						images: {
-							create: images.map((image) => ({
-								url: image as string,
-							})),
-						},
-						description: data.description as string,
-					},
-				},
-			},
+		const data = await req.json();
+		await prisma.$transaction(async (prisma) => {
+			await prisma.project.create({ data });
 		});
 		return NextResponse.json({ message: 'OK' }, { status: 200 });
 	} catch {
@@ -55,29 +34,42 @@ export async function PUT(req: NextRequest) {
 		const formData = await req.formData();
 		const images = formData.getAll('images') as string[];
 		const data = Object.fromEntries(formData.entries());
-		await prisma.project.update({
-			where: { id: Number(data.id) },
-			data: {
-				title: data.title as string,
-				intro: data.intro as string,
-				organization: data.organization as string,
-				startDate: dayjs(data.startDate as string).toDate(),
-				endDate: dayjs(data.endDate as string).toDate(),
-				github: data.github as string,
-				homepage: data.homepage as string,
-				notion: data.notion as string,
-				projectDetail: {
-					update: {
+		await prisma.$transaction(async (prisma) => {
+			await prisma.project.update({
+				where: { id: Number(data.id) },
+				data: {
+					title: data.title as string,
+					intro: data.intro as string,
+					organization: data.organization as string,
+					startDate: dayjs(data.startDate as string).toDate(),
+					endDate: dayjs(data.endDate as string).toDate(),
+					github: data.github as string,
+					homepage: data.homepage as string,
+					notion: data.notion as string,
+				},
+			});
+
+			const projectDetail = await prisma.projectDetail.findUnique({
+				where: { projectId: Number(data.id) },
+			});
+
+			if (projectDetail) {
+				await prisma.projectImage.deleteMany({
+					where: { projectDetailId: projectDetail.id },
+				});
+
+				await prisma.projectDetail.update({
+					where: { id: projectDetail.id },
+					data: {
+						description: data.description as string,
 						images: {
-							deleteMany: {},
 							create: images.map((image) => ({
 								url: image as string,
 							})),
 						},
-						description: data.description as string,
 					},
-				},
-			},
+				});
+			}
 		});
 		return NextResponse.json({ message: 'OK' }, { status: 200 });
 	} catch (err) {
@@ -137,21 +129,31 @@ export async function DELETE(req: NextRequest) {
 		const projectDetail = await prisma.projectDetail.findUnique({
 			where: { projectId: Number(id) },
 		});
+		if (!projectDetail) {
+			return NextResponse.json(
+				{ error: 'Project not found' },
+				{ status: 404 }
+			);
+		}
 		const projectImages = await prisma.projectImage.findMany({
 			where: { projectDetailId: Number(projectDetail?.id) },
 		});
-		projectImages.forEach(async (image) => {
-			await deleteFromS3(image.url);
-		});
+		await Promise.all(
+			projectImages.map(async (image) => {
+				await deleteFromS3(image.url);
+			})
+		);
 		await prisma.projectImage.deleteMany({
 			where: { projectDetailId: Number(projectDetail?.id) },
 		});
-		await prisma.projectDetail.delete({
-			where: { id: Number(projectDetail?.id) },
-		});
-		await prisma.project.delete({
-			where: { id: Number(id) },
-		});
+		await prisma.$transaction([
+			prisma.projectDetail.delete({
+				where: { id: Number(projectDetail.id) },
+			}),
+			prisma.project.delete({
+				where: { id: Number(id) },
+			}),
+		]);
 		return NextResponse.json({ message: 'OK' }, { status: 200 });
 	} catch {
 		return NextResponse.json(

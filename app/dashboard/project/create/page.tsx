@@ -1,7 +1,6 @@
 'use client';
 
 import instance from '@/app/api/instance';
-import ImageInputList from '@/components/common/ImageInputList';
 import { Button } from '@/components/ui/button';
 import {
 	Form,
@@ -12,8 +11,8 @@ import {
 	FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
 import { zodResolver } from '@hookform/resolvers/zod';
+import dayjs from 'dayjs';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -33,14 +32,6 @@ const formSchema = z.object({
 	github: z.string().optional(),
 	homepage: z.string().optional(),
 	notion: z.string().optional(),
-	description: z
-		.string({ required_error: '프로젝트 설명을 입력하세요.' })
-		.min(1, { message: '프로젝트 설명을 입력하세요.' }),
-	images: z
-		.array(z.string(), {
-			required_error: '이미지를 최소 한 개 이상 업로드하세요.',
-		})
-		.min(1, '이미지를 최소 한 개 이상 업로드하세요.'),
 });
 
 export default function ProjectCreate() {
@@ -56,32 +47,17 @@ export default function ProjectCreate() {
 			github: '',
 			homepage: '',
 			notion: '',
-			description: '',
-			images: [],
 		},
 	});
 
-	async function handleSubmit(values: z.infer<typeof formSchema>) {
+	async function onSubmit(values: z.infer<typeof formSchema>) {
 		try {
-			const formData = new FormData();
-			const keys = Object.keys(values);
-			keys.forEach((key) => {
-				const value = values[key as keyof typeof values];
-				if (value) {
-					if (key === 'images' && Array.isArray(value)) {
-						value.forEach((image) => {
-							formData.append(key, image);
-						});
-					} else if (typeof value === 'string') {
-						formData.append(key, value);
-					}
-				}
-			});
-			const { status } = await instance.post('/api/project', formData, {
-				headers: {
-					'Content-Type': 'multipart/form-data',
-				},
-			});
+			const body = {
+				...values,
+				startDate: dayjs(values.startDate).toDate(),
+				endDate: values.endDate ? dayjs(values.endDate).toDate() : null,
+			};
+			const { status } = await instance.post('/api/project', body);
 			if (status === 200) {
 				console.log('생성');
 				router.push('/dashboard/project');
@@ -94,7 +70,7 @@ export default function ProjectCreate() {
 		<div className="m-5 p-10 rounded-lg bg-white">
 			<Form {...form}>
 				<form
-					onSubmit={form.handleSubmit(handleSubmit)}
+					onSubmit={form.handleSubmit(onSubmit)}
 					className="space-y-8"
 				>
 					<FormField
@@ -239,53 +215,6 @@ export default function ProjectCreate() {
 										<Input
 											placeholder="Notion"
 											{...field}
-										/>
-									</FormControl>
-									<FormMessage />
-								</div>
-							</FormItem>
-						)}
-					/>
-					<FormField
-						control={form.control}
-						name="description"
-						render={({ field }) => (
-							<FormItem>
-								<div className="flex gap-4 items-center">
-									<FormLabel className="flex-shrink-0 w-20">
-										상세 설명
-									</FormLabel>
-									<FormControl className="w-80">
-										<Textarea
-											className="resize-none w-96 h-40"
-											placeholder="상세 설명"
-											{...field}
-										/>
-									</FormControl>
-									<FormMessage />
-								</div>
-							</FormItem>
-						)}
-					/>
-					<FormField
-						control={form.control}
-						name="images"
-						render={({ field }) => (
-							<FormItem>
-								<div className="flex gap-4 items-center">
-									<FormLabel
-										htmlFor="images"
-										className="flex-shrink-0 w-20"
-									>
-										이미지
-									</FormLabel>
-									<FormControl className="w-80">
-										<ImageInputList
-											id="images"
-											dir="project"
-											onChange={(images) =>
-												field.onChange(images)
-											}
 										/>
 									</FormControl>
 									<FormMessage />
