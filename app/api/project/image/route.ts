@@ -17,7 +17,7 @@ export async function POST(req: NextRequest) {
 		const imageBuffer = Buffer.from(await image.arrayBuffer());
 		const imageUrl = await uploadToS3(
 			imageBuffer,
-			'skill',
+			'project',
 			`${Date.now()}-${image.name}`
 		);
 		await prisma.$transaction(async (prisma) => {
