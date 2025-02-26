@@ -1,7 +1,6 @@
 import deleteFromS3 from '@/lib/deleteFromS3';
 import { isAdmin } from '@/lib/isAdmin';
 import { PrismaClient } from '@prisma/client';
-import dayjs from 'dayjs';
 import { NextRequest, NextResponse } from 'next/server';
 
 const prisma = new PrismaClient();
@@ -29,51 +28,18 @@ export async function PUT(req: NextRequest) {
 	if (!isAdmin(req)) {
 		return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
 	}
-
 	try {
-		const formData = await req.formData();
-		const images = formData.getAll('images') as string[];
-		const data = Object.fromEntries(formData.entries());
+		const { id, ...data } = await req.json();
 		await prisma.$transaction(async (prisma) => {
-			await prisma.project.update({
-				where: { id: Number(data.id) },
-				data: {
-					title: data.title as string,
-					intro: data.intro as string,
-					organization: data.organization as string,
-					startDate: dayjs(data.startDate as string).toDate(),
-					endDate: dayjs(data.endDate as string).toDate(),
-					github: data.github as string,
-					homepage: data.homepage as string,
-					notion: data.notion as string,
-				},
-			});
-
-			const projectDetail = await prisma.projectDetail.findUnique({
-				where: { projectId: Number(data.id) },
-			});
-
-			if (projectDetail) {
-				await prisma.projectImage.deleteMany({
-					where: { projectDetailId: projectDetail.id },
-				});
-
-				await prisma.projectDetail.update({
-					where: { id: projectDetail.id },
-					data: {
-						description: data.description as string,
-						images: {
-							create: images.map((image) => ({
-								url: image as string,
-							})),
-						},
-					},
-				});
-			}
+			await prisma.project.update({ where: { id: Number(id) }, data });
 		});
 		return NextResponse.json({ message: 'OK' }, { status: 200 });
 	} catch (err) {
-		return NextResponse.json({ error: err }, { status: 500 });
+		console.log(err);
+		return NextResponse.json(
+			{ error: 'Something went wrong' },
+			{ status: 500 }
+		);
 	}
 }
 
@@ -91,9 +57,11 @@ export async function GET(req: NextRequest) {
 			const projectDetail = await prisma.projectDetail.findUnique({
 				where: { projectId: Number(id) },
 			});
-			const projectImages = await prisma.projectImage.findMany({
-				where: { projectDetailId: Number(projectDetail?.id) },
-			});
+			const projectImages = projectDetail
+				? await prisma.projectImage.findMany({
+						where: { projectDetailId: Number(projectDetail?.id) },
+					})
+				: null;
 			return NextResponse.json(
 				{
 					data: {
@@ -111,7 +79,8 @@ export async function GET(req: NextRequest) {
 		});
 		const totalCnt = await prisma.project.count();
 		return NextResponse.json({ data: projects, totalCnt }, { status: 200 });
-	} catch {
+	} catch (err) {
+		console.log(err);
 		return NextResponse.json(
 			{ error: 'Something went wrong' },
 			{ status: 500 }

@@ -103,7 +103,8 @@ function ProjectComponent() {
 								{dayjs(project.startDate).format('YYYY-MM-DD')}
 							</td>
 							<td>
-								{dayjs(project.endDate).format('YYYY-MM-DD')}
+								{project.endDate &&
+									dayjs(project.endDate).format('YYYY-MM-DD')}
 							</td>
 							<td>
 								<div className="flex gap-2 justify-center">

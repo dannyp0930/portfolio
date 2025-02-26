@@ -50,7 +50,7 @@ export default function ProjectCreate() {
 		},
 	});
 
-	async function onSubmit(values: z.infer<typeof formSchema>) {
+	async function handleSubmit(values: z.infer<typeof formSchema>) {
 		try {
 			const body = {
 				...values,
@@ -70,7 +70,7 @@ export default function ProjectCreate() {
 		<div className="m-5 p-10 rounded-lg bg-white">
 			<Form {...form}>
 				<form
-					onSubmit={form.handleSubmit(onSubmit)}
+					onSubmit={form.handleSubmit(handleSubmit)}
 					className="space-y-8"
 				>
 					<FormField
