@@ -35,7 +35,6 @@ export async function PUT(req: NextRequest) {
 	if (!isAdmin(req)) {
 		return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
 	}
-
 	try {
 		const { projectId, description } = await req.json();
 		await prisma.$transaction(async (prisma) => {

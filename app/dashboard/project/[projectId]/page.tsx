@@ -122,21 +122,31 @@ export default function ProjectUpdate({ params }: ProjectUpdateParams) {
 	async function handleDetailSubmit(
 		values: z.infer<typeof detailFormSchema>
 	) {
-		console.log(projectDetailId);
 		try {
 			const body = {
 				...values,
 				projectId,
 			};
-			const {
-				status,
-				data: { id },
-			} = await instance.post('/api/project/detail', body);
-			if (status === 200) {
-				console.log('수정');
-				setProjectDetailId(id);
+			if (!projectDetailId) {
+				const {
+					status,
+					data: { id },
+				} = await instance.post('/api/project/detail', body);
+				if (status === 200) {
+					console.log('저장');
+					setProjectDetailId(id);
+				}
+			} else {
+				const { status } = await instance.put(
+					'/api/project/detail',
+					body
+				);
+				if (status === 200) {
+					console.log('수정');
+				}
 			}
 		} catch (err) {
+			// todo: toast 추가(api resopnse 모두)
 			console.error(err);
 		}
 	}
@@ -296,7 +306,7 @@ export default function ProjectUpdate({ params }: ProjectUpdateParams) {
 							</FormItem>
 						)}
 					/>
-					<Button type="submit">Submit</Button>
+					<Button type="submit">수정</Button>
 				</form>
 			</Form>
 			<Form {...detailForm}>
@@ -325,7 +335,9 @@ export default function ProjectUpdate({ params }: ProjectUpdateParams) {
 					<Button type="submit">저장</Button>
 				</form>
 			</Form>
-			{projectImages}
+			{projectDetailId
+				? projectImages?.map((image) => <div key={image}>{image}</div>)
+				: null}
 		</div>
 	);
 }
