@@ -7,6 +7,7 @@ export default function useAuthCheck() {
 	const pathname = usePathname();
 
 	useEffect(() => {
+		// todo: auth logic refactoring
 		async function checkLoginStatus() {
 			try {
 				await instance.post('/api/refresh');
@@ -14,6 +15,10 @@ export default function useAuthCheck() {
 				if (data.user) {
 					if (!data.user.isAdmin) {
 						router.push('/');
+					} else {
+						if (!pathname.startsWith('/dashboard')) {
+							router.push('/dashbooard');
+						}
 					}
 				}
 			} catch (err) {
