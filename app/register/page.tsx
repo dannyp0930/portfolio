@@ -31,7 +31,7 @@ export default function Register() {
 			if (isAxiosError(error)) {
 				if (error.response?.status === 409) {
 					const errorMessage =
-						(error.response.data as { error?: string }).error ||
+						(error.response.data as { error?: string }).error ??
 						'Registration failed';
 					return alert(errorMessage);
 				}

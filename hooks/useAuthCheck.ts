@@ -1,9 +1,10 @@
 import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import instance from '@/app/api/instance';
 
 export default function useAuthCheck() {
 	const router = useRouter();
+	const pathname = usePathname();
 
 	useEffect(() => {
 		async function checkLoginStatus() {
@@ -17,9 +18,11 @@ export default function useAuthCheck() {
 				}
 			} catch (err) {
 				console.error('Token verification failed:', err);
-				router.push('/login');
+				if (pathname !== '/register') {
+					router.push('/login');
+				}
 			}
 		}
 		checkLoginStatus();
-	}, [router]);
+	}, [router, pathname]);
 }
