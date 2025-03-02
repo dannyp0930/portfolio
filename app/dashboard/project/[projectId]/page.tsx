@@ -1,6 +1,7 @@
 'use client';
 
 import instance from '@/app/api/instance';
+import ImageInput from '@/components/common/ImageInput';
 import { Button } from '@/components/ui/button';
 import {
 	Form,
@@ -43,7 +44,7 @@ type formSchemaType = typeof formSchema.shape;
 
 export default function ProjectUpdate({ params }: ProjectUpdateParams) {
 	const { projectId } = use(params);
-	const [projectImages, setProjectImages] = useState<string[]>();
+	const [projectImages, setProjectImages] = useState<ProjectImage[]>();
 	const [projectDetailId, setProjectDetailId] = useState<number>();
 
 	const form = useForm<z.infer<typeof formSchema>>({
@@ -71,6 +72,7 @@ export default function ProjectUpdate({ params }: ProjectUpdateParams) {
 		async function getProject() {
 			try {
 				const params = { id: projectId };
+				console.log(projectId);
 				const {
 					data: { data },
 				} = await instance.get('/api/project', { params });
@@ -79,10 +81,12 @@ export default function ProjectUpdate({ params }: ProjectUpdateParams) {
 				).forEach(async (key) => {
 					const value = data[key];
 					if (key === 'startDate' || key === 'endDate') {
-						form.setValue(
-							key,
-							dayjs(value as string).format('YYYY-MM-DD')
-						);
+						if (value) {
+							form.setValue(
+								key,
+								dayjs(value as string).format('YYYY-MM-DD')
+							);
+						}
 					} else {
 						form.setValue(key, value ?? '');
 					}
@@ -147,6 +151,39 @@ export default function ProjectUpdate({ params }: ProjectUpdateParams) {
 			}
 		} catch (err) {
 			// todo: toast 추가(api resopnse 모두)
+			console.error(err);
+		}
+	}
+
+	async function handleCreateImage(image: File) {
+		try {
+			const formData = new FormData();
+			formData.append('image', image);
+			formData.append('id', String(projectDetailId));
+			const { data, status } = await instance.post(
+				'/api/project/image',
+				formData,
+				{
+					headers: {
+						'Content-Type': 'multipart/form-data',
+					},
+				}
+			);
+			if (status === 200) {
+				console.log(data.message);
+				console.log('이미지 추가 완료');
+			}
+		} catch (err) {
+			console.error(err);
+		}
+	}
+
+	async function handleUpdateImage(image: File, imageId: number) {
+		try {
+			const formData = new FormData();
+			formData.append('image', image);
+			formData.append('id', String(imageId));
+		} catch (err) {
 			console.error(err);
 		}
 	}
@@ -335,9 +372,29 @@ export default function ProjectUpdate({ params }: ProjectUpdateParams) {
 					<Button type="submit">저장</Button>
 				</form>
 			</Form>
-			{projectDetailId
-				? projectImages?.map((image) => <div key={image}>{image}</div>)
-				: null}
+			<div>
+				{projectDetailId && (
+					<div>
+						<ImageInput
+							width={160}
+							height={90}
+							onChange={handleCreateImage}
+						/>
+					</div>
+				)}
+				{projectImages?.map((image) => (
+					<div key={image.id}>
+						<ImageInput
+							imageUrl={image.url}
+							width={160}
+							height={90}
+							onChange={(file: File) =>
+								handleUpdateImage(file, image.id)
+							}
+						></ImageInput>
+					</div>
+				))}
+			</div>
 		</div>
 	);
 }

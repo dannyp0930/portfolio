@@ -7,9 +7,11 @@ declare global {
 	}
 
 	interface ImageInputProps {
-		id: string;
+		id?: string;
 		imageUrl?: string;
-		onChange: Dispatch<SetStateAction<File | null | undefined>>;
+		width?: number;
+		height?: number;
+		onChange: Dispatch<SetStateAction<File>> | ((file: File) => void);
 	}
 
 	interface ImageInputListProps {

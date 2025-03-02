@@ -13,25 +13,30 @@ export async function POST(req: NextRequest) {
 	const formData = await req.formData();
 	const image = formData.get('image') as File;
 	const data = Object.fromEntries(formData.entries());
-
+	let imageUrl: string | null = null;
 	try {
 		const imageBuffer = Buffer.from(await image.arrayBuffer());
-		const imageUrl = await uploadToS3(
+		imageUrl = (await uploadToS3(
 			imageBuffer,
 			'skill',
 			`${Date.now()}-${image.name}`
-		);
-		await prisma.skill.create({
-			data: {
-				title: data.title as string,
-				description: data.description as string,
-				level: Number(data.level),
-				category: data.category as string,
-				imageUrl: imageUrl as string,
-			},
+		)) as string;
+		await prisma.$transaction(async (prisma) => {
+			await prisma.skill.create({
+				data: {
+					title: data.title as string,
+					description: data.description as string,
+					level: Number(data.level),
+					category: data.category as string,
+					imageUrl: imageUrl as string,
+				},
+			});
 		});
 		return NextResponse.json({ message: 'OK' }, { status: 200 });
 	} catch {
+		if (imageUrl) {
+			await deleteFromS3(imageUrl);
+		}
 		return NextResponse.json(
 			{ error: 'Something went wrong' },
 			{ status: 500 }
@@ -46,35 +51,47 @@ export async function PUT(req: NextRequest) {
 	const formData = await req.formData();
 	const image = formData.get('image') as File | null;
 	const data = Object.fromEntries(formData.entries());
-
+	let newImageUrl: string | null = null;
+	let existingImageUrl: string | null = null;
 	try {
-		let imageUrl: string | undefined;
 		const existingSkill = await prisma.skill.findUnique({
 			where: { id: Number(data.id) },
 		});
+		if (!existingSkill) {
+			return NextResponse.json(
+				{ error: 'Skill not found' },
+				{ status: 404 }
+			);
+		}
+		existingImageUrl = existingSkill.imageUrl;
 		if (image) {
 			const imageBuffer = Buffer.from(await image.arrayBuffer());
-			imageUrl = await uploadToS3(
+			newImageUrl = (await uploadToS3(
 				imageBuffer,
 				'skill',
 				`${Date.now()}-${image.name}`
-			);
-			if (existingSkill?.imageUrl) {
-				await deleteFromS3(existingSkill.imageUrl);
-			}
+			)) as string;
 		}
-		await prisma.skill.update({
-			where: { id: Number(data.id) },
-			data: {
-				title: data.title as string,
-				description: data.description as string,
-				level: Number(data.level),
-				category: data.category as string,
-				...(imageUrl && { imageUrl }),
-			},
+		await prisma.$transaction(async (prisma) => {
+			await prisma.skill.update({
+				where: { id: Number(data.id) },
+				data: {
+					title: data.title as string,
+					description: data.description as string,
+					level: Number(data.level),
+					category: data.category as string,
+					...(newImageUrl && { imageUrl: newImageUrl }),
+				},
+			});
 		});
+		if (existingImageUrl && newImageUrl) {
+			await deleteFromS3(existingImageUrl);
+		}
 		return NextResponse.json({ message: 'OK' }, { status: 200 });
 	} catch {
+		if (newImageUrl) {
+			await deleteFromS3(newImageUrl);
+		}
 		return NextResponse.json(
 			{ error: 'Something went wrong' },
 			{ status: 500 }
@@ -129,19 +146,31 @@ export async function DELETE(req: NextRequest) {
 		return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
 	}
 	const { id } = await req.json();
-
+	let imageUrl: string | null = null;
 	try {
 		const skill = await prisma.skill.findUnique({
 			where: { id: Number(id) },
 		});
-		if (skill?.imageUrl) {
-			await deleteFromS3(skill.imageUrl);
+		if (!skill) {
+			return NextResponse.json(
+				{ error: 'Skill not found' },
+				{ status: 404 }
+			);
 		}
-		await prisma.skill.delete({
-			where: { id: Number(id) },
+		imageUrl = skill.imageUrl;
+		if (imageUrl) {
+			await deleteFromS3(imageUrl);
+		}
+		await prisma.$transaction(async (prisma) => {
+			await prisma.skill.delete({
+				where: { id: Number(id) },
+			});
 		});
 		return NextResponse.json({ message: 'OK' }, { status: 200 });
 	} catch {
+		if (imageUrl) {
+			await uploadToS3(Buffer.from(''), 'skill', imageUrl);
+		}
 		return NextResponse.json(
 			{ error: 'Something went wrong' },
 			{ status: 500 }
