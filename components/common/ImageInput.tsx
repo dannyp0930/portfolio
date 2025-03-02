@@ -1,9 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
+import { ImagePlus } from 'lucide-react';
 
 export default function ImageInput({
-	id = '',
+	id,
+	className = '',
 	imageUrl,
 	width = 100,
 	height = 100,
@@ -26,7 +28,7 @@ export default function ImageInput({
 	};
 
 	return (
-		<div className="flex gap-4">
+		<div className={`flex gap-4 ${className}`}>
 			<input
 				id={id}
 				hidden
@@ -36,7 +38,9 @@ export default function ImageInput({
 				onChange={handleChange}
 			/>
 			<Button asChild size="icon">
-				<label htmlFor={id}>+</label>
+				<label htmlFor={id}>
+					<ImagePlus />
+				</label>
 			</Button>
 			{newImageUrl && (
 				<Image
@@ -44,6 +48,7 @@ export default function ImageInput({
 					alt={newImageUrl}
 					width={width}
 					height={height}
+					style={{ width: width, height: height }}
 				/>
 			)}
 		</div>

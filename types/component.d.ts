@@ -7,7 +7,8 @@ declare global {
 	}
 
 	interface ImageInputProps {
-		id?: string;
+		id: string;
+		className?: string;
 		imageUrl?: string;
 		width?: number;
 		height?: number;

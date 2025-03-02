@@ -15,7 +15,8 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { zodResolver } from '@hookform/resolvers/zod';
 import dayjs from 'dayjs';
-import { use, useEffect, useState } from 'react';
+import { ImageMinus } from 'lucide-react';
+import { MouseEvent, use, useCallback, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
@@ -44,6 +45,7 @@ type formSchemaType = typeof formSchema.shape;
 
 export default function ProjectUpdate({ params }: ProjectUpdateParams) {
 	const { projectId } = use(params);
+	const [load, setLoad] = useState<boolean>(true);
 	const [projectImages, setProjectImages] = useState<ProjectImage[]>();
 	const [projectDetailId, setProjectDetailId] = useState<number>();
 
@@ -68,17 +70,15 @@ export default function ProjectUpdate({ params }: ProjectUpdateParams) {
 		},
 	});
 
-	useEffect(() => {
-		async function getProject() {
-			try {
-				const params = { id: projectId };
-				console.log(projectId);
-				const {
-					data: { data },
-				} = await instance.get('/api/project', { params });
-				(
-					Object.keys(formSchema.shape) as (keyof formSchemaType)[]
-				).forEach(async (key) => {
+	const getProject = useCallback(async () => {
+		try {
+			const params = { id: projectId };
+			console.log(projectId);
+			const {
+				data: { data },
+			} = await instance.get('/api/project', { params });
+			(Object.keys(formSchema.shape) as (keyof formSchemaType)[]).forEach(
+				async (key) => {
 					const value = data[key];
 					if (key === 'startDate' || key === 'endDate') {
 						if (value) {
@@ -90,21 +90,27 @@ export default function ProjectUpdate({ params }: ProjectUpdateParams) {
 					} else {
 						form.setValue(key, value ?? '');
 					}
-				});
-				if (data.projectDetail) {
-					detailForm.setValue(
-						'description',
-						data.projectDetail.description
-					);
-					setProjectDetailId(data.projectDetail.id);
 				}
-				setProjectImages(data.projectImages);
-			} catch (err) {
-				console.error(err);
+			);
+			if (data.projectDetail) {
+				detailForm.setValue(
+					'description',
+					data.projectDetail.description
+				);
+				setProjectDetailId(data.projectDetail.id);
 			}
+			setProjectImages(data.projectImages);
+			setLoad(false);
+		} catch (err) {
+			console.error(err);
 		}
-		getProject();
 	}, [detailForm, form, projectId]);
+
+	useEffect(() => {
+		if (load) {
+			getProject();
+		}
+	}, [load, getProject]);
 
 	async function handleSubmit(values: z.infer<typeof formSchema>) {
 		try {
@@ -170,6 +176,8 @@ export default function ProjectUpdate({ params }: ProjectUpdateParams) {
 			}
 		} catch (err) {
 			console.error(err);
+		} finally {
+			setLoad(true);
 		}
 	}
 
@@ -184,11 +192,33 @@ export default function ProjectUpdate({ params }: ProjectUpdateParams) {
 			);
 			if (status === 200) {
 				console.log(data.message);
-				console.log('이미지 추가 완료');
+				console.log('이미지 수정 완료');
 			}
 		} catch (err) {
 			console.error(err);
+		} finally {
+			setLoad(true);
 		}
+	}
+
+	function handleDeleteImage(imageId: number) {
+		return async (e: MouseEvent<HTMLButtonElement>) => {
+			e.preventDefault();
+			try {
+				const body = { id: imageId };
+				const { data, status } = await instance.delete(
+					'/api/project/image',
+					{ data: body }
+				);
+				if (status === 200) {
+					alert(data.message);
+				}
+			} catch (err) {
+				console.error(err);
+			} finally {
+				setLoad(true);
+			}
+		};
 	}
 	return (
 		<div className="m-5 p-10 rounded-lg bg-white">
@@ -349,54 +379,71 @@ export default function ProjectUpdate({ params }: ProjectUpdateParams) {
 					<Button type="submit">수정</Button>
 				</form>
 			</Form>
-			<Form {...detailForm}>
-				<form onSubmit={detailForm.handleSubmit(handleDetailSubmit)}>
-					<FormField
-						control={detailForm.control}
-						name="description"
-						render={({ field }) => (
-							<FormItem>
-								<div className="flex gap-4 items-center">
-									<FormLabel className="flex-shrink-0 w-20">
-										내용
-									</FormLabel>
-									<FormControl className="w-48">
-										<Textarea
-											className="resize-none w-96 h-40"
-											placeholder="내용"
-											{...field}
-										/>
-									</FormControl>
-									<FormMessage />
-								</div>
-							</FormItem>
-						)}
-					/>
-					<Button type="submit">저장</Button>
-				</form>
-			</Form>
-			<div>
-				{projectDetailId && (
-					<div>
-						<ImageInput
-							width={160}
-							height={90}
-							onChange={handleCreateImage}
+			<div className="pt-10">
+				<h4>프로젝트 상세</h4>
+				<Form {...detailForm}>
+					<form
+						className="pt-5"
+						onSubmit={detailForm.handleSubmit(handleDetailSubmit)}
+					>
+						<FormField
+							control={detailForm.control}
+							name="description"
+							render={({ field }) => (
+								<FormItem>
+									<div className="flex gap-4 items-center">
+										<FormLabel className="flex-shrink-0 w-20">
+											내용
+										</FormLabel>
+										<FormControl className="w-48">
+											<Textarea
+												className="resize-none w-96 h-40"
+												placeholder="내용"
+												{...field}
+											/>
+										</FormControl>
+										<FormMessage />
+									</div>
+								</FormItem>
+							)}
 						/>
-					</div>
-				)}
-				{projectImages?.map((image) => (
-					<div key={image.id}>
-						<ImageInput
-							imageUrl={image.url}
-							width={160}
-							height={90}
-							onChange={(file: File) =>
-								handleUpdateImage(file, image.id)
-							}
-						></ImageInput>
-					</div>
-				))}
+						<Button type="submit">저장</Button>
+					</form>
+				</Form>
+				<div className="pt-5 flex flex-col gap-4">
+					<h5>이미지 추가</h5>
+					{projectDetailId && (
+						<div>
+							<ImageInput
+								id="image-create"
+								width={160}
+								height={90}
+								onChange={handleCreateImage}
+							/>
+						</div>
+					)}
+					{projectImages?.map((image) => (
+						<div key={image.id} className="flex gap-4 items-center">
+							<ImageInput
+								id={`image-${image.id}`}
+								className="items-center"
+								imageUrl={image.url}
+								width={160}
+								height={90}
+								onChange={(file: File) =>
+									handleUpdateImage(file, image.id)
+								}
+							/>
+							<Button
+								variant="destructive"
+								size="icon"
+								onClick={handleDeleteImage(image.id)}
+							>
+								<ImageMinus />
+							</Button>
+						</div>
+					))}
+				</div>
 			</div>
 		</div>
 	);
