@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
-import instance from '@/app/api/instance';
+import { instance } from '@/app/api/instance';
 
 export default function useAuthCheck() {
 	const router = useRouter();

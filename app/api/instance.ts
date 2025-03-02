@@ -7,4 +7,11 @@ const instance = axios.create({
 	},
 });
 
-export default instance;
+const formInstance = axios.create({
+	headers: {
+		'Content-Type': 'multipart/form-data',
+		withCredentials: true,
+	},
+});
+
+export { instance, formInstance };

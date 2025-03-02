@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { ChangeEvent, MouseEvent, useEffect, useRef, useState } from 'react';
-import instance from '@/app/api/instance';
+import { formInstance, instance } from '@/app/api/instance';
 
 export default function ImageInputList({
 	id,
@@ -27,11 +27,7 @@ export default function ImageInputList({
 				formData.append('dir', dir);
 				const {
 					data: { url },
-				} = await instance.post('/api/upload', formData, {
-					headers: {
-						'Content-Type': 'multipart/form-data',
-					},
-				});
+				} = await formInstance.post('/api/upload', formData);
 				const newImageList = [...newImages, url];
 				setNewImages(newImageList);
 				onChange(newImageList);

@@ -1,6 +1,6 @@
 'use client';
 
-import instance from '@/app/api/instance';
+import { instance } from '@/app/api/instance';
 import { Button } from '@/components/ui/button';
 import {
 	Form,

@@ -1,6 +1,6 @@
 'use client';
 
-import instance from '@/app/api/instance';
+import { formInstance, instance } from '@/app/api/instance';
 import ImageInput from '@/components/common/ImageInput';
 import AdminPagination from '@/components/dashboard/AdminPagination';
 import { Button } from '@/components/ui/button';
@@ -51,14 +51,9 @@ function SkillComponent() {
 				formData.append('image', image);
 			}
 			formData.append('category', category);
-			const { data, status } = await instance.post(
+			const { data, status } = await formInstance.post(
 				'/api/skill',
-				formData,
-				{
-					headers: {
-						'Content-Type': 'multipart/form-data',
-					},
-				}
+				formData
 			);
 			if (status === 200) {
 				alert(data.message);
@@ -91,14 +86,9 @@ function SkillComponent() {
 					formData.append('category', updateSkill.category);
 				if (newImage) formData.append('image', newImage);
 			}
-			const { data, status } = await instance.put(
+			const { data, status } = await formInstance.put(
 				'/api/skill',
-				formData,
-				{
-					headers: {
-						'Content-Type': 'multipart/form-data',
-					},
-				}
+				formData
 			);
 			if (status === 200) {
 				alert(data.message);

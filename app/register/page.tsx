@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import instance from '../api/instance';
+import { instance } from '@/app/api/instance';
 import useAuthCheck from '@/hooks/useAuthCheck';
 import Link from 'next/link';
 import { isAxiosError } from '@/lib/utils/typeGuards';

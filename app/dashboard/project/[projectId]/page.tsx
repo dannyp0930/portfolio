@@ -1,6 +1,6 @@
 'use client';
 
-import instance from '@/app/api/instance';
+import { formInstance, instance } from '@/app/api/instance';
 import ImageInput from '@/components/common/ImageInput';
 import { Button } from '@/components/ui/button';
 import {
@@ -160,14 +160,9 @@ export default function ProjectUpdate({ params }: ProjectUpdateParams) {
 			const formData = new FormData();
 			formData.append('image', image);
 			formData.append('id', String(projectDetailId));
-			const { data, status } = await instance.post(
+			const { data, status } = await formInstance.post(
 				'/api/project/image',
-				formData,
-				{
-					headers: {
-						'Content-Type': 'multipart/form-data',
-					},
-				}
+				formData
 			);
 			if (status === 200) {
 				console.log(data.message);
@@ -183,6 +178,14 @@ export default function ProjectUpdate({ params }: ProjectUpdateParams) {
 			const formData = new FormData();
 			formData.append('image', image);
 			formData.append('id', String(imageId));
+			const { data, status } = await formInstance.put(
+				'/api/project/image',
+				formData
+			);
+			if (status === 200) {
+				console.log(data.message);
+				console.log('이미지 추가 완료');
+			}
 		} catch (err) {
 			console.error(err);
 		}
