@@ -9,6 +9,8 @@ export default function Dashboard({
 }: Readonly<{
 	children: React.ReactNode;
 }>) {
+	// todo: auth logic refactoring
+	// 토큰 유효 하지 않을 때 refresh하기
 	useAuthCheck();
 
 	return (

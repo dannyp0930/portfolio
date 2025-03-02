@@ -7,7 +7,6 @@ export default function useAuthCheck() {
 	const pathname = usePathname();
 
 	useEffect(() => {
-		// todo: auth logic refactoring
 		async function checkLoginStatus() {
 			try {
 				await instance.post('/api/refresh');
