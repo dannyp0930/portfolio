@@ -103,7 +103,6 @@ model Career {
   description String
   position    String
   duty        String
-  content     String
   careerDetails CareerDetail[]
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
@@ -111,7 +110,7 @@ model Career {
 
 model CareerDetail {
   id        Int     @id @default(autoincrement())
-  careerId  Int     @unique
+  careerId  Int
   title     String
   content   String
   career    Career  @relation(fields: [careerId], references: [id])

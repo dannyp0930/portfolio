@@ -20,31 +20,25 @@ import { toast } from 'sonner';
 import { z } from 'zod';
 
 const formSchema = z.object({
-	title: z.string().min(1, { message: '프로젝트 제목을 입력하세요.' }),
-	intro: z.string().min(1, { message: '프로젝트 개요를 입력하세요.' }),
-	organization: z.string().optional(),
-	startDate: z
-		.string()
-		.min(1, { message: '프로젝트 시작일자를 입력하세요.' }),
+	companyName: z.string().min(1, { message: '회사명을 입력하세요.' }),
+	description: z.string().min(1, { message: '회사 설명을 입력하세요.' }),
+	position: z.string().min(1, { message: '직무를 입력하세요.' }),
+	duty: z.string().min(1, { message: '업무 상세를 입력하세요.' }),
+	startDate: z.string().min(1, { message: '근무 시작일자를 입력하세요.' }),
 	endDate: z.string().optional(),
-	github: z.string().optional(),
-	homepage: z.string().optional(),
-	notion: z.string().optional(),
 });
 
-export default function ProjectCreate() {
+export default function CareerCreate() {
 	const router = useRouter();
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
-			title: '',
-			intro: '',
-			organization: '',
+			companyName: '',
+			description: '',
+			position: '',
+			duty: '',
 			startDate: '',
 			endDate: '',
-			github: '',
-			homepage: '',
-			notion: '',
 		},
 	});
 
@@ -58,10 +52,10 @@ export default function ProjectCreate() {
 			const {
 				data: { message },
 				status,
-			} = await instance.post('/api/project', body);
+			} = await instance.post('/api/career', body);
 			if (status === 200) {
 				toast.success(message);
-				router.push('/dashboard/project');
+				router.push('/dashboard/career');
 			}
 		} catch (err) {
 			if (err instanceof AxiosError) {
@@ -78,15 +72,15 @@ export default function ProjectCreate() {
 				>
 					<FormField
 						control={form.control}
-						name="title"
+						name="companyName"
 						render={({ field }) => (
 							<FormItem>
 								<div className="flex gap-4 items-center">
 									<FormLabel className="flex-shrink-0 w-20">
-										제목
+										회사
 									</FormLabel>
 									<FormControl className="w-48">
-										<Input placeholder="제목" {...field} />
+										<Input placeholder="회사" {...field} />
 									</FormControl>
 									<FormMessage />
 								</div>
@@ -95,15 +89,15 @@ export default function ProjectCreate() {
 					/>
 					<FormField
 						control={form.control}
-						name="intro"
+						name="description"
 						render={({ field }) => (
 							<FormItem>
 								<div className="flex gap-4 items-center">
 									<FormLabel className="flex-shrink-0 w-20">
-										개요
+										설명
 									</FormLabel>
 									<FormControl className="w-80">
-										<Input placeholder="개요" {...field} />
+										<Input placeholder="설명" {...field} />
 									</FormControl>
 									<FormMessage />
 								</div>
@@ -112,15 +106,35 @@ export default function ProjectCreate() {
 					/>
 					<FormField
 						control={form.control}
-						name="organization"
+						name="position"
 						render={({ field }) => (
 							<FormItem>
 								<div className="flex gap-4 items-center">
 									<FormLabel className="flex-shrink-0 w-20">
-										조직
+										직무
 									</FormLabel>
 									<FormControl className="w-48">
-										<Input placeholder="조직" {...field} />
+										<Input placeholder="직무" {...field} />
+									</FormControl>
+									<FormMessage />
+								</div>
+							</FormItem>
+						)}
+					/>
+					<FormField
+						control={form.control}
+						name="duty"
+						render={({ field }) => (
+							<FormItem>
+								<div className="flex gap-4 items-center">
+									<FormLabel className="flex-shrink-0 w-20">
+										업무 상세
+									</FormLabel>
+									<FormControl className="w-80">
+										<Input
+											placeholder="업무 상세"
+											{...field}
+										/>
 									</FormControl>
 									<FormMessage />
 								</div>
@@ -134,7 +148,7 @@ export default function ProjectCreate() {
 							<FormItem>
 								<div className="flex gap-4 items-center">
 									<FormLabel className="flex-shrink-0 w-20">
-										시작일자
+										근무 시작
 									</FormLabel>
 									<FormControl className="w-40">
 										<Input type="date" {...field} />
@@ -151,73 +165,13 @@ export default function ProjectCreate() {
 							<FormItem>
 								<div className="flex gap-4 items-center">
 									<FormLabel className="flex-shrink-0 w-20">
-										종료일자
+										근무 종료
 									</FormLabel>
 									<FormControl className="w-40">
 										<Input
 											type="date"
 											{...field}
 											min={form.getValues('startDate')}
-										/>
-									</FormControl>
-									<FormMessage />
-								</div>
-							</FormItem>
-						)}
-					/>
-					<FormField
-						control={form.control}
-						name="github"
-						render={({ field }) => (
-							<FormItem>
-								<div className="flex gap-4 items-center">
-									<FormLabel className="flex-shrink-0 w-20">
-										Github
-									</FormLabel>
-									<FormControl className="w-80">
-										<Input
-											placeholder="Github"
-											{...field}
-										/>
-									</FormControl>
-									<FormMessage />
-								</div>
-							</FormItem>
-						)}
-					/>
-					<FormField
-						control={form.control}
-						name="homepage"
-						render={({ field }) => (
-							<FormItem>
-								<div className="flex gap-4 items-center">
-									<FormLabel className="flex-shrink-0 w-20">
-										Homepage
-									</FormLabel>
-									<FormControl className="w-80">
-										<Input
-											placeholder="Homepage"
-											{...field}
-										/>
-									</FormControl>
-									<FormMessage />
-								</div>
-							</FormItem>
-						)}
-					/>
-					<FormField
-						control={form.control}
-						name="notion"
-						render={({ field }) => (
-							<FormItem>
-								<div className="flex gap-4 items-center">
-									<FormLabel className="flex-shrink-0 w-20">
-										Notion
-									</FormLabel>
-									<FormControl className="w-80">
-										<Input
-											placeholder="Notion"
-											{...field}
 										/>
 									</FormControl>
 									<FormMessage />

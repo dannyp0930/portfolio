@@ -23,7 +23,7 @@ declare global {
 	}
 
 	interface CareerListProps {
-		careers: Career[];
+		careers: CareerTemp[];
 	}
 
 	interface RawProject {
@@ -50,7 +50,7 @@ declare global {
 		notion: string;
 	}
 
-	interface Career {
+	interface CareerTemp {
 		id: string;
 		companyName: string;
 		period: string;
@@ -58,10 +58,10 @@ declare global {
 		position: string;
 		duty: string;
 		content: string;
-		detail: CareerDetail[];
+		detail: CareerDetailTemp[];
 	}
 
-	interface CareerDetail {
+	interface CareerDetailTemp {
 		title: string;
 		content: string[];
 	}

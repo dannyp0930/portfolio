@@ -2,7 +2,7 @@ import api from '@/api';
 import CareerList from './CareerList';
 
 export default async function Career() {
-	const careers = (await api.getDataList('career')) as Career[];
+	const careers = (await api.getDataList('career')) as CareerTemp[];
 	return (
 		<section
 			id="career"

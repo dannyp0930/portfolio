@@ -23,15 +23,11 @@ import { toast } from 'sonner';
 import { z } from 'zod';
 
 const formSchema = z.object({
-	title: z
-		.string({ required_error: '프로젝트 제목을 입력하세요.' })
-		.min(1, { message: '프로젝트 제목을 입력하세요.' }),
-	intro: z
-		.string({ required_error: '프로젝트 개요를 입력하세요.' })
-		.min(1, { message: '프로젝트 개요를 입력하세요.' }),
+	title: z.string().min(1, { message: '프로젝트 제목을 입력하세요.' }),
+	intro: z.string().min(1, { message: '프로젝트 개요를 입력하세요.' }),
 	organization: z.string().optional(),
 	startDate: z
-		.string({ required_error: '프로젝트 시작일자를 입력하세요.' })
+		.string()
 		.min(1, { message: '프로젝트 시작일자를 입력하세요.' }),
 	endDate: z.string().optional(),
 	github: z.string().optional(),
@@ -75,7 +71,6 @@ export default function ProjectUpdate({ params }: ProjectUpdateParams) {
 	const getProject = useCallback(async () => {
 		try {
 			const params = { id: projectId };
-			console.log(projectId);
 			const {
 				data: { data },
 			} = await instance.get('/api/project', { params });
@@ -124,9 +119,12 @@ export default function ProjectUpdate({ params }: ProjectUpdateParams) {
 				startDate: dayjs(values.startDate).toDate(),
 				endDate: values.endDate ? dayjs(values.endDate).toDate() : null,
 			};
-			const { status } = await instance.put('/api/project', body);
+			const {
+				data: { message },
+				status,
+			} = await instance.put('/api/project', body);
 			if (status === 200) {
-				console.log('수정');
+				toast.success(message);
 			}
 		} catch (err) {
 			if (err instanceof AxiosError) {
@@ -146,23 +144,22 @@ export default function ProjectUpdate({ params }: ProjectUpdateParams) {
 			if (!projectDetailId) {
 				const {
 					status,
-					data: { id },
+					data: { id, message },
 				} = await instance.post('/api/project/detail', body);
 				if (status === 200) {
-					console.log('저장');
+					toast.success(message);
 					setProjectDetailId(id);
 				}
 			} else {
-				const { status } = await instance.put(
-					'/api/project/detail',
-					body
-				);
+				const {
+					data: { message },
+					status,
+				} = await instance.put('/api/project/detail', body);
 				if (status === 200) {
-					console.log('수정');
+					toast.success(message);
 				}
 			}
 		} catch (err) {
-			// todo: toast 추가(api resopnse 모두)
 			if (err instanceof AxiosError) {
 				toast.error(err.response?.data.error || 'An error occurred');
 			}
@@ -174,13 +171,12 @@ export default function ProjectUpdate({ params }: ProjectUpdateParams) {
 			const formData = new FormData();
 			formData.append('image', image);
 			formData.append('id', String(projectDetailId));
-			const { data, status } = await formInstance.post(
-				'/api/project/image',
-				formData
-			);
+			const {
+				data: { message },
+				status,
+			} = await formInstance.post('/api/project/image', formData);
 			if (status === 200) {
-				console.log(data.message);
-				console.log('이미지 추가 완료');
+				toast.success(message);
 			}
 		} catch (err) {
 			if (err instanceof AxiosError) {
@@ -196,13 +192,12 @@ export default function ProjectUpdate({ params }: ProjectUpdateParams) {
 			const formData = new FormData();
 			formData.append('image', image);
 			formData.append('id', String(imageId));
-			const { data, status } = await formInstance.put(
-				'/api/project/image',
-				formData
-			);
+			const {
+				data: { message },
+				status,
+			} = await formInstance.put('/api/project/image', formData);
 			if (status === 200) {
-				console.log(data.message);
-				console.log('이미지 수정 완료');
+				toast.success(message);
 			}
 		} catch (err) {
 			if (err instanceof AxiosError) {
@@ -426,9 +421,9 @@ export default function ProjectUpdate({ params }: ProjectUpdateParams) {
 						<Button type="submit">저장</Button>
 					</form>
 				</Form>
-				<div className="pt-5 flex flex-col gap-4">
-					<h5>이미지 추가</h5>
-					{projectDetailId && (
+				{projectDetailId && (
+					<div className="pt-5 flex flex-col gap-4">
+						<h5>이미지 추가</h5>
 						<div>
 							<ImageInput
 								id="image-create"
@@ -437,29 +432,32 @@ export default function ProjectUpdate({ params }: ProjectUpdateParams) {
 								onChange={handleCreateImage}
 							/>
 						</div>
-					)}
-					{projectImages?.map((image) => (
-						<div key={image.id} className="flex gap-4 items-center">
-							<ImageInput
-								id={`image-${image.id}`}
-								className="items-center"
-								imageUrl={image.url}
-								width={160}
-								height={90}
-								onChange={(file: File) =>
-									handleUpdateImage(file, image.id)
-								}
-							/>
-							<Button
-								variant="destructive"
-								size="icon"
-								onClick={handleDeleteImage(image.id)}
+						{projectImages?.map((image) => (
+							<div
+								key={image.id}
+								className="flex gap-4 items-center"
 							>
-								<ImageMinus />
-							</Button>
-						</div>
-					))}
-				</div>
+								<ImageInput
+									id={`image-${image.id}`}
+									className="items-center"
+									imageUrl={image.url}
+									width={160}
+									height={90}
+									onChange={(file: File) =>
+										handleUpdateImage(file, image.id)
+									}
+								/>
+								<Button
+									variant="destructive"
+									size="icon"
+									onClick={handleDeleteImage(image.id)}
+								>
+									<ImageMinus />
+								</Button>
+							</div>
+						))}
+					</div>
+				)}
 			</div>
 		</div>
 	);

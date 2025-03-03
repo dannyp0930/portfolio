@@ -8,18 +8,16 @@ export async function POST(req: NextRequest) {
 	}
 	try {
 		const { projectId, description } = await req.json();
-		await prisma.$transaction(async (prisma) => {
+		const { id } = await prisma.$transaction(async (prisma) => {
 			const { id } = await prisma.projectDetail.create({
 				data: {
 					projectId: Number(projectId),
 					description: String(description),
 				},
 			});
-			return NextResponse.json(
-				{ message: 'OK', id: id },
-				{ status: 200 }
-			);
+			return { id };
 		});
+		return NextResponse.json({ message: 'OK', id }, { status: 200 });
 	} catch (err) {
 		return NextResponse.json(
 			{ error: 'Something went wrong', details: err },
