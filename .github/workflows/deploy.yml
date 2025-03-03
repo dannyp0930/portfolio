@@ -13,6 +13,9 @@ jobs:
             - name: Checkout repository
               uses: actions/checkout@v4
 
+            - name: Remove old Docker images
+              run: docker image prune -af
+
             - name: Execute remote ssh and Deploy
               uses: appleboy/ssh-action@master
               with:
