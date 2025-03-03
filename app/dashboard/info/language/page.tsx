@@ -3,6 +3,7 @@
 import { instance } from '@/app/api/instance';
 import AdminPagination from '@/components/dashboard/AdminPagination';
 import { Button } from '@/components/ui/button';
+import { AxiosError } from 'axios';
 import dayjs from 'dayjs';
 import { useSearchParams } from 'next/navigation';
 import {
@@ -14,6 +15,7 @@ import {
 	useEffect,
 	useState,
 } from 'react';
+import { toast } from 'sonner';
 
 export default function Language() {
 	return (
@@ -46,19 +48,21 @@ function LanguageContent() {
 				examDate: dayjs(examDate).toDate(),
 				institution,
 			};
-			const { data, status } = await instance.post(
-				'/api/info/language',
-				body
-			);
+			const {
+				data: { message },
+				status,
+			} = await instance.post('/api/info/language', body);
 			if (status === 200) {
-				alert(data.message);
+				toast.success(message);
 				setLanguageName('');
 				setProficiency('');
 				setExamDate('');
 				setInstitution('');
 			}
 		} catch (err) {
-			console.error(err);
+			if (err instanceof AxiosError) {
+				toast.error(err.response?.data.error || 'An error occurred');
+			}
 		} finally {
 			setLoad(true);
 		}
@@ -71,17 +75,19 @@ function LanguageContent() {
 				...updateLanguage,
 				examDate: dayjs(updateLanguage?.examDate).toDate(),
 			};
-			const { data, status } = await instance.put(
-				'/api/info/language',
-				body
-			);
+			const {
+				data: { message },
+				status,
+			} = await instance.put('/api/info/language', body);
 			if (status === 200) {
-				alert(data.message);
+				toast.success(message);
 				setUpdateLanguageId(null);
 				setUpdateLanguage(null);
 			}
 		} catch (err) {
-			console.error(err);
+			if (err instanceof AxiosError) {
+				toast.error(err.response?.data.error || 'An error occurred');
+			}
 		} finally {
 			setLoad(true);
 		}
@@ -92,17 +98,21 @@ function LanguageContent() {
 			e.preventDefault();
 			try {
 				const body = { id: languageId };
-				const { data, status } = await instance.delete(
-					'/api/info/language',
-					{ data: body }
-				);
+				const {
+					data: { message },
+					status,
+				} = await instance.delete('/api/info/language', { data: body });
 				if (status === 200) {
-					alert(data.message);
+					toast.success(message);
 					setUpdateLanguageId(null);
 					setUpdateLanguage(null);
 				}
 			} catch (err) {
-				console.error(err);
+				if (err instanceof AxiosError) {
+					toast.error(
+						err.response?.data.error || 'An error occurred'
+					);
+				}
 			} finally {
 				setLoad(true);
 			}
@@ -144,7 +154,9 @@ function LanguageContent() {
 			setTotalCnt(totalCnt);
 			setLoad(false);
 		} catch (err) {
-			console.error(err);
+			if (err instanceof AxiosError) {
+				toast.error(err.response?.data.error || 'An error occurred');
+			}
 		}
 	}, [selectPage, take]);
 

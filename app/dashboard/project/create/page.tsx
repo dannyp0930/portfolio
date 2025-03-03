@@ -12,9 +12,11 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { AxiosError } from 'axios';
 import dayjs from 'dayjs';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 import { z } from 'zod';
 
 const formSchema = z.object({
@@ -63,7 +65,9 @@ export default function ProjectCreate() {
 				router.push('/dashboard/project');
 			}
 		} catch (err) {
-			console.error(err);
+			if (err instanceof AxiosError) {
+				toast.error(err.response?.data.error || 'An error occurred');
+			}
 		}
 	}
 	return (

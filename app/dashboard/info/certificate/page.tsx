@@ -3,6 +3,7 @@
 import { instance } from '@/app/api/instance';
 import AdminPagination from '@/components/dashboard/AdminPagination';
 import { Button } from '@/components/ui/button';
+import { AxiosError } from 'axios';
 import dayjs from 'dayjs';
 import { useSearchParams } from 'next/navigation';
 import {
@@ -14,6 +15,7 @@ import {
 	useEffect,
 	useState,
 } from 'react';
+import { toast } from 'sonner';
 
 export default function Certificate() {
 	return (
@@ -47,18 +49,20 @@ function CertificateContent() {
 				issueDate: dayjs(issueDate).toDate(),
 				issuingOrganization,
 			};
-			const { data, status } = await instance.post(
-				'/api/info/certificate',
-				body
-			);
+			const {
+				data: { message },
+				status,
+			} = await instance.post('/api/info/certificate', body);
 			if (status === 200) {
-				alert(data.message);
+				toast.success(message);
 				setCertificateName('');
 				setIssueDate('');
 				setIssuingOrganization('');
 			}
 		} catch (err) {
-			console.error(err);
+			if (err instanceof AxiosError) {
+				toast.error(err.response?.data.error || 'An error occurred');
+			}
 		} finally {
 			setLoad(true);
 		}
@@ -71,17 +75,19 @@ function CertificateContent() {
 				...updateCertificate,
 				issueDate: dayjs(updateCertificate?.issueDate).toDate(),
 			};
-			const { data, status } = await instance.put(
-				'/api/info/certificate',
-				body
-			);
+			const {
+				data: { message },
+				status,
+			} = await instance.put('/api/info/certificate', body);
 			if (status === 200) {
-				alert(data.message);
+				toast.success(message);
 				setUpdateCertificateId(null);
 				setUpdateCertificate(null);
 			}
 		} catch (err) {
-			console.error(err);
+			if (err instanceof AxiosError) {
+				toast.error(err.response?.data.error || 'An error occurred');
+			}
 		} finally {
 			setLoad(true);
 		}
@@ -92,17 +98,23 @@ function CertificateContent() {
 			e.preventDefault();
 			try {
 				const body = { id: certificateId };
-				const { data, status } = await instance.delete(
-					'/api/info/certificate',
-					{ data: body }
-				);
+				const {
+					data: { message },
+					status,
+				} = await instance.delete('/api/info/certificate', {
+					data: body,
+				});
 				if (status === 200) {
-					alert(data.message);
+					toast.success(message);
 					setUpdateCertificateId(null);
 					setUpdateCertificate(null);
 				}
 			} catch (err) {
-				console.error(err);
+				if (err instanceof AxiosError) {
+					toast.error(
+						err.response?.data.error || 'An error occurred'
+					);
+				}
 			} finally {
 				setLoad(true);
 			}
@@ -144,7 +156,9 @@ function CertificateContent() {
 			setTotalCnt(totalCnt);
 			setLoad(false);
 		} catch (err) {
-			console.error(err);
+			if (err instanceof AxiosError) {
+				toast.error(err.response?.data.error || 'An error occurred');
+			}
 		}
 	}, [selectPage, take]);
 

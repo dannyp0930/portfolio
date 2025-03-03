@@ -3,6 +3,7 @@
 import { instance } from '@/app/api/instance';
 import AdminPagination from '@/components/dashboard/AdminPagination';
 import { Button } from '@/components/ui/button';
+import { AxiosError } from 'axios';
 import dayjs from 'dayjs';
 import { useSearchParams } from 'next/navigation';
 import {
@@ -14,6 +15,7 @@ import {
 	useEffect,
 	useState,
 } from 'react';
+import { toast } from 'sonner';
 
 export default function Experience() {
 	return (
@@ -49,19 +51,21 @@ function ExperienceContent() {
 				startDate: dayjs(startDate).toDate(),
 				endDate: dayjs(endDate).toDate(),
 			};
-			const { data, status } = await instance.post(
-				'/api/info/experience',
-				body
-			);
+			const {
+				data: { message },
+				status,
+			} = await instance.post('/api/info/experience', body);
 			if (status === 200) {
-				alert(data.message);
+				toast.success(message);
 				setOrganization('');
 				setDescription('');
 				setStartDate('');
 				setEndDate('');
 			}
 		} catch (err) {
-			console.error(err);
+			if (err instanceof AxiosError) {
+				toast.error(err.response?.data.error || 'An error occurred');
+			}
 		} finally {
 			setLoad(true);
 		}
@@ -75,17 +79,19 @@ function ExperienceContent() {
 				startDate: dayjs(updateExperience?.startDate).toDate(),
 				endDate: dayjs(updateExperience?.endDate).toDate(),
 			};
-			const { data, status } = await instance.put(
-				'/api/info/experience',
-				body
-			);
+			const {
+				data: { message },
+				status,
+			} = await instance.put('/api/info/experience', body);
 			if (status === 200) {
-				alert(data.message);
+				toast.success(message);
 				setUpdateExperienceId(null);
 				setUpdateExperience(null);
 			}
 		} catch (err) {
-			console.error(err);
+			if (err instanceof AxiosError) {
+				toast.error(err.response?.data.error || 'An error occurred');
+			}
 		} finally {
 			setLoad(true);
 		}
@@ -96,17 +102,23 @@ function ExperienceContent() {
 			e.preventDefault();
 			try {
 				const body = { id: experienceId };
-				const { data, status } = await instance.delete(
-					'/api/info/experience',
-					{ data: body }
-				);
+				const {
+					data: { message },
+					status,
+				} = await instance.delete('/api/info/experience', {
+					data: body,
+				});
 				if (status === 200) {
-					alert(data.message);
+					toast.success(message);
 					setUpdateExperienceId(null);
 					setUpdateExperience(null);
 				}
 			} catch (err) {
-				console.error(err);
+				if (err instanceof AxiosError) {
+					toast.error(
+						err.response?.data.error || 'An error occurred'
+					);
+				}
 			} finally {
 				setLoad(true);
 			}
@@ -148,7 +160,9 @@ function ExperienceContent() {
 			setTotalCnt(totalCnt);
 			setLoad(false);
 		} catch (err) {
-			console.error(err);
+			if (err instanceof AxiosError) {
+				toast.error(err.response?.data.error || 'An error occurred');
+			}
 		}
 	}, [selectPage, take]);
 

@@ -14,10 +14,12 @@ import {
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { AxiosError } from 'axios';
 import dayjs from 'dayjs';
 import { ImageMinus } from 'lucide-react';
 import { MouseEvent, use, useCallback, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 import { z } from 'zod';
 
 const formSchema = z.object({
@@ -102,7 +104,9 @@ export default function ProjectUpdate({ params }: ProjectUpdateParams) {
 			setProjectImages(data.projectImages);
 			setLoad(false);
 		} catch (err) {
-			console.error(err);
+			if (err instanceof AxiosError) {
+				toast.error(err.response?.data.error || 'An error occurred');
+			}
 		}
 	}, [detailForm, form, projectId]);
 
@@ -125,7 +129,9 @@ export default function ProjectUpdate({ params }: ProjectUpdateParams) {
 				console.log('수정');
 			}
 		} catch (err) {
-			console.error(err);
+			if (err instanceof AxiosError) {
+				toast.error(err.response?.data.error || 'An error occurred');
+			}
 		}
 	}
 
@@ -157,7 +163,9 @@ export default function ProjectUpdate({ params }: ProjectUpdateParams) {
 			}
 		} catch (err) {
 			// todo: toast 추가(api resopnse 모두)
-			console.error(err);
+			if (err instanceof AxiosError) {
+				toast.error(err.response?.data.error || 'An error occurred');
+			}
 		}
 	}
 
@@ -175,7 +183,9 @@ export default function ProjectUpdate({ params }: ProjectUpdateParams) {
 				console.log('이미지 추가 완료');
 			}
 		} catch (err) {
-			console.error(err);
+			if (err instanceof AxiosError) {
+				toast.error(err.response?.data.error || 'An error occurred');
+			}
 		} finally {
 			setLoad(true);
 		}
@@ -195,7 +205,9 @@ export default function ProjectUpdate({ params }: ProjectUpdateParams) {
 				console.log('이미지 수정 완료');
 			}
 		} catch (err) {
-			console.error(err);
+			if (err instanceof AxiosError) {
+				toast.error(err.response?.data.error || 'An error occurred');
+			}
 		} finally {
 			setLoad(true);
 		}
@@ -206,15 +218,19 @@ export default function ProjectUpdate({ params }: ProjectUpdateParams) {
 			e.preventDefault();
 			try {
 				const body = { id: imageId };
-				const { data, status } = await instance.delete(
-					'/api/project/image',
-					{ data: body }
-				);
+				const {
+					data: { message },
+					status,
+				} = await instance.delete('/api/project/image', { data: body });
 				if (status === 200) {
-					alert(data.message);
+					toast.success(message);
 				}
 			} catch (err) {
-				console.error(err);
+				if (err instanceof AxiosError) {
+					toast.error(
+						err.response?.data.error || 'An error occurred'
+					);
+				}
 			} finally {
 				setLoad(true);
 			}

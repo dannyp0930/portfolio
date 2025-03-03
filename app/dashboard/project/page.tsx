@@ -3,10 +3,12 @@
 import { instance } from '@/app/api/instance';
 import AdminPagination from '@/components/dashboard/AdminPagination';
 import { Button } from '@/components/ui/button';
+import { AxiosError } from 'axios';
 import dayjs from 'dayjs';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { MouseEvent, Suspense, useCallback, useEffect, useState } from 'react';
+import { toast } from 'sonner';
 
 export default function Project() {
 	return (
@@ -29,14 +31,21 @@ function ProjectComponent() {
 			e.preventDefault();
 			try {
 				const body = { id: projectId };
-				const { data, status } = await instance.delete('/api/project', {
+				const {
+					data: { message },
+					status,
+				} = await instance.delete('/api/project', {
 					data: body,
 				});
 				if (status === 200) {
-					alert(data.message);
+					toast.success(message);
 				}
 			} catch (err) {
-				console.error(err);
+				if (err instanceof AxiosError) {
+					toast.error(
+						err.response?.data.error || 'An error occurred'
+					);
+				}
 			} finally {
 				setLoad(true);
 			}

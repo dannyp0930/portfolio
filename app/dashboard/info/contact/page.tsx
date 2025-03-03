@@ -3,6 +3,7 @@
 import { instance } from '@/app/api/instance';
 import AdminPagination from '@/components/dashboard/AdminPagination';
 import { Button } from '@/components/ui/button';
+import { AxiosError } from 'axios';
 import { useSearchParams } from 'next/navigation';
 import {
 	ChangeEvent,
@@ -13,6 +14,7 @@ import {
 	useEffect,
 	useState,
 } from 'react';
+import { toast } from 'sonner';
 
 export default function Contact() {
 	return (
@@ -39,18 +41,20 @@ function ContactContent() {
 		e.preventDefault();
 		try {
 			const body = { type, value, label };
-			const { data, status } = await instance.post(
-				'/api/info/contact',
-				body
-			);
+			const {
+				data: { message },
+				status,
+			} = await instance.post('/api/info/contact', body);
 			if (status === 200) {
-				alert(data.message);
+				toast.success(message);
 				setType('');
 				setValue('');
 				setLabel('');
 			}
 		} catch (err) {
-			console.error(err);
+			if (err instanceof AxiosError) {
+				toast.error(err.response?.data.error || 'An error occurred');
+			}
 		} finally {
 			setLoad(true);
 		}
@@ -60,17 +64,19 @@ function ContactContent() {
 		e.preventDefault();
 		try {
 			const body = { ...updateContact };
-			const { data, status } = await instance.put(
-				'/api/info/contact',
-				body
-			);
+			const {
+				data: { message },
+				status,
+			} = await instance.put('/api/info/contact', body);
 			if (status === 200) {
-				alert(data.message);
+				toast.success(message);
 				setUpdateContactId(null);
 				setUpdateContact(null);
 			}
 		} catch (err) {
-			console.error(err);
+			if (err instanceof AxiosError) {
+				toast.error(err.response?.data.error || 'An error occurred');
+			}
 		} finally {
 			setLoad(true);
 		}
@@ -81,17 +87,21 @@ function ContactContent() {
 			e.preventDefault();
 			try {
 				const body = { id: contactId };
-				const { data, status } = await instance.delete(
-					'/api/info/contact',
-					{ data: body }
-				);
+				const {
+					data: { message },
+					status,
+				} = await instance.delete('/api/info/contact', { data: body });
 				if (status === 200) {
-					alert(data.message);
+					toast.success(message);
 					setUpdateContactId(null);
 					setUpdateContact(null);
 				}
 			} catch (err) {
-				console.error(err);
+				if (err instanceof AxiosError) {
+					toast.error(
+						err.response?.data.error || 'An error occurred'
+					);
+				}
 			} finally {
 				setLoad(true);
 			}
@@ -133,7 +143,9 @@ function ContactContent() {
 			setTotalCnt(totalCnt);
 			setLoad(false);
 		} catch (err) {
-			console.error(err);
+			if (err instanceof AxiosError) {
+				toast.error(err.response?.data.error || 'An error occurred');
+			}
 		}
 	}, [selectPage, take]);
 

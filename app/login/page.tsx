@@ -24,7 +24,9 @@ export default function Login() {
 				router.push('/');
 			}
 		} catch (err) {
-			console.error(err);
+			if (err instanceof AxiosError) {
+				toast.error(err.response?.data.error || 'An error occurred');
+			}
 		}
 	}
 

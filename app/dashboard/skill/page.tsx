@@ -4,6 +4,7 @@ import { formInstance, instance } from '@/app/api/instance';
 import ImageInput from '@/components/common/ImageInput';
 import AdminPagination from '@/components/dashboard/AdminPagination';
 import { Button } from '@/components/ui/button';
+import { AxiosError } from 'axios';
 import Image from 'next/image';
 import { useSearchParams } from 'next/navigation';
 import {
@@ -15,6 +16,7 @@ import {
 	useEffect,
 	useState,
 } from 'react';
+import { toast } from 'sonner';
 
 export default function Skill() {
 	return (
@@ -51,12 +53,12 @@ function SkillComponent() {
 				formData.append('image', image);
 			}
 			formData.append('category', category);
-			const { data, status } = await formInstance.post(
-				'/api/skill',
-				formData
-			);
+			const {
+				data: { message },
+				status,
+			} = await formInstance.post('/api/skill', formData);
 			if (status === 200) {
-				alert(data.message);
+				toast.success(message);
 				setTitle('');
 				setDescription('');
 				setLevel(1);
@@ -64,7 +66,9 @@ function SkillComponent() {
 				setCategory('');
 			}
 		} catch (err) {
-			console.error(err);
+			if (err instanceof AxiosError) {
+				toast.error(err.response?.data.error || 'An error occurred');
+			}
 		} finally {
 			setLoad(true);
 		}
@@ -86,19 +90,21 @@ function SkillComponent() {
 					formData.append('category', updateSkill.category);
 				if (newImage) formData.append('image', newImage);
 			}
-			const { data, status } = await formInstance.put(
-				'/api/skill',
-				formData
-			);
+			const {
+				data: { message },
+				status,
+			} = await formInstance.put('/api/skill', formData);
 			if (status === 200) {
-				alert(data.message);
+				toast.success(message);
 				setUpdateSkillId(null);
 				setUpdateSkill(null);
 				setNewImage(null);
 				console.log('update 완료', load);
 			}
 		} catch (err) {
-			console.error(err);
+			if (err instanceof AxiosError) {
+				toast.error(err.response?.data.error || 'An error occurred');
+			}
 		} finally {
 			setLoad(true);
 		}
@@ -109,16 +115,23 @@ function SkillComponent() {
 			e.preventDefault();
 			try {
 				const body = { id: skillId };
-				const { data, status } = await instance.delete('/api/skill', {
+				const {
+					data: { message },
+					status,
+				} = await instance.delete('/api/skill', {
 					data: body,
 				});
 				if (status === 200) {
-					alert(data.message);
+					toast.success(message);
 					setUpdateSkillId(null);
 					setUpdateSkill(null);
 				}
 			} catch (err) {
-				console.error(err);
+				if (err instanceof AxiosError) {
+					toast.error(
+						err.response?.data.error || 'An error occurred'
+					);
+				}
 			} finally {
 				setLoad(true);
 			}

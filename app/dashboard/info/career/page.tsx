@@ -3,6 +3,7 @@
 import { instance } from '@/app/api/instance';
 import AdminPagination from '@/components/dashboard/AdminPagination';
 import { Button } from '@/components/ui/button';
+import { AxiosError } from 'axios';
 import dayjs from 'dayjs';
 import { useSearchParams } from 'next/navigation';
 import {
@@ -14,6 +15,7 @@ import {
 	useEffect,
 	useState,
 } from 'react';
+import { toast } from 'sonner';
 
 export default function Career() {
 	return (
@@ -48,12 +50,12 @@ function CareerContent() {
 				startDate: dayjs(startDate).toDate(),
 				endDate: dayjs(endDate).toDate(),
 			};
-			const { data, status } = await instance.post(
-				'/api/info/career',
-				body
-			);
+			const {
+				data: { message },
+				status,
+			} = await instance.post('/api/info/career', body);
 			if (status === 200) {
-				alert(data.message);
+				toast.success(message);
 				setOrganization('');
 				setPosition('');
 				setDescription('');
@@ -61,7 +63,9 @@ function CareerContent() {
 				setEndDate('');
 			}
 		} catch (err) {
-			console.error(err);
+			if (err instanceof AxiosError) {
+				toast.error(err.response?.data.error || 'An error occurred');
+			}
 		} finally {
 			setLoad(true);
 		}
@@ -75,17 +79,19 @@ function CareerContent() {
 				startDate: dayjs(updateCareer?.startDate).toDate(),
 				endDate: dayjs(updateCareer?.endDate).toDate(),
 			};
-			const { data, status } = await instance.put(
-				'/api/info/career',
-				body
-			);
+			const {
+				data: { message },
+				status,
+			} = await instance.put('/api/info/career', body);
 			if (status === 200) {
-				alert(data.message);
+				toast.success(message);
 				setUpdateCareerId(null);
 				setUpdateCareer(null);
 			}
 		} catch (err) {
-			console.error(err);
+			if (err instanceof AxiosError) {
+				toast.error(err.response?.data.error || 'An error occurred');
+			}
 		} finally {
 			setLoad(true);
 		}
@@ -96,17 +102,21 @@ function CareerContent() {
 			e.preventDefault();
 			try {
 				const body = { id: careerId };
-				const { data, status } = await instance.delete(
-					'/api/info/career',
-					{ data: body }
-				);
+				const {
+					data: { message },
+					status,
+				} = await instance.delete('/api/info/career', { data: body });
 				if (status === 200) {
-					alert(data.message);
+					toast.success(message);
 					setUpdateCareerId(null);
 					setUpdateCareer(null);
 				}
 			} catch (err) {
-				console.error(err);
+				if (err instanceof AxiosError) {
+					toast.error(
+						err.response?.data.error || 'An error occurred'
+					);
+				}
 			} finally {
 				setLoad(true);
 			}
@@ -148,7 +158,9 @@ function CareerContent() {
 			setTotalCnt(totalCnt);
 			setLoad(false);
 		} catch (err) {
-			console.error(err);
+			if (err instanceof AxiosError) {
+				toast.error(err.response?.data.error || 'An error occurred');
+			}
 		}
 	}, [selectPage, take]);
 
@@ -333,9 +345,10 @@ function CareerContent() {
 										)}
 									</td>
 									<td>
-										{dayjs(career.endDate).format(
-											'YYYY.MM.DD'
-										)}
+										{career.endDate &&
+											dayjs(career.endDate).format(
+												'YYYY.MM.DD'
+											)}
 									</td>
 									<td>
 										<div className="flex gap-2 justify-center">

@@ -32,7 +32,11 @@ export default function ImageInputList({
 				setNewImages(newImageList);
 				onChange(newImageList);
 			} catch (err) {
-				console.error(err);
+				if (err instanceof AxiosError) {
+					toast.error(
+						err.response?.data.error || 'An error occurred'
+					);
+				}
 			}
 		}
 	}
@@ -48,7 +52,11 @@ export default function ImageInputList({
 					prevImages.filter((_, i) => i !== index)
 				);
 			} catch (err) {
-				console.error(err);
+				if (err instanceof AxiosError) {
+					toast.error(
+						err.response?.data.error || 'An error occurred'
+					);
+				}
 			}
 		};
 	}

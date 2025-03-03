@@ -9,8 +9,6 @@ export async function POST(req: NextRequest) {
 		return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
 	}
 	const data = await req.json();
-	console.log(data);
-
 	try {
 		await prisma.careerOverview.create({ data });
 		return NextResponse.json({ message: 'OK' }, { status: 200 });
@@ -27,7 +25,6 @@ export async function PUT(req: NextRequest) {
 		return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
 	}
 	const data = await req.json();
-
 	try {
 		await prisma.careerOverview.update({
 			where: { id: Number(data.id) },
@@ -47,7 +44,6 @@ export async function GET(req: NextRequest) {
 	const id = searchParams.get('id');
 	const page = parseInt(searchParams.get('page') as string);
 	const take = parseInt(searchParams.get('take') as string);
-
 	try {
 		if (id) {
 			const careerOverview = await prisma.careerOverview.findUnique({
@@ -77,7 +73,6 @@ export async function DELETE(req: NextRequest) {
 		return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
 	}
 	const { id } = await req.json();
-
 	try {
 		await prisma.careerOverview.delete({
 			where: { id: Number(id) },

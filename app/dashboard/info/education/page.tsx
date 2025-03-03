@@ -3,6 +3,7 @@
 import { instance } from '@/app/api/instance';
 import AdminPagination from '@/components/dashboard/AdminPagination';
 import { Button } from '@/components/ui/button';
+import { AxiosError } from 'axios';
 import dayjs from 'dayjs';
 import { useSearchParams } from 'next/navigation';
 import {
@@ -14,6 +15,7 @@ import {
 	useEffect,
 	useState,
 } from 'react';
+import { toast } from 'sonner';
 
 export default function Education() {
 	return (
@@ -46,19 +48,21 @@ function EducationContent() {
 				startDate: dayjs(startDate).toDate(),
 				endDate: dayjs(endDate).toDate(),
 			};
-			const { data, status } = await instance.post(
-				'/api/info/education',
-				body
-			);
+			const {
+				data: { message },
+				status,
+			} = await instance.post('/api/info/education', body);
 			if (status === 200) {
-				alert(data.message);
+				toast.success(message);
 				setInstitutionName('');
 				setDegreeStatus('');
 				setStartDate('');
 				setEndDate('');
 			}
 		} catch (err) {
-			console.error(err);
+			if (err instanceof AxiosError) {
+				toast.error(err.response?.data.error || 'An error occurred');
+			}
 		} finally {
 			setLoad(true);
 		}
@@ -72,17 +76,19 @@ function EducationContent() {
 				startDate: dayjs(updateEducation?.startDate).toDate(),
 				endDate: dayjs(updateEducation?.endDate).toDate(),
 			};
-			const { data, status } = await instance.put(
-				'/api/info/education',
-				body
-			);
+			const {
+				data: { message },
+				status,
+			} = await instance.put('/api/info/education', body);
 			if (status === 200) {
-				alert(data.message);
+				toast.success(message);
 				setUpdateEducationId(null);
 				setUpdateEducation(null);
 			}
 		} catch (err) {
-			console.error(err);
+			if (err instanceof AxiosError) {
+				toast.error(err.response?.data.error || 'An error occurred');
+			}
 		} finally {
 			setLoad(true);
 		}
@@ -93,17 +99,23 @@ function EducationContent() {
 			e.preventDefault();
 			try {
 				const body = { id: educationId };
-				const { data, status } = await instance.delete(
-					'/api/info/education',
-					{ data: body }
-				);
+				const {
+					data: { message },
+					status,
+				} = await instance.delete('/api/info/education', {
+					data: body,
+				});
 				if (status === 200) {
-					alert(data.message);
+					toast.success(message);
 					setUpdateEducationId(null);
 					setUpdateEducation(null);
 				}
 			} catch (err) {
-				console.error(err);
+				if (err instanceof AxiosError) {
+					toast.error(
+						err.response?.data.error || 'An error occurred'
+					);
+				}
 			} finally {
 				setLoad(true);
 			}
@@ -145,7 +157,9 @@ function EducationContent() {
 			setTotalCnt(totalCnt);
 			setLoad(false);
 		} catch (err) {
-			console.error(err);
+			if (err instanceof AxiosError) {
+				toast.error(err.response?.data.error || 'An error occurred');
+			}
 		}
 	}, [selectPage, take]);
 
