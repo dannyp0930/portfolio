@@ -1,8 +1,6 @@
 import jwt from 'jsonwebtoken';
-import { PrismaClient } from '@prisma/client';
 import { NextRequest } from 'next/server';
-
-const prisma = new PrismaClient();
+import prisma from '@/lib/prisma';
 
 const SECRET_KEY = process.env.JWT_SECRET!;
 

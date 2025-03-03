@@ -1,10 +1,8 @@
-import deleteFromS3 from '@/lib/deleteFromS3';
+import { NextRequest, NextResponse } from 'next/server';
 import { isAdmin } from '@/lib/isAdmin';
 import uploadToS3 from '@/lib/uploadToS3';
-import { PrismaClient } from '@prisma/client';
-import { NextRequest, NextResponse } from 'next/server';
-
-const prisma = new PrismaClient();
+import deleteFromS3 from '@/lib/deleteFromS3';
+import prisma from '@/lib/prisma';
 
 export async function POST(req: NextRequest) {
 	if (!isAdmin(req)) {
@@ -33,12 +31,12 @@ export async function POST(req: NextRequest) {
 			});
 		});
 		return NextResponse.json({ message: 'OK' }, { status: 200 });
-	} catch {
+	} catch (err) {
 		if (imageUrl) {
 			await deleteFromS3(imageUrl);
 		}
 		return NextResponse.json(
-			{ error: 'Something went wrong' },
+			{ error: 'Something went wrong', details: err },
 			{ status: 500 }
 		);
 	}
@@ -88,12 +86,12 @@ export async function PUT(req: NextRequest) {
 			await deleteFromS3(existingImageUrl);
 		}
 		return NextResponse.json({ message: 'OK' }, { status: 200 });
-	} catch {
+	} catch (err) {
 		if (newImageUrl) {
 			await deleteFromS3(newImageUrl);
 		}
 		return NextResponse.json(
-			{ error: 'Something went wrong' },
+			{ error: 'Something went wrong', details: err },
 			{ status: 500 }
 		);
 	}
@@ -104,7 +102,6 @@ export async function GET(req: NextRequest) {
 	const id = searchParams.get('id');
 	const page = parseInt(searchParams.get('page') as string);
 	const take = parseInt(searchParams.get('take') as string);
-
 	try {
 		if (id) {
 			const skill = await prisma.skill.findUnique({
@@ -133,9 +130,9 @@ export async function GET(req: NextRequest) {
 		});
 		const totalCnt = await prisma.skill.count();
 		return NextResponse.json({ data: skills, totalCnt }, { status: 200 });
-	} catch {
+	} catch (err) {
 		return NextResponse.json(
-			{ error: 'Something went wrong' },
+			{ error: 'Something went wrong', details: err },
 			{ status: 500 }
 		);
 	}
@@ -167,12 +164,12 @@ export async function DELETE(req: NextRequest) {
 			});
 		});
 		return NextResponse.json({ message: 'OK' }, { status: 200 });
-	} catch {
+	} catch (err) {
 		if (imageUrl) {
 			await uploadToS3(Buffer.from(''), 'skill', imageUrl);
 		}
 		return NextResponse.json(
-			{ error: 'Something went wrong' },
+			{ error: 'Something went wrong', details: err },
 			{ status: 500 }
 		);
 	}

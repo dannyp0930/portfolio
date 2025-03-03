@@ -1,10 +1,8 @@
 import deleteFromS3 from '@/lib/deleteFromS3';
 import { isAdmin } from '@/lib/isAdmin';
 import uploadToS3 from '@/lib/uploadToS3';
-import { PrismaClient } from '@prisma/client';
 import { NextRequest, NextResponse } from 'next/server';
-
-const prisma = new PrismaClient();
+import prisma from '@/lib/prisma';
 
 export async function POST(req: NextRequest) {
 	if (!isAdmin(req)) {
@@ -30,12 +28,12 @@ export async function POST(req: NextRequest) {
 			});
 		});
 		return NextResponse.json({ message: 'OK' }, { status: 200 });
-	} catch {
+	} catch (err) {
 		if (imageUrl) {
 			await deleteFromS3(imageUrl);
 		}
 		return NextResponse.json(
-			{ error: 'Something went wrong' },
+			{ error: 'Something went wrong', details: err },
 			{ status: 500 }
 		);
 	}
@@ -77,12 +75,12 @@ export async function PUT(req: NextRequest) {
 			await deleteFromS3(existingImageUrl);
 		}
 		return NextResponse.json({ message: 'OK' }, { status: 200 });
-	} catch {
+	} catch (err) {
 		if (newImageUrl) {
 			await deleteFromS3(newImageUrl);
 		}
 		return NextResponse.json(
-			{ error: 'Something went wrong' },
+			{ error: 'Something went wrong', details: err },
 			{ status: 500 }
 		);
 	}
@@ -112,12 +110,12 @@ export async function DELETE(req: NextRequest) {
 			await prisma.projectImage.delete({ where: { id: Number(id) } });
 		});
 		return NextResponse.json({ message: 'OK' }, { status: 200 });
-	} catch {
+	} catch (err) {
 		if (imageUrl) {
 			await uploadToS3(Buffer.from(''), 'project', imageUrl);
 		}
 		return NextResponse.json(
-			{ error: 'Something went wrong' },
+			{ error: 'Something went wrong', details: err },
 			{ status: 500 }
 		);
 	}

@@ -1,24 +1,21 @@
-import deleteFromS3 from '@/lib/deleteFromS3';
-import { isAdmin } from '@/lib/isAdmin';
-import { PrismaClient } from '@prisma/client';
 import { NextRequest, NextResponse } from 'next/server';
-
-const prisma = new PrismaClient();
+import { isAdmin } from '@/lib/isAdmin';
+import deleteFromS3 from '@/lib/deleteFromS3';
+import prisma from '@/lib/prisma';
 
 export async function POST(req: NextRequest) {
 	if (!isAdmin(req)) {
 		return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
 	}
-
 	try {
 		const data = await req.json();
 		await prisma.$transaction(async (prisma) => {
 			await prisma.project.create({ data });
 		});
 		return NextResponse.json({ message: 'OK' }, { status: 200 });
-	} catch {
+	} catch (err) {
 		return NextResponse.json(
-			{ error: 'Something went wrong' },
+			{ error: 'Something went wrong', details: err },
 			{ status: 500 }
 		);
 	}
@@ -35,9 +32,8 @@ export async function PUT(req: NextRequest) {
 		});
 		return NextResponse.json({ message: 'OK' }, { status: 200 });
 	} catch (err) {
-		console.log(err);
 		return NextResponse.json(
-			{ error: 'Something went wrong' },
+			{ error: 'Something went wrong', details: err },
 			{ status: 500 }
 		);
 	}
@@ -84,9 +80,8 @@ export async function GET(req: NextRequest) {
 		const totalCnt = await prisma.project.count();
 		return NextResponse.json({ data: projects, totalCnt }, { status: 200 });
 	} catch (err) {
-		console.log(err);
 		return NextResponse.json(
-			{ error: 'Something went wrong' },
+			{ error: 'Something went wrong', details: err },
 			{ status: 500 }
 		);
 	}
@@ -96,57 +91,46 @@ export async function DELETE(req: NextRequest) {
 	if (!isAdmin(req)) {
 		return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
 	}
-
 	const { id } = await req.json();
-
 	try {
 		const projectDetail = await prisma.projectDetail.findUnique({
 			where: { projectId: Number(id) },
 		});
-
 		if (!projectDetail) {
 			return NextResponse.json(
 				{ error: 'Project not found' },
 				{ status: 404 }
 			);
 		}
-
 		const projectImages = await prisma.projectImage.findMany({
 			where: { projectDetailId: Number(projectDetail.id) },
 		});
-
 		const s3DeleteResults = await Promise.allSettled(
 			projectImages.map(async (image) => {
 				await deleteFromS3(image.url);
 			})
 		);
-
 		const s3DeleteFailed = s3DeleteResults.some(
 			(result) => result.status === 'rejected'
 		);
-
 		if (s3DeleteFailed) {
 			throw new Error('Failed to delete some images from S3');
 		}
-
 		await prisma.$transaction(async (prisma) => {
 			await prisma.projectImage.deleteMany({
 				where: { projectDetailId: Number(projectDetail.id) },
 			});
-
 			await prisma.projectDetail.delete({
 				where: { id: Number(projectDetail.id) },
 			});
-
 			await prisma.project.delete({
 				where: { id: Number(id) },
 			});
 		});
-
 		return NextResponse.json({ message: 'OK' }, { status: 200 });
-	} catch {
+	} catch (err) {
 		return NextResponse.json(
-			{ error: 'Something went wrong' },
+			{ error: 'Something went wrong', details: err },
 			{ status: 500 }
 		);
 	}

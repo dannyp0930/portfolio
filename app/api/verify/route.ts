@@ -1,9 +1,7 @@
-import { PrismaClient } from '@prisma/client';
-import jwt, { JwtPayload } from 'jsonwebtoken';
-import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
-
-const prisma = new PrismaClient();
+import { cookies } from 'next/headers';
+import jwt, { JwtPayload } from 'jsonwebtoken';
+import prisma from '@/lib/prisma';
 
 export async function POST() {
 	const cookieStore = await cookies();
@@ -11,7 +9,6 @@ export async function POST() {
 	if (!accessToken) {
 		return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 	}
-
 	try {
 		const decoded = jwt.verify(
 			accessToken,
@@ -20,7 +17,6 @@ export async function POST() {
 		const user = await prisma.user.findUnique({
 			where: { id: decoded.userId },
 		});
-
 		if (user) {
 			return NextResponse.json(
 				{
@@ -37,7 +33,10 @@ export async function POST() {
 				{ status: 404 }
 			);
 		}
-	} catch {
-		return NextResponse.json({ error: 'Invalid token' }, { status: 401 });
+	} catch (err) {
+		return NextResponse.json(
+			{ error: 'Invalid token', details: err },
+			{ status: 401 }
+		);
 	}
 }

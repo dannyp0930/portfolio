@@ -1,9 +1,7 @@
-import { PrismaClient } from '@prisma/client';
-import jwt, { JwtPayload } from 'jsonwebtoken';
-import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
-
-const prisma = new PrismaClient();
+import { cookies } from 'next/headers';
+import jwt, { JwtPayload } from 'jsonwebtoken';
+import prisma from '@/lib/prisma';
 
 export async function POST() {
 	const cookieStore = await cookies();
@@ -11,17 +9,14 @@ export async function POST() {
 	if (!refreshToken) {
 		return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 	}
-
 	try {
 		const decoded = jwt.verify(
 			refreshToken,
 			process.env.JWT_REFRESH_SECRET!
 		) as JwtPayload;
-
 		const user = await prisma.user.findUnique({
 			where: { id: decoded.userId },
 		});
-
 		if (user && user.refreshToken === refreshToken) {
 			const newAccessToken = jwt.sign(
 				{ userId: user.id },
@@ -34,7 +29,6 @@ export async function POST() {
 				path: '/',
 				maxAge: 60 * 60,
 			});
-
 			return NextResponse.json(
 				{
 					user: {
@@ -50,10 +44,10 @@ export async function POST() {
 				{ status: 401 }
 			);
 		}
-	} catch {
+	} catch (err) {
 		return NextResponse.json(
-			{ error: 'Invalid refresh token' },
-			{ status: 401 }
+			{ error: 'Something went wrong', details: err },
+			{ status: 500 }
 		);
 	}
 }
