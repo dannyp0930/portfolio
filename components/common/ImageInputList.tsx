@@ -2,6 +2,8 @@ import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { ChangeEvent, MouseEvent, useEffect, useRef, useState } from 'react';
 import { formInstance, instance } from '@/app/api/instance';
+import { AxiosError } from 'axios';
+import { toast } from 'sonner';
 
 export default function ImageInputList({
 	id,

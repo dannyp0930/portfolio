@@ -36,9 +36,7 @@ export default async function uploadToS3(
 		await s3Client.send(command);
 		return `https://${params.Bucket}.s3.${process.env.AWS_REGION}.amazonaws.com/${params.Key}`;
 	} catch (err) {
-		console.log(process.env);
-		if (err instanceof AxiosError) {
-			toast.error(err.response?.data.error || 'An error occurred');
-		}
+		console.error('Failed to upload image from S3:', err);
+		throw err;
 	}
 }
