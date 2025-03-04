@@ -31,8 +31,89 @@
 |          | Husky + lint-staged             | 9.1.7 + 15.4.3 | Git 커밋 전 코드 검사 및 포맷팅 자동화        |
 
 ## 설치 및 실행
+```bash
+# DB 빌드
+$ yarn docker:build
+
+# DB 마이그레이션
+$ yarn migrate:dev
+
+# 어플리케이션 실행
+$ yarn dev
+```
 
 ## 배포 및 운영
+> Github action을 통한 자동 배포 구현
+
+### .env
+```
+MYSQL_PASSWORD=""
+JWT_SECRET=""
+JWT_REFRESH_SECRET=""
+DATABASE_URL=""
+SHADOW_DATABASE_URL=""
+
+AWS_ACCESS_KEY_ID=""
+AWS_SECRET_ACCESS_KEY=""
+AWS_REGION=""
+S3_BUCKET_NAME=""
+S3_REGION=""
+```
+
+### .github/deploy.yml
+```yml
+name: Deploy on Master Merge
+
+on:
+    push:
+        branches:
+            - master
+
+jobs:
+    build-and-deploy:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v4
+
+            - name: Execute remote ssh and Deploy
+              uses: appleboy/ssh-action@master
+              with:
+                  host: ${{ secrets.SSH_HOST }}
+                  username: ${{ secrets.SSH_USERNAME }}
+                  key: ${{ secrets.SSH_PRIVATE_KEY }}
+                  script: |
+                      set -e
+                      echo "Starting deployment process..."
+
+                      echo "Updating repository..."
+                      cd /srv/portfolio
+                      sudo git pull origin master || { echo "Git pull failed"; exit 1; }
+
+                      echo "Setting up Node.js environment..."
+                      export NVM_DIR="$HOME/.nvm"
+                      [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+                      nvm use 22 || { echo "nvm use failed"; exit 1; }
+
+                      echo "Installing dependencies..."
+                      sudo yarn install --frozen-lockfile || { echo "yarn install failed"; exit 1; }
+
+                      echo "Running migrations..."
+                      sudo yarn migrate:prod || { echo "yarn migrate:prod failed"; exit 1; }
+
+                      echo "Building application..."
+                      sudo yarn build || { echo "yarn build failed"; exit 1; }
+
+                      echo "Restarting application..."
+                      if pm2 describe portfolio > /dev/null 2>&1; then
+                        pm2 restart portfolio --update-env || { echo "pm2 restart failed"; exit 1; }
+                      else
+                        pm2 start "yarn start" --name portfolio --update-env || { echo "pm2 start failed"; exit 1; }
+                      fi
+
+```
+github repository에 환경 변수 등록 필수
 
 ## ToDo List
 
