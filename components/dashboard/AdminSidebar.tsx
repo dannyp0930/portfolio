@@ -16,7 +16,7 @@ import {
 import { usePathname } from 'next/navigation';
 
 export default function AdminSidebar() {
-	const routes = [
+	const infoRoutes = [
 		{
 			title: 'Contact',
 			url: '/dashboard/info/contact',
@@ -40,6 +40,20 @@ export default function AdminSidebar() {
 		{
 			title: 'Certificate',
 			url: '/dashboard/info/certificate',
+		},
+	];
+	const detailRoutes = [
+		{
+			title: 'Skill',
+			url: '/dashboard/skill',
+		},
+		{
+			title: 'Project',
+			url: '/dashboard/project',
+		},
+		{
+			title: 'Career',
+			url: '/dashboard/career',
 		},
 	];
 	const pathname = usePathname();
@@ -73,7 +87,7 @@ export default function AdminSidebar() {
 					<SidebarGroupLabel>Info</SidebarGroupLabel>
 					<SidebarGroupContent>
 						<SidebarMenu>
-							{routes.map((route) => (
+							{infoRoutes.map((route) => (
 								<SidebarMenuItem key={route.title}>
 									<SidebarMenuButton
 										asChild
@@ -89,46 +103,21 @@ export default function AdminSidebar() {
 					</SidebarGroupContent>
 				</SidebarGroup>
 				<SidebarGroup>
+					<SidebarGroupLabel>Detail</SidebarGroupLabel>
 					<SidebarGroupContent>
 						<SidebarMenu>
-							<SidebarMenuItem>
-								<SidebarMenuButton
-									asChild
-									isActive={pathname === '/dashboard/skill'}
-								>
-									<Link href="/dashboard/skill">Skill</Link>
-								</SidebarMenuButton>
-							</SidebarMenuItem>
-						</SidebarMenu>
-					</SidebarGroupContent>
-				</SidebarGroup>
-				<SidebarGroup>
-					<SidebarGroupContent>
-						<SidebarMenu>
-							<SidebarMenuItem>
-								<SidebarMenuButton
-									asChild
-									isActive={pathname === '/dashboard/project'}
-								>
-									<Link href="/dashboard/project">
-										Project
-									</Link>
-								</SidebarMenuButton>
-							</SidebarMenuItem>
-						</SidebarMenu>
-					</SidebarGroupContent>
-				</SidebarGroup>
-				<SidebarGroup>
-					<SidebarGroupContent>
-						<SidebarMenu>
-							<SidebarMenuItem>
-								<SidebarMenuButton
-									asChild
-									isActive={pathname === '/dashboard/career'}
-								>
-									<Link href="/dashboard/career">Career</Link>
-								</SidebarMenuButton>
-							</SidebarMenuItem>
+							{detailRoutes.map((route) => (
+								<SidebarMenuItem key={route.title}>
+									<SidebarMenuButton
+										asChild
+										isActive={pathname === route.url}
+									>
+										<Link href={route.url}>
+											{route.title}
+										</Link>
+									</SidebarMenuButton>
+								</SidebarMenuItem>
+							))}
 						</SidebarMenu>
 					</SidebarGroupContent>
 				</SidebarGroup>

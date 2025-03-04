@@ -1,3 +1,5 @@
+'use client';
+
 import Link from 'next/link';
 import {
 	NavigationMenu,
@@ -6,12 +8,14 @@ import {
 	NavigationMenuList,
 	navigationMenuTriggerStyle,
 } from '@/components/ui/navigation-menu';
+import { usePathname } from 'next/navigation';
 
 export default function Dashboard({
 	children,
 }: Readonly<{
 	children: React.ReactNode;
 }>) {
+	const pathname = usePathname();
 	const routes = [
 		{
 			title: 'Contact',
@@ -47,6 +51,7 @@ export default function Dashboard({
 							<Link href={route.url} legacyBehavior passHref>
 								<NavigationMenuLink
 									className={navigationMenuTriggerStyle()}
+									active={pathname === route.url}
 								>
 									{route.title}
 								</NavigationMenuLink>
