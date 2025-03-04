@@ -9,7 +9,3 @@
 ALTER TABLE `Intro` DROP PRIMARY KEY,
     MODIFY `id` INTEGER NOT NULL AUTO_INCREMENT,
     ADD PRIMARY KEY (`id`);
-
-INSERT INTO `Intro` (`id`, `title`, `description`, `reusmeFileUrl`, `bannerIamgeUrl`, `createdAt`, `updatedAt`)
-SELECT 1, '', '', '', '', NOW(), NOW()
-WHERE NOT EXISTS (SELECT 1 FROM `Intro` LIMIT 1);

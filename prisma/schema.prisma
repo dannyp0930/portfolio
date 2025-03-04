@@ -22,7 +22,7 @@ model Intro {
   id                Int   @id @default(autoincrement())
   title             String
   description  String
-  reusmeFileUrl String
+  resumeFileUrl String
   bannerIamgeUrl String
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
