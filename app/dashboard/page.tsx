@@ -20,6 +20,7 @@ import { useCallback, useEffect, useState } from 'react';
 import ImageInput from '@/components/common/ImageInput';
 import { Label } from '@/components/ui/label';
 import FileInput from '@/components/common/FileInput';
+import { Textarea } from '@/components/ui/textarea';
 
 const formSchema = z.object({
 	title: z.string().min(1, { message: '제목을 입력하세요.' }),
@@ -122,7 +123,11 @@ export default function Dashboard() {
 										소개
 									</FormLabel>
 									<FormControl className="w-80">
-										<Input placeholder="소개" {...field} />
+										<Textarea
+											className="resize-none w-96 h-40"
+											placeholder="소개"
+											{...field}
+										/>
 									</FormControl>
 									<FormMessage />
 								</div>

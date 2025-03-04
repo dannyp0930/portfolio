@@ -1,4 +1,8 @@
 declare global {
+	interface BannerProps {
+		intro: Intro;
+	}
+
 	interface InfoProps {
 		contacts: Contact[];
 		educations: Education[];

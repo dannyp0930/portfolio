@@ -9,6 +9,9 @@ import { serverInstance } from '@/app/api/instance';
 
 export default async function Home() {
 	const {
+		data: { data: intro },
+	} = await serverInstance.get('/api/intro');
+	const {
 		data: { data: contacts },
 	} = await serverInstance.get('/api/info/contact', { params: { take: -1 } });
 	const {
@@ -42,7 +45,7 @@ export default async function Home() {
 		<>
 			<Header />
 			<article>
-				<Banner />
+				<Banner intro={intro} />
 				<Info
 					contacts={contacts}
 					educations={educations}

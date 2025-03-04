@@ -2,7 +2,7 @@ import BannerDesktop from '@/assets/images/banner-desktop.webp';
 import BannerTablet from '@/assets/images/banner-tablet.webp';
 import BannerMobile from '@/assets/images/banner-mobile.webp';
 
-export default function Banner() {
+export default function Banner({ intro }: BannerProps) {
 	return (
 		<section
 			id="banner"
@@ -21,19 +21,9 @@ export default function Banner() {
 				/>
 			</picture>
 			<div className="z-20 content">
-				<h1>
-					프론트엔드 엔지니어
-					<br />
-					박상훈 입니다.
-				</h1>
-				<p className="px-5 mt-10 break-keep">
-					저는 계획을 세우는 것을 좋아합니다.
-					<br />
-					그리고 일을 마칠때 까지 깊이 몰두합니다.
-					<br />
-					사용자가 필요한 기능이 무엇인지 고민하는 것을 좋아합니다.
-					<br />
-					항상 긍정적이고 새로운 아이디어를 생각합니다.
+				<h1>{intro.title}</h1>
+				<p className="px-5 mt-10 break-keep whitespace-pre-line">
+					{intro.description}
 				</p>
 			</div>
 		</section>
