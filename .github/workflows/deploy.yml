@@ -20,18 +20,30 @@ jobs:
                   username: ${{ secrets.SSH_USERNAME }}
                   key: ${{ secrets.SSH_PRIVATE_KEY }}
                   script: |
-                      cd /srv/portfolio
-                      git pull origin master
+                      set -e
+                      echo "Starting deployment process..."
 
+                      echo "Updating repository..."
+                      cd /srv/portfolio
+                      sudo git pull origin master || { echo "Git pull failed"; exit 1; }
+
+                      echo "Setting up Node.js environment..."
                       export NVM_DIR="$HOME/.nvm"
                       [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+                      nvm use 22 || { echo "nvm use failed"; exit 1; }
 
-                      nvm use 22
+                      echo "Installing dependencies..."
+                      sudo yarn install --frozen-lockfile || { echo "yarn install failed"; exit 1; }
 
-                      docker image prune -af
-                      yarn install --frozen-lockfile
-                      yarn migrate:prod
-                      yarn build
+                      echo "Running migrations..."
+                      sudo yarn migrate:prod || { echo "yarn migrate:prod failed"; exit 1; }
 
-                      pm2 restart portfolio --update-env || pm2 start "yarn start" --name portfolio --update-env
-                      pm2 save
+                      echo "Building application..."
+                      sudo yarn build || { echo "yarn build failed"; exit 1; }
+
+                      echo "Restarting application..."
+                      if pm2 describe portfolio > /dev/null 2>&1; then
+                        pm2 restart portfolio --update-env || { echo "pm2 restart failed"; exit 1; }
+                      else
+                        pm2 start "yarn start" --name portfolio --update-env || { echo "pm2 start failed"; exit 1; }
+                      fi
