@@ -53,6 +53,10 @@ export async function GET(req: NextRequest) {
 			});
 			return NextResponse.json({ data: careerOverview }, { status: 200 });
 		}
+		if (take === -1) {
+			const careers = await prisma.careerOverview.findMany();
+			return NextResponse.json({ data: careers }, { status: 200 });
+		}
 		const careerOverviews = await prisma.careerOverview.findMany({
 			skip: (page - 1) * take,
 			take,

@@ -11,7 +11,7 @@ declare global {
 	}
 
 	interface SkillsProps {
-		skills: Skill[];
+		skills: Record<string, Skill[]>;
 	}
 
 	interface ProjectListPros {

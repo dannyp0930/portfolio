@@ -50,6 +50,10 @@ export async function GET(req: NextRequest) {
 			});
 			return NextResponse.json({ data: contact }, { status: 200 });
 		}
+		if (take === -1) {
+			const contacts = await prisma.contact.findMany();
+			return NextResponse.json({ data: contacts }, { status: 200 });
+		}
 		const contacts = await prisma.contact.findMany({
 			skip: (page - 1) * take,
 			take,

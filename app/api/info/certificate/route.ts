@@ -53,6 +53,10 @@ export async function GET(req: NextRequest) {
 			});
 			return NextResponse.json({ data: certificate }, { status: 200 });
 		}
+		if (take === -1) {
+			const certificates = await prisma.certificate.findMany();
+			return NextResponse.json({ data: certificates }, { status: 200 });
+		}
 		const certificates = await prisma.certificate.findMany({
 			skip: (page - 1) * take,
 			take,

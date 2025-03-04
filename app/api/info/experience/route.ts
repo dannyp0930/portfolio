@@ -53,6 +53,10 @@ export async function GET(req: NextRequest) {
 			});
 			return NextResponse.json({ data: experience }, { status: 200 });
 		}
+		if (take === -1) {
+			const experiences = await prisma.experience.findMany();
+			return NextResponse.json({ data: experiences }, { status: 200 });
+		}
 		const experiences = await prisma.experience.findMany({
 			skip: (page - 1) * take,
 			take,

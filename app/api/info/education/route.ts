@@ -50,6 +50,10 @@ export async function GET(req: NextRequest) {
 			});
 			return NextResponse.json({ data: education }, { status: 200 });
 		}
+		if (take === -1) {
+			const educations = await prisma.education.findMany();
+			return NextResponse.json({ data: educations }, { status: 200 });
+		}
 		const educations = await prisma.education.findMany({
 			skip: (page - 1) * take,
 			take,

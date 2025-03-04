@@ -53,6 +53,10 @@ export async function GET(req: NextRequest) {
 			});
 			return NextResponse.json({ data: language }, { status: 200 });
 		}
+		if (take === -1) {
+			const languages = await prisma.language.findMany();
+			return NextResponse.json({ data: languages }, { status: 200 });
+		}
 		const languages = await prisma.language.findMany({
 			skip: (page - 1) * take,
 			take,
