@@ -23,6 +23,7 @@ export default async function uploadToS3(
 			gif: 'image/gif',
 			webp: 'image/webp',
 			svg: 'image/svg+xml',
+			pdf: 'application/pdf',
 		};
 		const params = {
 			Bucket: process.env.S3_BUCKET_NAME,

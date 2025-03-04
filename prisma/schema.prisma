@@ -19,10 +19,9 @@ model User {
 }
 
 model Intro {
-  id                String   @id @default(cuid())
+  id                Int   @id @default(autoincrement())
   title             String
   description  String
-  portfolioFileUrl  String
   reusmeFileUrl String
   bannerIamgeUrl String
   createdAt         DateTime @default(now())
