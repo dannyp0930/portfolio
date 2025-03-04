@@ -14,7 +14,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { AxiosError } from 'axios';
+import { isAxiosError } from 'axios';
 import dayjs from 'dayjs';
 import { ImageMinus } from 'lucide-react';
 import { MouseEvent, use, useCallback, useEffect, useState } from 'react';
@@ -99,7 +99,7 @@ export default function ProjectUpdate({ params }: ProjectUpdateParams) {
 			setProjectImages(data.projectImages);
 			setLoad(false);
 		} catch (err) {
-			if (err instanceof AxiosError) {
+			if (isAxiosError(err)) {
 				toast.error(err.response?.data.error || 'An error occurred');
 			}
 		}
@@ -127,7 +127,7 @@ export default function ProjectUpdate({ params }: ProjectUpdateParams) {
 				toast.success(message);
 			}
 		} catch (err) {
-			if (err instanceof AxiosError) {
+			if (isAxiosError(err)) {
 				toast.error(err.response?.data.error || 'An error occurred');
 			}
 		}
@@ -160,7 +160,7 @@ export default function ProjectUpdate({ params }: ProjectUpdateParams) {
 				}
 			}
 		} catch (err) {
-			if (err instanceof AxiosError) {
+			if (isAxiosError(err)) {
 				toast.error(err.response?.data.error || 'An error occurred');
 			}
 		}
@@ -179,7 +179,7 @@ export default function ProjectUpdate({ params }: ProjectUpdateParams) {
 				toast.success(message);
 			}
 		} catch (err) {
-			if (err instanceof AxiosError) {
+			if (isAxiosError(err)) {
 				toast.error(err.response?.data.error || 'An error occurred');
 			}
 		} finally {
@@ -200,7 +200,7 @@ export default function ProjectUpdate({ params }: ProjectUpdateParams) {
 				toast.success(message);
 			}
 		} catch (err) {
-			if (err instanceof AxiosError) {
+			if (isAxiosError(err)) {
 				toast.error(err.response?.data.error || 'An error occurred');
 			}
 		} finally {
@@ -221,7 +221,7 @@ export default function ProjectUpdate({ params }: ProjectUpdateParams) {
 					toast.success(message);
 				}
 			} catch (err) {
-				if (err instanceof AxiosError) {
+				if (isAxiosError(err)) {
 					toast.error(
 						err.response?.data.error || 'An error occurred'
 					);

@@ -12,7 +12,7 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { AxiosError } from 'axios';
+import { isAxiosError } from 'axios';
 import dayjs from 'dayjs';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
@@ -58,7 +58,7 @@ export default function CareerCreate() {
 				router.push('/dashboard/career');
 			}
 		} catch (err) {
-			if (err instanceof AxiosError) {
+			if (isAxiosError(err)) {
 				toast.error(err.response?.data.error || 'An error occurred');
 			}
 		}

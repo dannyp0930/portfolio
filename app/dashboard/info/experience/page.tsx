@@ -3,7 +3,7 @@
 import { instance } from '@/app/api/instance';
 import AdminPagination from '@/components/dashboard/AdminPagination';
 import { Button } from '@/components/ui/button';
-import { AxiosError } from 'axios';
+import { isAxiosError } from 'axios';
 import dayjs from 'dayjs';
 import { useSearchParams } from 'next/navigation';
 import {
@@ -63,7 +63,7 @@ function ExperienceContent() {
 				setEndDate('');
 			}
 		} catch (err) {
-			if (err instanceof AxiosError) {
+			if (isAxiosError(err)) {
 				toast.error(err.response?.data.error || 'An error occurred');
 			}
 		} finally {
@@ -89,7 +89,7 @@ function ExperienceContent() {
 				setUpdateExperience(null);
 			}
 		} catch (err) {
-			if (err instanceof AxiosError) {
+			if (isAxiosError(err)) {
 				toast.error(err.response?.data.error || 'An error occurred');
 			}
 		} finally {
@@ -114,7 +114,7 @@ function ExperienceContent() {
 					setUpdateExperience(null);
 				}
 			} catch (err) {
-				if (err instanceof AxiosError) {
+				if (isAxiosError(err)) {
 					toast.error(
 						err.response?.data.error || 'An error occurred'
 					);
@@ -160,7 +160,7 @@ function ExperienceContent() {
 			setTotalCnt(totalCnt);
 			setLoad(false);
 		} catch (err) {
-			if (err instanceof AxiosError) {
+			if (isAxiosError(err)) {
 				toast.error(err.response?.data.error || 'An error occurred');
 			}
 		}

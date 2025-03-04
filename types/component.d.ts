@@ -15,6 +15,14 @@ declare global {
 		onChange: Dispatch<SetStateAction<File>> | ((file: File) => void);
 	}
 
+	interface FileInputProps {
+		id: string;
+		className?: string;
+		fileUrl?: string;
+		accept?: string;
+		onChange: Dispatch<SetStateAction<File>> | ((file: File) => void);
+	}
+
 	interface ImageInputListProps {
 		id: string;
 		images?: string[];

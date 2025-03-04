@@ -2,7 +2,7 @@ import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { ChangeEvent, MouseEvent, useEffect, useRef, useState } from 'react';
 import { formInstance, instance } from '@/app/api/instance';
-import { AxiosError } from 'axios';
+import { isAxiosError } from 'axios';
 import { toast } from 'sonner';
 
 export default function ImageInputList({
@@ -34,7 +34,7 @@ export default function ImageInputList({
 				setNewImages(newImageList);
 				onChange(newImageList);
 			} catch (err) {
-				if (err instanceof AxiosError) {
+				if (isAxiosError(err)) {
 					toast.error(
 						err.response?.data.error || 'An error occurred'
 					);
@@ -54,7 +54,7 @@ export default function ImageInputList({
 					prevImages.filter((_, i) => i !== index)
 				);
 			} catch (err) {
-				if (err instanceof AxiosError) {
+				if (isAxiosError(err)) {
 					toast.error(
 						err.response?.data.error || 'An error occurred'
 					);

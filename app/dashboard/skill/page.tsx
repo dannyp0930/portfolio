@@ -4,7 +4,7 @@ import { formInstance, instance } from '@/app/api/instance';
 import ImageInput from '@/components/common/ImageInput';
 import AdminPagination from '@/components/dashboard/AdminPagination';
 import { Button } from '@/components/ui/button';
-import { AxiosError } from 'axios';
+import { isAxiosError } from 'axios';
 import Image from 'next/image';
 import { useSearchParams } from 'next/navigation';
 import {
@@ -66,7 +66,7 @@ function SkillComponent() {
 				setCategory('');
 			}
 		} catch (err) {
-			if (err instanceof AxiosError) {
+			if (isAxiosError(err)) {
 				toast.error(err.response?.data.error || 'An error occurred');
 			}
 		} finally {
@@ -102,7 +102,7 @@ function SkillComponent() {
 				console.log('update 완료', load);
 			}
 		} catch (err) {
-			if (err instanceof AxiosError) {
+			if (isAxiosError(err)) {
 				toast.error(err.response?.data.error || 'An error occurred');
 			}
 		} finally {
@@ -127,7 +127,7 @@ function SkillComponent() {
 					setUpdateSkill(null);
 				}
 			} catch (err) {
-				if (err instanceof AxiosError) {
+				if (isAxiosError(err)) {
 					toast.error(
 						err.response?.data.error || 'An error occurred'
 					);

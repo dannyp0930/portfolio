@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { instance } from '@/app/api/instance';
 import useAuthCheck from '@/hooks/useAuthCheck';
 import Link from 'next/link';
-import { AxiosError } from 'axios';
+import { isAxiosError } from 'axios';
 import { toast } from 'sonner';
 
 export default function Login() {
@@ -26,7 +26,7 @@ export default function Login() {
 				router.push('/');
 			}
 		} catch (err) {
-			if (err instanceof AxiosError) {
+			if (isAxiosError(err)) {
 				toast.error(err.response?.data.error || 'An error occurred');
 			}
 		}

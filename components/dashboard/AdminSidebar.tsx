@@ -77,7 +77,7 @@ export default function AdminSidebar() {
 									asChild
 									isActive={pathname === '/dashboard'}
 								>
-									<Link href="/dashboard">Dashboard</Link>
+									<Link href="/dashboard">Intro</Link>
 								</SidebarMenuButton>
 							</SidebarMenuItem>
 						</SidebarMenu>

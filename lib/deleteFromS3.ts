@@ -8,11 +8,10 @@ const s3Client = new S3Client({
 	},
 });
 
-export default async function deleteFromS3(imageUrl: string) {
+export default async function deleteFromS3(fileUrl: string) {
 	try {
-		const url = new URL(imageUrl);
-		const key = url.pathname.substring(1);
-
+		const url = new URL(fileUrl);
+		const key = decodeURIComponent(url.pathname.substring(1));
 		await s3Client.send(
 			new DeleteObjectCommand({
 				Bucket: process.env.S3_BUCKET_NAME,

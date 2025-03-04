@@ -13,7 +13,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { AxiosError } from 'axios';
+import { isAxiosError } from 'axios';
 import dayjs from 'dayjs';
 import { MouseEvent, use, useCallback, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -98,7 +98,7 @@ export default function CareerUpdate({ params }: CareerUpdateParams) {
 			}
 			setLoad(false);
 		} catch (err) {
-			if (err instanceof AxiosError) {
+			if (isAxiosError(err)) {
 				toast.error(err.response?.data.error || 'An error occurred');
 			}
 		}
@@ -126,7 +126,7 @@ export default function CareerUpdate({ params }: CareerUpdateParams) {
 				toast.success(message);
 			}
 		} catch (err) {
-			if (err instanceof AxiosError) {
+			if (isAxiosError(err)) {
 				toast.error(err.response?.data.error || 'An error occurred');
 			}
 		}
@@ -150,7 +150,7 @@ export default function CareerUpdate({ params }: CareerUpdateParams) {
 				detailForm.setValue('content', '');
 			}
 		} catch (err) {
-			if (err instanceof AxiosError) {
+			if (isAxiosError(err)) {
 				toast.error(err.response?.data.error || 'An error occurred');
 			}
 		} finally {
@@ -192,7 +192,7 @@ export default function CareerUpdate({ params }: CareerUpdateParams) {
 				detailForm.setValue('content', '');
 			}
 		} catch (err) {
-			if (err instanceof AxiosError) {
+			if (isAxiosError(err)) {
 				toast.error(err.response?.data.error || 'An error occurred');
 			}
 		} finally {
@@ -214,7 +214,7 @@ export default function CareerUpdate({ params }: CareerUpdateParams) {
 					setCareerDetailUpdateId(null);
 				}
 			} catch (err) {
-				if (err instanceof AxiosError) {
+				if (isAxiosError(err)) {
 					toast.error(
 						err.response?.data.error || 'An error occurred'
 					);
