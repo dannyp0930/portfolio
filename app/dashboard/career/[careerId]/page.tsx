@@ -190,6 +190,7 @@ export default function CareerUpdate({ params }: CareerUpdateParams) {
 				toast.success(message);
 				detailForm.setValue('title', '');
 				detailForm.setValue('content', '');
+				setCareerDetailUpdateId(null);
 			}
 		} catch (err) {
 			if (isAxiosError(err)) {
@@ -449,7 +450,7 @@ export default function CareerUpdate({ params }: CareerUpdateParams) {
 										)}
 									/>
 									<div className="flex justify-between w-80">
-										<Button type="submit">추가</Button>
+										<Button type="submit">저장</Button>
 										<Button
 											onClick={cancelDetailUpdate}
 											variant="secondary"
@@ -473,7 +474,7 @@ export default function CareerUpdate({ params }: CareerUpdateParams) {
 									<div className="flex-shrink-0 w-20 text-sm">
 										내용
 									</div>
-									<div className="flex min-h-[60px] rounded-md border border-input px-3 py-2 text-base shadow-sm md:text-sm w-96 h-40">
+									<div className="flex min-h-[60px] rounded-md border border-input px-3 py-2 text-base shadow-sm md:text-sm w-96 h-40 whitespace-pre-line">
 										{detail.content}
 									</div>
 								</div>

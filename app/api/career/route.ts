@@ -64,7 +64,21 @@ export async function GET(req: NextRequest) {
 		}
 		if (take === -1) {
 			const careers = await prisma.career.findMany();
-			return NextResponse.json({ data: careers }, { status: 200 });
+			const careersWithDetails = await Promise.all(
+				careers.map(async (career) => {
+					const careerDetail = await prisma.careerDetail.findMany({
+						where: { careerId: career.id },
+					});
+					return {
+						...career,
+						details: careerDetail,
+					};
+				})
+			);
+			return NextResponse.json(
+				{ data: careersWithDetails },
+				{ status: 200 }
+			);
 		}
 		const careers = await prisma.career.findMany({
 			skip: (page - 1) * take,

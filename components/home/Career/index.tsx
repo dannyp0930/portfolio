@@ -1,8 +1,10 @@
-import api from '@/api';
 import CareerList from './CareerList';
+import { serverInstance } from '@/app/api/instance';
 
 export default async function Career() {
-	const careers = (await api.getDataList('career')) as CareerTemp[];
+	const {
+		data: { data: careers },
+	} = await serverInstance.get('/api/career', { params: { take: -1 } });
 	return (
 		<section
 			id="career"
