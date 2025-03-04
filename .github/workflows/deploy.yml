@@ -13,9 +13,6 @@ jobs:
             - name: Checkout repository
               uses: actions/checkout@v4
 
-            - name: Remove old Docker images
-              run: docker image prune -af
-
             - name: Execute remote ssh and Deploy
               uses: appleboy/ssh-action@master
               with:
@@ -24,17 +21,16 @@ jobs:
                   key: ${{ secrets.SSH_PRIVATE_KEY }}
                   script: |
                       cd /srv/portfolio
-                      sudo git pull origin master
+                      git pull origin master
+
                       export NVM_DIR="$HOME/.nvm"
                       [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+
                       nvm use 22
 
-                      sudo yarn install
-                      sudo yarn migrate:prod
-                      sudo yarn build
+                      docker image prune -af
+                      yarn install --frozen-lockfile
+                      yarn migrate:prod
+                      yarn build
 
-                      if pm2 describe portfolio > /dev/null 2>&1; then
-                        pm2 restart portfolio
-                      else
-                        pm2 start "yarn start" --name portfolio
-                      fi
+                      pm2 start "yarn start" --name portfolio --update-env
