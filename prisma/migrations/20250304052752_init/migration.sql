@@ -8,7 +8,3 @@
 -- AlterTable
 ALTER TABLE `Intro` DROP COLUMN `reusmeFileUrl`,
     ADD COLUMN `resumeFileUrl` VARCHAR(191) NOT NULL;
-
-INSERT INTO `Intro` (`id`, `title`, `description`, `resumeFileUrl`, `bannerIamgeUrl`, `createdAt`, `updatedAt`)
-    SELECT 1, '', '', '', '', NOW(), NOW()
-    WHERE NOT EXISTS (SELECT 1 FROM `Intro` LIMIT 1);

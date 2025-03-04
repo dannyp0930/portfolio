@@ -22,8 +22,8 @@ model Intro {
   id                Int   @id @default(autoincrement())
   title             String
   description  String
-  resumeFileUrl String
-  bannerIamgeUrl String
+  resumeFileUrl String?
+  bannerIamgeUrl String?
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
 }
