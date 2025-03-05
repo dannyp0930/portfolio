@@ -1,7 +1,3 @@
-import BannerDesktop from '@/assets/images/banner-desktop.webp';
-import BannerTablet from '@/assets/images/banner-tablet.webp';
-import BannerMobile from '@/assets/images/banner-mobile.webp';
-
 export default function Banner({ intro }: BannerProps) {
 	return (
 		<section
@@ -10,13 +6,16 @@ export default function Banner({ intro }: BannerProps) {
 		>
 			<picture className="absolute top-0 left-0 z-10 w-full h-full opacity-40">
 				<source
-					media="(min-width: 1280px)"
-					srcSet={BannerDesktop.src}
+					media="(max-width: 768px)"
+					srcSet={intro.bannerImageUrlMobile}
 				/>
-				<source media="(min-width: 768px)" srcSet={BannerTablet.src} />
+				<source
+					media="(max-width: 1279px)"
+					srcSet={intro.bannerImageUrlTablet}
+				/>
 				<img
 					className="object-cover w-full h-full"
-					src={BannerMobile.src}
+					src={intro.bannerImageUrl}
 					alt="banner"
 				/>
 			</picture>

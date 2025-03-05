@@ -11,11 +11,17 @@ export async function PUT(req: NextRequest) {
 	const formData = await req.formData();
 	const resume = formData.get('resume') as File;
 	const banner = formData.get('banner') as File;
+	const bannerTablet = formData.get('bannerTablet') as File;
+	const bannerMobile = formData.get('bannerMobile') as File;
 	const data = Object.fromEntries(formData.entries());
 	let newResumeFileUrl: string | null = null;
 	let existingResumeFileUrl: string | null = null;
 	let newBannerImageUrl: string | null = null;
 	let existingBannerImageUrl: string | null = null;
+	let newBannerImageUrlTablet: string | null = null;
+	let existingBannerImageUrlTablet: string | null = null;
+	let newBannerImageUrlMobile: string | null = null;
+	let existingBannerImageUrlMobile: string | null = null;
 	try {
 		const existingIntro = await prisma.intro.findFirst();
 		if (!existingIntro) {
@@ -26,7 +32,8 @@ export async function PUT(req: NextRequest) {
 		}
 		existingResumeFileUrl = existingIntro.resumeFileUrl;
 		existingBannerImageUrl = existingIntro.bannerImageUrl;
-		console.log(existingResumeFileUrl);
+		existingBannerImageUrlTablet = existingIntro.bannerImageUrlTablet;
+		existingBannerImageUrlMobile = existingIntro.bannerImageUrlMobile;
 		if (resume) {
 			const resumeBuffer = Buffer.from(await resume.arrayBuffer());
 			newResumeFileUrl = (await uploadToS3(
@@ -43,6 +50,26 @@ export async function PUT(req: NextRequest) {
 				`${Date.now()}-${banner.name}`
 			)) as string;
 		}
+		if (bannerTablet) {
+			const bannerTabletBuffer = Buffer.from(
+				await bannerTablet.arrayBuffer()
+			);
+			newBannerImageUrlTablet = (await uploadToS3(
+				bannerTabletBuffer,
+				'intro',
+				`${Date.now()}-${bannerTablet.name}`
+			)) as string;
+		}
+		if (bannerMobile) {
+			const bannerMobileBuffer = Buffer.from(
+				await bannerMobile.arrayBuffer()
+			);
+			newBannerImageUrlMobile = (await uploadToS3(
+				bannerMobileBuffer,
+				'intro',
+				`${Date.now()}-${bannerMobile.name}`
+			)) as string;
+		}
 		await prisma.$transaction(async (prisma) => {
 			await prisma.intro.update({
 				where: { id: Number(existingIntro.id) },
@@ -55,6 +82,12 @@ export async function PUT(req: NextRequest) {
 					...(newBannerImageUrl && {
 						bannerImageUrl: newBannerImageUrl,
 					}),
+					...(newBannerImageUrlTablet && {
+						bannerImageUrlTablet: newBannerImageUrlTablet,
+					}),
+					...(newBannerImageUrlMobile && {
+						bannerImageUrlMobile: newBannerImageUrlMobile,
+					}),
 				},
 			});
 		});
@@ -64,6 +97,12 @@ export async function PUT(req: NextRequest) {
 		if (existingBannerImageUrl && newBannerImageUrl) {
 			await deleteFromS3(existingBannerImageUrl);
 		}
+		if (existingBannerImageUrlTablet && newBannerImageUrlTablet) {
+			await deleteFromS3(existingBannerImageUrlTablet);
+		}
+		if (existingBannerImageUrlMobile && newBannerImageUrlMobile) {
+			await deleteFromS3(existingBannerImageUrlMobile);
+		}
 		return NextResponse.json({ message: 'OK' }, { status: 200 });
 	} catch (err) {
 		if (newResumeFileUrl) {
@@ -71,6 +110,12 @@ export async function PUT(req: NextRequest) {
 		}
 		if (newBannerImageUrl) {
 			await deleteFromS3(newBannerImageUrl);
+		}
+		if (newBannerImageUrlTablet) {
+			await deleteFromS3(newBannerImageUrlTablet);
+		}
+		if (newBannerImageUrlMobile) {
+			await deleteFromS3(newBannerImageUrlMobile);
 		}
 		return NextResponse.json(
 			{ error: 'Something went wrong', details: err },

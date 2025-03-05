@@ -32,7 +32,11 @@ export default function Dashboard() {
 	const [resume, setResume] = useState<File | null>();
 	const [resumeUrl, setResumeUrl] = useState<string>();
 	const [banner, setBanner] = useState<File | null>();
+	const [bannerTablet, setBannerTablet] = useState<File | null>();
+	const [bannerMobile, setBannerMobile] = useState<File | null>();
 	const [bannerUrl, setBannerUrl] = useState<string>();
+	const [bannerUrlTablet, setBannerUrlTablet] = useState<string>();
+	const [bannerUrlMobile, setBannerUrlMobile] = useState<string>();
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
@@ -47,12 +51,18 @@ export default function Dashboard() {
 				data: { data },
 			} = await instance.get('/api/intro');
 			form.setValue('title', data.title);
-			form.setValue('description', data.title);
+			form.setValue('description', data.description);
 			if (data.resumeFileUrl) {
 				setResumeUrl(data.resumeFileUrl);
 			}
 			if (data.bannerImageUrl) {
 				setBannerUrl(data.bannerImageUrl);
+			}
+			if (data.bannerImageUrlTablet) {
+				setBannerUrlTablet(data.bannerImageUrlTablet);
+			}
+			if (data.bannerImageUrlMobile) {
+				setBannerUrlMobile(data.bannerImageUrlMobile);
 			}
 		} catch (err) {
 			if (isAxiosError(err)) {
@@ -73,6 +83,8 @@ export default function Dashboard() {
 				...values,
 				...(resume && { resume }),
 				...(banner && { banner }),
+				...(bannerTablet && { bannerTablet }),
+				...(bannerMobile && { bannerMobile }),
 			};
 			const {
 				data: { message },
@@ -151,6 +163,32 @@ export default function Dashboard() {
 							height={225}
 							imageUrl={bannerUrl}
 							onChange={setBanner}
+						/>
+					</div>
+					<div className="flex gap-4 items-center">
+						<Label className="flex-shrink-0 w-20">
+							배너(태블릿)
+						</Label>
+						<ImageInput
+							id="banner-tablet"
+							className="items-center"
+							width={400}
+							height={225}
+							imageUrl={bannerUrlTablet}
+							onChange={setBannerTablet}
+						/>
+					</div>
+					<div className="flex gap-4 items-center">
+						<Label className="flex-shrink-0 w-20">
+							배너(모바일)
+						</Label>
+						<ImageInput
+							id="banner-mobile"
+							className="items-center"
+							width={400}
+							height={225}
+							imageUrl={bannerUrlMobile}
+							onChange={setBannerMobile}
 						/>
 					</div>
 					<Button type="submit">저장</Button>

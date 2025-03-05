@@ -23,7 +23,9 @@ model Intro {
   title             String
   description  String
   resumeFileUrl String?
-  bannerImageUrl String?
+  bannerImageUrl String
+  bannerImageUrlTablet String?
+  bannerImageUrlMobile String?
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
 }
