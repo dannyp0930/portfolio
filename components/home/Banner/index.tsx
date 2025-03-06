@@ -7,15 +7,15 @@ export default function Banner({ intro }: BannerProps) {
 			<picture className="absolute top-0 left-0 z-10 w-full h-full opacity-40">
 				<source
 					media="(max-width: 768px)"
-					srcSet={intro.bannerImageUrlMobile}
+					srcSet={intro.bannerImageUrlMobile as string}
 				/>
 				<source
 					media="(max-width: 1279px)"
-					srcSet={intro.bannerImageUrlTablet}
+					srcSet={intro.bannerImageUrlTablet as string}
 				/>
 				<img
 					className="object-cover w-full h-full"
-					src={intro.bannerImageUrl}
+					src={intro.bannerImageUrl as string}
 					alt="banner"
 				/>
 			</picture>
