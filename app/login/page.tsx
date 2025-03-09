@@ -19,7 +19,9 @@ export default function Login() {
 		e.preventDefault();
 		try {
 			const body = { email, password };
-			const { data: user } = await instance.post('/api/login', body);
+			const {
+				data: { user },
+			} = await instance.post('/api/login', body);
 			if (user.isAdmin) {
 				router.push('/dashboard');
 			} else {
