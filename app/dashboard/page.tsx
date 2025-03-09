@@ -172,8 +172,8 @@ export default function Dashboard() {
 						<ImageInput
 							id="banner-tablet"
 							className="items-center"
-							width={400}
-							height={225}
+							width={300}
+							height={400}
 							imageUrl={bannerUrlTablet}
 							onChange={setBannerTablet}
 						/>
@@ -185,8 +185,8 @@ export default function Dashboard() {
 						<ImageInput
 							id="banner-mobile"
 							className="items-center"
-							width={400}
-							height={225}
+							width={180}
+							height={320}
 							imageUrl={bannerUrlMobile}
 							onChange={setBannerMobile}
 						/>
