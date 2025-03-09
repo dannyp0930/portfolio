@@ -2,8 +2,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faGithub } from '@fortawesome/free-brands-svg-icons';
 import { faHome } from '@fortawesome/free-solid-svg-icons';
 import notionSvg from '@/assets/images/icons/notion.svg';
-import { timeToDate } from '@/lib/utils';
 import Image from 'next/image';
+import dayjs from 'dayjs';
 
 export default function ProjectCard({ project }: ProjectCardProps) {
 	return (
@@ -14,8 +14,10 @@ export default function ProjectCard({ project }: ProjectCardProps) {
 			</h1>
 			<h4 className="break-keep">{project.intro}</h4>
 			<p>
-				{timeToDate(project.startDate)} ~{' '}
-				{project.endDate ? timeToDate(project.endDate) : null}
+				{dayjs(project.startDate).format('YYYY.MM.DD')} ~{' '}
+				{project.endDate
+					? dayjs(project.endDate).format('YYYY.MM.DD')
+					: null}
 			</p>
 			<div className="flex items-center gap-5 mt-3 lg:gap-12">
 				{project.github && (

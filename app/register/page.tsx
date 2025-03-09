@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { instance } from '@/app/api/instance';
 import useAuthCheck from '@/hooks/useAuthCheck';
 import Link from 'next/link';
-import { isAxiosError } from '@/lib/utils/typeGuards';
+import { isAxiosError } from 'axios';
 
 export default function Register() {
 	const [email, setEmail] = useState('');
