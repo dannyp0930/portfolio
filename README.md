@@ -142,7 +142,7 @@ github repository에 환경 변수 등록 필수
 | 기타     | 로그인 쿠키 강화            | ☑      |
 |          | POST, PUT, DELETE 권한 설정 | ☑      |
 |          | Grafana 등 추적 로깅        | ☐      |
-|          | Firebase 제거               | ☐      |
+|          | Firebase 제거               | ☑      |
 
 ### Front
 | Category        | Task               | Status |
@@ -172,3 +172,4 @@ github repository에 환경 변수 등록 필수
 - Oauth
 - 뉴스레터 (+구독 시 이력서 전송)
 - 블로그
+- zustand 도입(상태관리)

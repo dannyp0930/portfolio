@@ -1,4 +1,9 @@
-export default function Header() {
+import { cookies } from 'next/headers';
+import Link from 'next/link';
+
+export default async function Header() {
+	const cookie = await cookies();
+	const session = cookie.get('access-token')?.value;
 	return (
 		<header className="fixed top-0 left-0 z-50 font-bold text-white w-dvw h-header underline-offset-4">
 			<nav className="flex items-center justify-between w-full h-full px-5 md:px-12">
@@ -74,6 +79,24 @@ export default function Header() {
 							</svg>
 						</a>
 					</li>
+					{!session && (
+						<li>
+							<Link className="hover:underline" href="login">
+								<span className="hidden md:inline">Login</span>
+								<svg
+									className="w-6 h-6 stroke-2 md:hidden stroke-white fill-transparent"
+									xmlns="http://www.w3.org/2000/svg"
+									viewBox="0 0 24 24"
+								>
+									<path
+										strokeLinecap="round"
+										strokeLinejoin="round"
+										d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z"
+									/>
+								</svg>
+							</Link>
+						</li>
+					)}
 				</ul>
 			</nav>
 		</header>
