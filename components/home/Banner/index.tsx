@@ -1,5 +1,4 @@
 'use client';
-import { useEffect } from 'react';
 
 export default function Banner({ intro }: BannerProps) {
 	const safeIntro = intro || {
@@ -9,9 +8,6 @@ export default function Banner({ intro }: BannerProps) {
 		bannerImageUrlTablet: '',
 		bannerImageUrlMobile: '',
 	};
-	useEffect(() => {
-		console.log(intro);
-	}, [intro]);
 
 	return (
 		<section
