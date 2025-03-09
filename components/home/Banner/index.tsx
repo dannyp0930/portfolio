@@ -1,5 +1,3 @@
-'use client';
-
 export default function Banner({ intro }: BannerProps) {
 	const safeIntro = intro || {
 		title: '',
