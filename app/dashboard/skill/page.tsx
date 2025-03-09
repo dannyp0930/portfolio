@@ -63,6 +63,7 @@ function SkillComponent() {
 				setDescription('');
 				setLevel(1);
 				setImage(null);
+				// todo: 이미지 업로드시 Image 초기화
 				setCategory('');
 			}
 		} catch (err) {
@@ -99,7 +100,7 @@ function SkillComponent() {
 				setUpdateSkillId(null);
 				setUpdateSkill(null);
 				setNewImage(null);
-				console.log('update 완료', load);
+				toast.success(message);
 			}
 		} catch (err) {
 			if (isAxiosError(err)) {
@@ -241,7 +242,13 @@ function SkillComponent() {
 							/>
 						</td>
 						<td>
-							<ImageInput id="image" onChange={setImage} />
+							<ImageInput
+								id="image"
+								onChange={setImage}
+								width={36}
+								height={36}
+								className="items-center justify-center"
+							/>
 						</td>
 						<td>
 							<input
@@ -308,8 +315,11 @@ function SkillComponent() {
 									<td>
 										<ImageInput
 											id={`image-${skill.id}`}
+											className="items-center justify-center"
 											imageUrl={updateSkill?.imageUrl}
 											onChange={setNewImage}
+											width={36}
+											height={36}
 										/>
 									</td>
 									<td>
@@ -349,10 +359,11 @@ function SkillComponent() {
 									<td>{skill.level}</td>
 									<td>
 										<Image
+											className="m-auto"
 											src={skill.imageUrl}
 											alt={skill.imageUrl}
-											width={100}
-											height={100}
+											width={36}
+											height={36}
 										/>
 									</td>
 									<td>{skill.category}</td>
