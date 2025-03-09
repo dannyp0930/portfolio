@@ -16,7 +16,7 @@ export default function useAuthCheck() {
 						router.push('/');
 					} else {
 						if (!pathname.startsWith('/dashboard')) {
-							router.push('/dashbooard');
+							router.push('/dashboard');
 						}
 					}
 				}

@@ -15,6 +15,13 @@ export default function Info({
 	const [selectItemIdx, setSelectItemIdx] = useState<number>(0);
 	const [selectItem, setSelectItem] = useState<string>('');
 
+	const safeContacts = contacts || [];
+	const safeEducations = educations || [];
+	const safeExperiences = experiences || [];
+	const safeCareerOverviews = careerOverviews || [];
+	const safeLanguages = languages || [];
+	const safeCertificates = certificates || [];
+
 	function closeModal() {
 		setSelectItemIdx(0);
 		document.body.style.removeProperty('overflow');
@@ -69,7 +76,7 @@ export default function Info({
 				>
 					<h3 className="text-center">CONTACT</h3>
 					<ul className="hidden mt-3">
-						{contacts.map((contact) => (
+						{safeContacts.map((contact) => (
 							<li key={contact.id}>
 								<h4>{contact.label}</h4>
 								<a href={`${contact.type}:${contact.value}`}>
@@ -85,7 +92,7 @@ export default function Info({
 				>
 					<h3 className="text-center">EDUCATION</h3>
 					<ul className="hidden mt-3">
-						{educations.map((education) => (
+						{safeEducations.map((education) => (
 							<li key={education.id}>
 								<h4>
 									{education.institutionName}{' '}
@@ -108,7 +115,7 @@ export default function Info({
 				>
 					<h3 className="text-center">EXPERIENCE</h3>
 					<ul className="hidden mt-3">
-						{experiences.map((experience) => (
+						{safeExperiences.map((experience) => (
 							<li key={experience.id}>
 								<h4>{experience.organization}</h4>
 								<p>
@@ -132,7 +139,7 @@ export default function Info({
 				>
 					<h3 className="text-center">CAREER</h3>
 					<ul className="hidden mt-3">
-						{careerOverviews.map((career) => (
+						{safeCareerOverviews.map((career) => (
 							<li key={career.id}>
 								<h4>{career.organization}</h4>
 								<p>
@@ -156,7 +163,7 @@ export default function Info({
 				>
 					<h3 className="text-center">LANGUAGE</h3>
 					<ul className="hidden mt-3">
-						{languages.map((language) => (
+						{safeLanguages.map((language) => (
 							<li key={language.id}>
 								<h4>
 									{language.languageName}{' '}
@@ -178,7 +185,7 @@ export default function Info({
 				>
 					<h3 className="text-center">CERTIFICATE</h3>
 					<ul className="hidden mt-3">
-						{certificates.map((certificate) => (
+						{safeCertificates.map((certificate) => (
 							<li key={certificate.id}>
 								<h4>{certificate.certificateName}</h4>
 								<p>

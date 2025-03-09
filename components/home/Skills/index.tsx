@@ -24,6 +24,7 @@ import { faStar } from '@fortawesome/free-solid-svg-icons';
 import Image from 'next/image';
 
 export default function Skills({ skills }: SkillsProps) {
+	const safeSkills = skills || [];
 	// const skills_tmp = [
 	// 	{
 	// 		title: 'HTML',
@@ -140,7 +141,7 @@ export default function Skills({ skills }: SkillsProps) {
 		>
 			<h1>SKILLS</h1>
 			<div className="flex flex-col gap-5 box-border p-5 bg-white shadow-lg w-72 md:w-11/12 lg:w-3/5 lg:p-14 rounded-2xl md:gap-12 md:p-10">
-				{Object.entries(skills).map(([category, skills]) => (
+				{Object.entries(safeSkills).map(([category, skills]) => (
 					<div className="flex flex-col gap-4" key={category}>
 						<h2>{category}</h2>
 						<div className="grid items-center grid-cols-4 gap-4 lg:grid-cols-6 md:grid-cols-5 md:gap-12">

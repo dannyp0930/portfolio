@@ -7,39 +7,68 @@ import Footer from '@/components/Layout/Footer';
 import Header from '@/components/Layout/Header';
 import { serverInstance } from '@/app/api/instance';
 
+async function fetchData() {
+	try {
+		const [
+			introResponse,
+			contactsResponse,
+			educationsResponse,
+			experiencesResponse,
+			careerOverviewsResponse,
+			languagesResponse,
+			certificatesResponse,
+			skillsResponse,
+		] = await Promise.all([
+			serverInstance.get('/api/intro'),
+			serverInstance.get('/api/info/contact', { params: { take: -1 } }),
+			serverInstance.get('/api/info/education', { params: { take: -1 } }),
+			serverInstance.get('/api/info/experience', {
+				params: { take: -1 },
+			}),
+			serverInstance.get('/api/info/career', { params: { take: -1 } }),
+			serverInstance.get('/api/info/language', { params: { take: -1 } }),
+			serverInstance.get('/api/info/certificate', {
+				params: { take: -1 },
+			}),
+			serverInstance.get('/api/skill', { params: { take: -1 } }),
+		]);
+
+		return {
+			intro: introResponse.data.data,
+			contacts: contactsResponse.data.data,
+			educations: educationsResponse.data.data,
+			experiences: experiencesResponse.data.data,
+			careerOverviews: careerOverviewsResponse.data.data,
+			languages: languagesResponse.data.data,
+			certificates: certificatesResponse.data.data,
+			skills: skillsResponse.data.data,
+		};
+	} catch (error) {
+		console.error('Error fetching data:', error);
+		return {
+			intro: {},
+			contacts: [],
+			educations: [],
+			experiences: [],
+			careerOverviews: [],
+			languages: [],
+			certificates: [],
+			skills: [],
+		};
+	}
+}
+
 export default async function Home() {
 	const {
-		data: { data: intro },
-	} = await serverInstance.get('/api/intro');
-	const {
-		data: { data: contacts },
-	} = await serverInstance.get('/api/info/contact', { params: { take: -1 } });
-	const {
-		data: { data: educations },
-	} = await serverInstance.get('/api/info/education', {
-		params: { take: -1 },
-	});
-	const {
-		data: { data: experiences },
-	} = await serverInstance.get('/api/info/experience', {
-		params: { take: -1 },
-	});
-	const {
-		data: { data: careerOverviews },
-	} = await serverInstance.get('/api/info/career', { params: { take: -1 } });
-	const {
-		data: { data: languages },
-	} = await serverInstance.get('/api/info/language', {
-		params: { take: -1 },
-	});
-	const {
-		data: { data: certificates },
-	} = await serverInstance.get('/api/info/certificate', {
-		params: { take: -1 },
-	});
-	const {
-		data: { data: skills },
-	} = await serverInstance.get('/api/skill', { params: { take: -1 } });
+		intro,
+		contacts,
+		educations,
+		experiences,
+		careerOverviews,
+		languages,
+		certificates,
+		skills,
+	} = await fetchData();
 
 	return (
 		<>
