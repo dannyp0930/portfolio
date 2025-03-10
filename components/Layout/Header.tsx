@@ -99,7 +99,7 @@ export default async function Header() {
 											xmlns="http://www.w3.org/2000/svg"
 											fill="none"
 											viewBox="0 0 24 24"
-											stroke-width="1.5"
+											strokeWidth="1.5"
 											stroke="currentColor"
 											className="w-6 h-6 stroke-2 md:hidden stroke-white fill-transparent"
 										>

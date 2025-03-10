@@ -122,7 +122,31 @@ export async function GET(req: NextRequest) {
 				},
 				{} as Record<string, typeof skills>
 			);
-			return NextResponse.json({ data: groupedSkills }, { status: 200 });
+			const categoryOrder = ['Front', 'Back', 'CI/CD'];
+			const orderedCategories = categoryOrder.filter(
+				(category) => groupedSkills[category]
+			);
+			const otherCategories = Object.keys(groupedSkills)
+				.filter(
+					(category) =>
+						!categoryOrder.includes(category) &&
+						category !== 'Uncategorized'
+				)
+				.sort((a, b) => a.localeCompare(b));
+			if (groupedSkills['Uncategorized']) {
+				otherCategories.push('Uncategorized');
+			}
+			const finalOrder = [...orderedCategories, ...otherCategories];
+			const sortedGroupedSkills = Object.fromEntries(
+				finalOrder.map((category) => [
+					category,
+					groupedSkills[category],
+				])
+			);
+			return NextResponse.json(
+				{ data: sortedGroupedSkills },
+				{ status: 200 }
+			);
 		}
 		const skills = await prisma.skill.findMany({
 			skip: (page - 1) * take,
