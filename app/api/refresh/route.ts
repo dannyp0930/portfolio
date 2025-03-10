@@ -7,7 +7,7 @@ export async function POST() {
 	const cookieStore = await cookies();
 	const refreshToken = cookieStore.get('refresh-token')?.value;
 	if (!refreshToken) {
-		return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+		return NextResponse.json({ user: null }, { status: 200 });
 	}
 	try {
 		const decoded = jwt.verify(

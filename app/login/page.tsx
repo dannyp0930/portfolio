@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { instance } from '@/app/api/instance';
 import useAuthCheck from '@/hooks/useAuthCheck';
 import Link from 'next/link';
@@ -11,7 +10,6 @@ import { toast } from 'sonner';
 export default function Login() {
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
-	const router = useRouter();
 
 	useAuthCheck();
 
@@ -23,9 +21,9 @@ export default function Login() {
 				data: { user },
 			} = await instance.post('/api/login', body);
 			if (user.isAdmin) {
-				router.push('/dashboard');
+				window.location.href = '/dashboard';
 			} else {
-				router.push('/');
+				window.location.href = '/';
 			}
 		} catch (err) {
 			if (isAxiosError(err)) {

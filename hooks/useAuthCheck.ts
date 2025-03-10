@@ -9,14 +9,18 @@ export default function useAuthCheck() {
 	useEffect(() => {
 		async function checkLoginStatus() {
 			try {
-				await instance.post('/api/refresh');
-				const { data } = await instance.post('/api/verify');
-				if (data.user) {
-					if (!data.user.isAdmin) {
-						router.push('/');
-					} else {
-						if (!pathname.startsWith('/dashboard')) {
-							router.push('/dashboard');
+				const {
+					data: { user },
+				} = await instance.post('/api/refresh');
+				if (user) {
+					const { data } = await instance.post('/api/verify');
+					if (data.user) {
+						if (!data.user.isAdmin) {
+							router.push('/');
+						} else {
+							if (!pathname.startsWith('/dashboard')) {
+								router.push('/dashboard');
+							}
 						}
 					}
 				}

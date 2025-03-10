@@ -1,11 +1,13 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
 import { MouseEvent } from 'react';
 import { toast } from 'sonner';
 import { isAxiosError } from 'axios';
 import { instance } from '@/app/api/instance';
 
 export function LogoutButton() {
+	const router = useRouter();
 	async function handleLogout(e: MouseEvent<HTMLButtonElement>) {
 		e.preventDefault();
 		try {
@@ -15,6 +17,7 @@ export function LogoutButton() {
 			} = await instance.post('/api/logout');
 			if (status === 200) {
 				toast.success(message);
+				router.push('/');
 			}
 		} catch (err) {
 			if (isAxiosError(err)) {
