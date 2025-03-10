@@ -67,7 +67,7 @@ SH Portfolio는 개발자 dannyp0930의 개인 포트폴리오 웹사이트입�
 
 ## 설치 및 실행
 ```bash
-# DB 빌드
+# DB 빌드 (Docker 또는 Docker Destkop 실행)
 $ yarn docker:build
 
 # DB 마이그레이션
