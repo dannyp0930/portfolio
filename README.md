@@ -45,6 +45,37 @@ $ yarn dev
 ## 배포 및 운영
 > Github action을 통해 master branch merge 발생시 자동 배포 구현
 
+### /etc/nginx/sites-available/{server_name}
+```
+server {
+    listen 80;
+    server_name {server_name};
+    return 301 https://$host$request_uri;  # HTTP -> HTTPS 리디렉션
+}
+
+server {
+    listen 443 ssl;
+    server_name {server_name} www.{server_name};
+
+    ssl_certificate /etc/letsencrypt/live/{server_name}/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/{server_name}/privkey.pem;
+    client_max_body_size 10M;
+
+    location / {
+        proxy_pass http://localhost:3000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+```
+| 항목              | 설명                    |
+| ----------------- | ----------------------- |
+| 도메인 구매       | Gabia                   |
+| DNS 등록          | AWS Route53             |
+| HTTPS 인증서 발급 | AWS Certificate Manager |
+
 ### .env
 ```
 MYSQL_PASSWORD=""
