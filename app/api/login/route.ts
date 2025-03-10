@@ -46,6 +46,12 @@ export async function POST(req: NextRequest) {
 			path: '/',
 			maxAge: 60 * 60,
 		});
+		cookieStore.set('is-admin', String(user.isAdmin), {
+			httpOnly: true,
+			secure: true,
+			path: '/',
+			maxAge: 60 * 60,
+		});
 		cookieStore.set('refresh-token', refreshToken, {
 			httpOnly: true,
 			secure: true,

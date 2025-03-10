@@ -1,5 +1,6 @@
 import { cookies } from 'next/headers';
 import Link from 'next/link';
+import { LogoutButton } from './LogoutButton';
 
 export default async function Header() {
 	const cookie = await cookies();
@@ -79,7 +80,11 @@ export default async function Header() {
 							</svg>
 						</a>
 					</li>
-					{!session && (
+					{session ? (
+						<li>
+							<LogoutButton />
+						</li>
+					) : (
 						<li>
 							<Link className="hover:underline" href="login">
 								<span className="hidden md:inline">Login</span>

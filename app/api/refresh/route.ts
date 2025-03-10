@@ -29,6 +29,12 @@ export async function POST() {
 				path: '/',
 				maxAge: 60 * 60,
 			});
+			cookieStore.set('is-admin', String(user.isAdmin), {
+				httpOnly: true,
+				secure: true,
+				path: '/',
+				maxAge: 60 * 60,
+			});
 			return NextResponse.json(
 				{
 					user: {
