@@ -32,9 +32,6 @@
 
 ## 설치 및 실행
 ```bash
-# 로컬 HTTP 인증
-$ yarn setup-https
-
 # DB 빌드
 $ yarn docker:build
 

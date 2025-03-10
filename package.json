@@ -4,7 +4,7 @@
 	"private": true,
 	"scripts": {
 		"prepare": "husky",
-    "dev": "node server.mjs",
+    "dev": "next dev",
 		"build": "next build",
 		"start": "next start",
 		"lint": "next lint",
@@ -12,8 +12,7 @@
 		"docker:build": "docker compose --env-file .env -f docker/docker-compose.yml up -d --build",
 		"migrate:prod": "prisma migrate deploy && prisma generate && prisma db seed",
 		"migrate:dev": "prisma migrate dev --name init",
-		"studio": "prisma studio",
-    "setup-https": "bash script/setup-https.sh"
+		"studio": "prisma studio"
 	},
 	"prisma": {
 		"seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts"
