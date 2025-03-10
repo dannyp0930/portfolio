@@ -17,7 +17,14 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { isAxiosError } from 'axios';
 import dayjs from 'dayjs';
 import { ImageMinus } from 'lucide-react';
-import { MouseEvent, use, useCallback, useEffect, useState } from 'react';
+import {
+	MouseEvent,
+	use,
+	useCallback,
+	useEffect,
+	useRef,
+	useState,
+} from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
@@ -46,6 +53,7 @@ export default function ProjectUpdate({ params }: ProjectUpdateParams) {
 	const [load, setLoad] = useState<boolean>(true);
 	const [projectImages, setProjectImages] = useState<ProjectImage[]>();
 	const [projectDetailId, setProjectDetailId] = useState<number>();
+	const imageRef = useRef<HTMLInputElement>(null);
 
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
@@ -167,23 +175,30 @@ export default function ProjectUpdate({ params }: ProjectUpdateParams) {
 	}
 
 	async function handleCreateImage(image: File) {
-		try {
-			const formData = new FormData();
-			formData.append('image', image);
-			formData.append('id', String(projectDetailId));
-			const {
-				data: { message },
-				status,
-			} = await formInstance.post('/api/project/image', formData);
-			if (status === 200) {
-				toast.success(message);
+		if (image) {
+			try {
+				const formData = new FormData();
+				formData.append('image', image);
+				formData.append('id', String(projectDetailId));
+				const {
+					data: { message },
+					status,
+				} = await formInstance.post('/api/project/image', formData);
+				if (status === 200) {
+					toast.success(message);
+					if (imageRef.current) {
+						imageRef.current.value = '';
+					}
+				}
+			} catch (err) {
+				if (isAxiosError(err)) {
+					toast.error(
+						err.response?.data.error || 'An error occurred'
+					);
+				}
+			} finally {
+				setLoad(true);
 			}
-		} catch (err) {
-			if (isAxiosError(err)) {
-				toast.error(err.response?.data.error || 'An error occurred');
-			}
-		} finally {
-			setLoad(true);
 		}
 	}
 
@@ -427,6 +442,7 @@ export default function ProjectUpdate({ params }: ProjectUpdateParams) {
 						<div>
 							<ImageInput
 								id="image-create"
+								ref={imageRef}
 								width={160}
 								height={90}
 								onChange={handleCreateImage}
