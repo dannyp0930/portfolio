@@ -14,6 +14,7 @@ import {
 	Suspense,
 	useCallback,
 	useEffect,
+	useRef,
 	useState,
 } from 'react';
 import { toast } from 'sonner';
@@ -40,6 +41,7 @@ function SkillComponent() {
 	const [updateSkillId, setUpdateSkillId] = useState<number | null>();
 	const [updateSkill, setUpdateSkill] = useState<Skill | null>();
 	const [newImage, setNewImage] = useState<File | null>();
+	const imageRef = useRef<HTMLInputElement>(null);
 	const take = 20;
 
 	async function handleCreateSkill(e: MouseEvent<HTMLButtonElement>) {
@@ -63,7 +65,9 @@ function SkillComponent() {
 				setDescription('');
 				setLevel(1);
 				setImage(null);
-				// todo: 이미지 업로드시 Image 초기화
+				if (imageRef.current) {
+					imageRef.current.value = '';
+				}
 				setCategory('');
 			}
 		} catch (err) {
@@ -244,6 +248,7 @@ function SkillComponent() {
 						<td>
 							<ImageInput
 								id="image"
+								ref={imageRef}
 								onChange={setImage}
 								width={36}
 								height={36}

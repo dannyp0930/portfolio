@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
 import { ImagePlus } from 'lucide-react';
@@ -9,9 +9,10 @@ export default function ImageInput({
 	imageUrl,
 	width = 100,
 	height = 100,
+	ref,
 	onChange,
 }: ImageInputProps) {
-	const inputRef = useRef<HTMLInputElement>(null);
+	// const inputRef = useRef<HTMLInputElement>(null);
 	const [newImageUrl, setNewImageUrl] = useState<string>('');
 
 	useEffect(() => {
@@ -19,6 +20,12 @@ export default function ImageInput({
 			setNewImageUrl(imageUrl);
 		}
 	}, [imageUrl]);
+
+	useEffect(() => {
+		if (ref?.current?.value === '') {
+			setNewImageUrl('');
+		}
+	}, [ref, ref?.current?.value, setNewImageUrl]);
 
 	const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 		const file = event.target.files?.[0] || undefined;
@@ -34,7 +41,7 @@ export default function ImageInput({
 				hidden
 				type="file"
 				accept="image/*"
-				ref={inputRef}
+				ref={ref}
 				onChange={handleChange}
 			/>
 			<Button asChild size="icon">

@@ -1,4 +1,4 @@
-import { Dispatch, ReactNode, SetStateAction } from 'react';
+import { Dispatch, ReactNode, RefObject, SetStateAction } from 'react';
 
 declare global {
 	interface ModalContainerProps {
@@ -12,6 +12,7 @@ declare global {
 		imageUrl?: string;
 		width?: number;
 		height?: number;
+		ref?: RefObject<HTMLInputElement | null>;
 		onChange: Dispatch<SetStateAction<File>> | ((file: File) => void);
 	}
 
