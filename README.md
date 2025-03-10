@@ -1,12 +1,47 @@
 # SH Portfolio
-> dannyp0930 개인 포트폴리오 웹 사이트
+> dannyp0930의 개인 포트폴리오 웹 사이트
 
 ## 목차
+- [프로젝트 개요](#프로젝트-개요)
+- [주요 기능](#주요-기능)
 - [기술 스택](#기술-스택)
 - [설치 및 실행](#설치-및-실행)
+- [API 문서](#api-문서)
 - [배포 및 운영](#배포-및-운영)
+- [컨트리뷰션 가이드](#컨트리뷰션-가이드)
+- [라이센스](#라이센스)
 - [ToDo List](#todo-list)
 - [Next](#next)
+
+## 프로젝트 개요
+SH Portfolio는 개발자 dannyp0930의 개인 포트폴리오 웹사이트입니다. 이 프로젝트는 다음과 같은 목표를 가지고 있습니다:
+- 개인의 기술 스택과 프로젝트 경험을 체계적으로 정리
+- 다양한 기술을 활용한 풀스택 개발 경험
+- 지속적인 개선과 새로운 기술 도입을 통한 학습
+
+## 주요 기능
+- **프로젝트 관리**
+  - 프로젝트 등록/수정/삭제 기능
+  - 프로젝트 상세 정보 및 이미지 관리
+  - GitHub, Notion, 홈페이지 링크 연동
+  **관련 코드**: `app/dashboard/project/[projectId]/page.tsx` (1-480 라인)
+
+- **경력 관리**
+  - 회사별 경력 정보 관리
+  - 직무 및 업무 상세 설명
+  - 기간별 경력 정리
+  **관련 코드**: `app/dashboard/career/[careerId]/page.tsx` (1-37 라인)
+
+- **스킬 관리**
+  - 기술 스택 카테고리별 분류
+  - 숙련도 표시 (1~5단계)
+  - 기술 설명 및 아이콘 표시
+  **관련 코드**: `components/home/Skills/index.tsx` (26-189 라인)
+
+- **관리자 대시보드**
+  - 모든 정보의 CRUD 관리
+  - 페이지네이션 지원
+  - 실시간 수정 및 반영
 
 ## 기술 스택
 ****
@@ -42,11 +77,20 @@ $ yarn migrate:dev
 $ yarn dev
 ```
 
+## API 문서
+### 프로젝트 API
+- `GET /api/project` - 프로젝트 목록 조회
+- `GET /api/project?id={id}` - 특정 프로젝트 상세 조회
+- `POST /api/project` - 프로젝트 생성
+- `PUT /api/project/{id}` - 프로젝트 수정
+- `DELETE /api/project/{id}` - 프로젝트 삭제
+**관련 코드**: `app/api/project/route.ts` (42-87 라인)
+
 ## 배포 및 운영
 > Github action을 통해 master branch merge 발생시 자동 배포 구현
 
 ### /etc/nginx/sites-available/{server_name}
-```
+```nginx
 server {
     listen 80;
     server_name {server_name};
