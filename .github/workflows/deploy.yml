@@ -32,6 +32,20 @@ jobs:
                       [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
                       nvm use 22 || { echo "nvm use failed"; exit 1; }
 
+                      if ! docker ps --format '{{.Names}}' | grep -q 'portfolio_db'; then
+                          echo "Docker container is not running. Starting Docker..."
+                          yarn docker:up || { echo "Docker container start failed"; exit 1; }
+                      else
+                          echo "Docker container is already running."
+                      fi
+
+                      if ! docker images --format '{{.Repository}}' | grep -q 'mysql'; then
+                          echo "Docker image not found. Building Docker image..."
+                          yarn docker:build || { echo "Docker image build failed"; exit 1; }
+                      else
+                          echo "Docker image already exists."
+                      fi
+
                       echo "Installing dependencies..."
                       sudo yarn install --frozen-lockfile || { echo "yarn install failed"; exit 1; }
 
