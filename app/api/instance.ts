@@ -1,18 +1,27 @@
 import axios from 'axios';
+import https from 'https';
 
-const instance = axios.create({
+const commonConfig = {
 	headers: {
 		'Content-Type': 'application/json',
 	},
 	withCredentials: true,
+};
+
+const httpsAgent =
+	process.env.NODE_ENV === 'development'
+		? new https.Agent({ rejectUnauthorized: false })
+		: undefined;
+
+const instance = axios.create({
+	...commonConfig,
+	httpsAgent,
 });
 
 const serverInstance = axios.create({
 	baseURL: process.env.API_URL,
-	headers: {
-		'Content-Type': 'application/json',
-	},
-	withCredentials: true,
+	...commonConfig,
+	httpsAgent,
 });
 
 const formInstance = axios.create({

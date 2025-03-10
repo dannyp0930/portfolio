@@ -9,7 +9,7 @@
 - [Next](#next)
 
 ## 기술 스택
-
+****
 | Category | Technology                      | Version        | Description                                   |
 | -------- | ------------------------------- | -------------- | --------------------------------------------- |
 | Frontend | Next.js                         | 15.1.6         | React 기반의 풀스택 프레임워크, SSR/SSG 지원  |
@@ -32,6 +32,9 @@
 
 ## 설치 및 실행
 ```bash
+# 로컬 HTTP 인증
+$ yarn setup-https
+
 # DB 빌드
 $ yarn docker:build
 

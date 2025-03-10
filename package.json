@@ -4,7 +4,7 @@
 	"private": true,
 	"scripts": {
 		"prepare": "husky",
-    "dev": "NODE_TLS_REJECT_UNAUTHORIZED=0 node server.mjs",
+    "dev": "node server.mjs",
 		"build": "next build",
 		"start": "next start",
 		"lint": "next lint",
