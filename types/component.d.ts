@@ -24,13 +24,6 @@ declare global {
 		onChange: Dispatch<SetStateAction<File>> | ((file: File) => void);
 	}
 
-	interface ImageInputListProps {
-		id: string;
-		images?: string[];
-		dir?: string;
-		onChange: Dispatch<SetStateAction<string[] | null | undefined>>;
-	}
-
 	interface AdminPaginationProps {
 		className?: string;
 		page: number;
