@@ -249,5 +249,6 @@ github repository에 환경 변수 등록 필수
 - Oauth
 - 뉴스레터 (+구독 시 이력서 전송)
 - 블로그
+- Schema 순서 추가
 - grafana 등 로깅
 - zustand 도입(상태관리)
