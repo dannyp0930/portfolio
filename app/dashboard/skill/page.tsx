@@ -85,14 +85,10 @@ function SkillComponent() {
 			const formData = new FormData();
 			if (updateSkill) {
 				formData.append('id', String(updateSkill.id));
-				if (updateSkill.title)
-					formData.append('title', updateSkill.title);
-				if (updateSkill.description)
-					formData.append('description', updateSkill.description);
-				if (updateSkill.level)
-					formData.append('level', String(updateSkill.level));
-				if (updateSkill.category)
-					formData.append('category', updateSkill.category);
+				formData.append('title', updateSkill.title);
+				formData.append('description', updateSkill.description);
+				formData.append('level', String(updateSkill.level));
+				formData.append('category', String(updateSkill.category));
 				if (newImage) formData.append('image', newImage);
 			}
 			const {
