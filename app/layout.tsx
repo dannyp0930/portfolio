@@ -3,6 +3,8 @@ import './globals.css';
 import { Toaster } from '@/components/ui/sonner';
 
 export const metadata: Metadata = {
+	title: 'SH Portfolio',
+	description: '개발자 SH의 포트폴리오 사이트입니다.',
 	manifest: '/manifest.json',
 };
 
