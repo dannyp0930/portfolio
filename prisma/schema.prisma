@@ -35,6 +35,8 @@ model Contact {
   type   String
   value  String
   label  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Education {
@@ -43,6 +45,8 @@ model Education {
   degreeStatus     String
   startDate        DateTime
   endDate          DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Experience {
@@ -51,6 +55,8 @@ model Experience {
   startDate     DateTime
   endDate       DateTime
   description   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model CareerOverview {
@@ -60,6 +66,8 @@ model CareerOverview {
   startDate     DateTime
   endDate       DateTime?
   description   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Language {
@@ -68,6 +76,8 @@ model Language {
   proficiency   String
   examDate      DateTime
   institution   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Certificate {
@@ -75,6 +85,8 @@ model Certificate {
   certificateName     String
   issueDate           DateTime
   issuingOrganization String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt  
 }
 
 model Project {
@@ -98,6 +110,8 @@ model ProjectDetail {
   description String
   images      ProjectImage[]
   project     Project       @relation(fields: [projectId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model ProjectImage {
@@ -105,6 +119,8 @@ model ProjectImage {
   url         String
   projectDetailId Int
   projectDetail ProjectDetail @relation(fields: [projectDetailId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Career {
@@ -126,6 +142,8 @@ model CareerDetail {
   title     String
   content   String  @db.Text
   career    Career  @relation(fields: [careerId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt  
 }
 
 model Skill {

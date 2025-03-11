@@ -14,11 +14,11 @@ export async function POST(req: NextRequest) {
 	let imageUrl: string | null = null;
 	try {
 		const imageBuffer = Buffer.from(await image.arrayBuffer());
-		imageUrl = (await uploadToS3(
+		imageUrl = await uploadToS3(
 			imageBuffer,
 			'skill',
 			`${Date.now()}-${image.name}`
-		)) as string;
+		);
 		await prisma.$transaction(async (prisma) => {
 			await prisma.skill.create({
 				data: {
@@ -64,11 +64,11 @@ export async function PUT(req: NextRequest) {
 		existingImageUrl = existingSkill.imageUrl;
 		if (image) {
 			const imageBuffer = Buffer.from(await image.arrayBuffer());
-			newImageUrl = (await uploadToS3(
+			newImageUrl = await uploadToS3(
 				imageBuffer,
 				'skill',
 				`${Date.now()}-${image.name}`
-			)) as string;
+			);
 		}
 		await prisma.$transaction(async (prisma) => {
 			await prisma.skill.update({
@@ -110,10 +110,12 @@ export async function GET(req: NextRequest) {
 			return NextResponse.json({ data: skill }, { status: 200 });
 		}
 		if (take === -1) {
-			const skills = await prisma.skill.findMany();
+			const skills = await prisma.skill.findMany({
+				orderBy: { id: 'asc' },
+			});
 			const groupedSkills = skills.reduce(
 				(acc, skill) => {
-					const category = skill.category || 'Uncategorized';
+					const category = skill.category ?? 'Uncategorized';
 					if (!acc[category]) {
 						acc[category] = [];
 					}
