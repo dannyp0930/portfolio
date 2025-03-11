@@ -361,7 +361,7 @@ export default function CareerUpdate({ params }: CareerUpdateParams) {
 										<FormLabel className="flex-shrink-0 w-20">
 											제목
 										</FormLabel>
-										<FormControl className="w-48">
+										<FormControl className="w-96">
 											<Input
 												placeholder="제목"
 												{...field}
@@ -417,7 +417,7 @@ export default function CareerUpdate({ params }: CareerUpdateParams) {
 													<FormLabel className="flex-shrink-0 w-20">
 														제목
 													</FormLabel>
-													<FormControl className="w-48">
+													<FormControl className="w-96">
 														<Input
 															placeholder="제목"
 															{...field}
@@ -466,7 +466,7 @@ export default function CareerUpdate({ params }: CareerUpdateParams) {
 									<div className="flex-shrink-0 w-20 text-sm">
 										제목
 									</div>
-									<div className="flex items-center h-9 rounded-md border border-input px-3 py-1 text-base shadow-sm transition-colors md:text-sm w-48">
+									<div className="flex items-center h-9 rounded-md border border-input px-3 py-1 text-base shadow-sm transition-colors md:text-sm w-96">
 										{detail.title}
 									</div>
 								</div>

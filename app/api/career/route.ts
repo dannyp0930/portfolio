@@ -51,7 +51,6 @@ export async function GET(req: NextRequest) {
 			const careerDetail = await prisma.careerDetail.findMany({
 				where: { careerId: Number(id) },
 			});
-			console.log(careerDetail);
 			return NextResponse.json(
 				{
 					data: {
