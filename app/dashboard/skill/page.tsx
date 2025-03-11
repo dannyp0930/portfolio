@@ -42,7 +42,7 @@ function SkillComponent() {
 	const [updateSkill, setUpdateSkill] = useState<Skill | null>();
 	const [newImage, setNewImage] = useState<File | null>();
 	const imageRef = useRef<HTMLInputElement>(null);
-	const take = 20;
+	const take = 5;
 
 	async function handleCreateSkill(e: MouseEvent<HTMLButtonElement>) {
 		e.preventDefault();
@@ -192,6 +192,10 @@ function SkillComponent() {
 			setSelectPage(parseInt(parmasPage));
 		}
 	}, [searchParams]);
+
+	useEffect(() => {
+		setLoad(true);
+	}, [selectPage]);
 
 	return (
 		<div className="m-5 py-10 rounded-lg bg-white">

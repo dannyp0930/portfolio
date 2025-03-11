@@ -84,6 +84,10 @@ function CareerComponent() {
 		}
 	}, [searchParams]);
 
+	useEffect(() => {
+		setLoad(true);
+	}, [selectPage]);
+
 	return (
 		<div className="m-5 py-10 rounded-lg bg-white">
 			<div className="flex justify-end px-5 pb-3">
