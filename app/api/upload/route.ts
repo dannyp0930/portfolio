@@ -41,7 +41,6 @@ export async function DELETE(req: NextRequest) {
 	const { imageUrl } = await req.json();
 	if (imageUrl) {
 		try {
-			console.log(imageUrl);
 			await deleteFromS3(imageUrl as string);
 			return NextResponse.json({ message: 'OK' }, { status: 200 });
 		} catch {
