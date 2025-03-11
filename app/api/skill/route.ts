@@ -125,9 +125,10 @@ export async function GET(req: NextRequest) {
 				{} as Record<string, typeof skills>
 			);
 			const categoryOrder = [
-				'Front',
-				'Back',
-				'DB',
+				'Language',
+				'Front-end',
+				'Back-end',
+				'Database',
 				'DevOps',
 				'Cloud',
 				'Tool',

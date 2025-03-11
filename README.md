@@ -236,6 +236,7 @@ github repository에 환경 변수 등록 필수
 |                 | 이력서 다운로드    | ☐      |
 
 ## Next
+- dashboard ordering
 - Oauth
 - 뉴스레터 (+구독 시 이력서 전송)
 - 블로그
