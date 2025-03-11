@@ -122,7 +122,14 @@ export async function GET(req: NextRequest) {
 				},
 				{} as Record<string, typeof skills>
 			);
-			const categoryOrder = ['Front', 'Back', 'CI/CD'];
+			const categoryOrder = [
+				'Front',
+				'Back',
+				'DB',
+				'DevOps',
+				'Cloud',
+				'Tool',
+			];
 			const orderedCategories = categoryOrder.filter(
 				(category) => groupedSkills[category]
 			);
