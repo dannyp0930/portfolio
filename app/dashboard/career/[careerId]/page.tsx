@@ -474,7 +474,7 @@ export default function CareerUpdate({ params }: CareerUpdateParams) {
 									<div className="flex-shrink-0 w-20 text-sm">
 										내용
 									</div>
-									<div className="flex min-h-[60px] rounded-md border border-input px-3 py-2 text-base shadow-sm md:text-sm w-96 h-40 whitespace-pre-line">
+									<div className="flex min-h-[60px] rounded-md border border-input px-3 py-2 text-base shadow-sm md:text-sm w-96 h-40 whitespace-pre-line overflow-auto">
 										{detail.content}
 									</div>
 								</div>
