@@ -1,10 +1,10 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faGithub } from '@fortawesome/free-brands-svg-icons';
 import { faHome } from '@fortawesome/free-solid-svg-icons';
+import { faCircleInfo } from '@fortawesome/free-solid-svg-icons';
 import notionSvg from '@/assets/images/icons/notion.svg';
 import Image from 'next/image';
 import dayjs from 'dayjs';
-import { Button } from '@/components/ui/button';
 
 export default function ProjectCard({ project, setModalId }: ProjectCardProps) {
 	return (
@@ -60,9 +60,15 @@ export default function ProjectCard({ project, setModalId }: ProjectCardProps) {
 						/>
 					</a>
 				)}
-				<Button variant="link" onClick={() => setModalId(project.id)}>
-					Detail
-				</Button>
+				<button
+					className="w-12 h-12 text-theme-sub"
+					onClick={() => setModalId(project.id)}
+				>
+					<FontAwesomeIcon
+						className="w-full h-full"
+						icon={faCircleInfo}
+					/>
+				</button>
 			</div>
 		</div>
 	);
