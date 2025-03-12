@@ -1,10 +1,18 @@
 'use client';
 
-import { useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import ProjectCard from './ProjectCard';
+import { ModalContainer } from '@/components/common/ModalContainer';
+import { toast } from 'sonner';
+import { isAxiosError } from 'axios';
+import { instance } from '@/app/api/instance';
+import Image from 'next/image';
 
 export default function ProjectList({ projects }: ProjectListPros) {
 	const [select, setSelect] = useState<number>(0);
+	const [modalId, setModalId] = useState<number>(0);
+	const [projectDetail, setProjectDetail] = useState<ProjectDetail | null>();
+	const [projectImages, setProjectImages] = useState<ProjectImage[]>();
 	const total = projects.length;
 
 	function goPrev() {
@@ -18,6 +26,41 @@ export default function ProjectList({ projects }: ProjectListPros) {
 			setSelect(select + 1);
 		}
 	}
+
+	const getProjectDetail = useCallback(async () => {
+		try {
+			const params = {
+				id: modalId,
+			};
+			const {
+				data: {
+					data: { projectDetail, projectImages },
+				},
+			} = await instance.get('/api/project/detail', { params });
+			setProjectDetail(projectDetail);
+			setProjectImages(projectImages);
+		} catch (err) {
+			if (isAxiosError(err)) {
+				toast.error(err.response?.data.error || 'An error occurred');
+				setModalId(0);
+				setProjectDetail(null);
+				setProjectImages([]);
+			}
+		}
+	}, [modalId]);
+
+	useEffect(() => {
+		if (modalId) {
+			getProjectDetail();
+		}
+	}, [modalId, getProjectDetail]);
+
+	function closeModal() {
+		setModalId(0);
+		setProjectDetail(null);
+		setProjectImages([]);
+	}
+
 	return (
 		<section
 			id="project"
@@ -50,11 +93,36 @@ export default function ProjectList({ projects }: ProjectListPros) {
 							className="flex flex-grow flex-shrink-0 justify-center items-center w-full h-full"
 							key={project.id}
 						>
-							<ProjectCard project={project} />
+							<ProjectCard
+								project={project}
+								setModalId={setModalId}
+							/>
 						</div>
 					))}
 				</div>
 			</div>
+			{modalId ? (
+				<ModalContainer closeModal={closeModal}>
+					<h4>프로젝트 상세</h4>
+					<div className="flex gap-4 mt-4">
+						<p className="whitespace-pre w-96">
+							{projectDetail?.description}
+						</p>
+						<div>
+							{projectImages?.map((projectImage) => (
+								<div key={projectImage.id}>
+									<Image
+										width={384}
+										height={216}
+										src={projectImage.url}
+										alt={String(projectImage.id)}
+									/>
+								</div>
+							))}
+						</div>
+					</div>
+				</ModalContainer>
+			) : null}
 		</section>
 	);
 }

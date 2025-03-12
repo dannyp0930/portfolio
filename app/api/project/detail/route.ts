@@ -48,3 +48,28 @@ export async function PUT(req: NextRequest) {
 		);
 	}
 }
+
+export async function GET(req: NextRequest) {
+	const { searchParams } = new URL(req.url);
+	const id = searchParams.get('id');
+	if (!isAdmin(req)) {
+		return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+	}
+	try {
+		const projectDetail = await prisma.projectDetail.findUnique({
+			where: { projectId: Number(id) },
+		});
+		const projectImages = await prisma.projectImage.findMany({
+			where: { projectDetailId: projectDetail?.id },
+		});
+		return NextResponse.json(
+			{ data: { projectDetail, projectImages } },
+			{ status: 200 }
+		);
+	} catch (err) {
+		return NextResponse.json(
+			{ error: 'Something went wrong', details: err },
+			{ status: 500 }
+		);
+	}
+}

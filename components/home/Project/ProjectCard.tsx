@@ -4,8 +4,9 @@ import { faHome } from '@fortawesome/free-solid-svg-icons';
 import notionSvg from '@/assets/images/icons/notion.svg';
 import Image from 'next/image';
 import dayjs from 'dayjs';
+import { Button } from '@/components/ui/button';
 
-export default function ProjectCard({ project }: ProjectCardProps) {
+export default function ProjectCard({ project, setModalId }: ProjectCardProps) {
 	return (
 		<div className="box-border flex flex-col justify-center w-5/6 gap-5 p-5 bg-white shadow-lg h-4/5 rounded-2xl md:h-5/6 md:p-12 lg:w-11/12">
 			<h1 className="flex flex-col md:flex-row lg:justify-between lg:items-center">
@@ -59,6 +60,9 @@ export default function ProjectCard({ project }: ProjectCardProps) {
 						/>
 					</a>
 				)}
+				<Button variant="link" onClick={() => setModalId(project.id)}>
+					Detail
+				</Button>
 			</div>
 		</div>
 	);
