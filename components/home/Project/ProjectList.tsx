@@ -76,6 +76,7 @@ export default function ProjectList({ projects }: ProjectListPros) {
 		setProjectDetail(null);
 		setProjectImages([]);
 		setTotalImages(0);
+		console.log(12312312);
 	}
 
 	return (
@@ -126,46 +127,48 @@ export default function ProjectList({ projects }: ProjectListPros) {
 						<p className="whitespace-pre">
 							{projectDetail?.description}
 						</p>
-						<div className="w-full h-40 m-auto relative overflow-hidden">
-							<div className="flex absolute top-1/2 z-50 justify-between w-full -translate-y-1/2">
-								<button
-									className={[
-										"text-5xl font-bold text-sub cursor-pointer after:content-['<']",
-										!selectImage && 'opacity-60',
-									].join(' ')}
-									onClick={goPrevImage}
-								></button>
-								<button
-									className={[
-										"text-5xl font-bold text-sub cursor-pointer after:content-['>']",
-										selectImage === totalImages - 1 &&
-											'opacity-60',
-									].join(' ')}
-									onClick={goNextImage}
-								></button>
+						{projectImages?.length ? (
+							<div className="w-full h-40 m-auto relative overflow-hidden">
+								<div className="flex absolute top-1/2 z-50 justify-between w-full -translate-y-1/2">
+									<button
+										className={[
+											"text-5xl font-bold text-sub cursor-pointer after:content-['<']",
+											!selectImage && 'opacity-60',
+										].join(' ')}
+										onClick={goPrevImage}
+									></button>
+									<button
+										className={[
+											"text-5xl font-bold text-sub cursor-pointer after:content-['>']",
+											selectImage === totalImages - 1 &&
+												'opacity-60',
+										].join(' ')}
+										onClick={goNextImage}
+									></button>
+								</div>
+								<div
+									className="flex items-center m-auto w-full h-full transition-transform"
+									style={{
+										transform: `translateX(${selectImage * -100}%)`,
+									}}
+								>
+									{projectImages?.map((projectImage) => (
+										<div
+											className="relative flex flex-grow flex-shrink-0 justify-center items-center w-full h-full"
+											key={projectImage.id}
+										>
+											<Image
+												className="object-cover"
+												fill
+												src={projectImage.url}
+												alt={String(projectImage.id)}
+											/>
+											{/* <img className='w-full h-full' src={projectImage.url} alt={projectImage.id} /> */}
+										</div>
+									))}
+								</div>
 							</div>
-							<div
-								className="flex items-center m-auto w-full h-full transition-transform"
-								style={{
-									transform: `translateX(${selectImage * -100}%)`,
-								}}
-							>
-								{projectImages?.map((projectImage) => (
-									<div
-										className="relative flex flex-grow flex-shrink-0 justify-center items-center w-full h-full"
-										key={projectImage.id}
-									>
-										<Image
-											className="object-cover"
-											fill
-											src={projectImage.url}
-											alt={String(projectImage.id)}
-										/>
-										{/* <img className='w-full h-full' src={projectImage.url} alt={projectImage.id} /> */}
-									</div>
-								))}
-							</div>
-						</div>
+						) : null}
 					</div>
 				</ModalContainer>
 			) : null}

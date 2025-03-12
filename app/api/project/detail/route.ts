@@ -56,11 +56,14 @@ export async function GET(req: NextRequest) {
 		const projectDetail = await prisma.projectDetail.findUnique({
 			where: { projectId: Number(id) },
 		});
-		const projectImages = await prisma.projectImage.findMany({
-			where: { projectDetailId: projectDetail?.id },
-		});
+		let projectImages = null;
+		if (projectDetail) {
+			projectImages = await prisma.projectImage.findMany({
+				where: { projectDetailId: projectDetail?.id },
+			});
+		}
 		return NextResponse.json(
-			{ data: { projectDetail, projectImages } },
+			{ data: { projectDetail, projectImages: projectImages } },
 			{ status: 200 }
 		);
 	} catch (err) {
