@@ -13,7 +13,9 @@ export default function ProjectList({ projects }: ProjectListPros) {
 	const [modalId, setModalId] = useState<number>(0);
 	const [projectDetail, setProjectDetail] = useState<ProjectDetail | null>();
 	const [projectImages, setProjectImages] = useState<ProjectImage[]>();
+	const [selectImage, setSelectImage] = useState<number>(0);
 	const total = projects.length;
+	const [totalImages, setTotalImages] = useState<number>(0);
 
 	function goPrev() {
 		if (select) {
@@ -24,6 +26,18 @@ export default function ProjectList({ projects }: ProjectListPros) {
 	function goNext() {
 		if (select < total - 1) {
 			setSelect(select + 1);
+		}
+	}
+
+	function goPrevImage() {
+		if (selectImage) {
+			setSelectImage(selectImage - 1);
+		}
+	}
+
+	function goNextImage() {
+		if (selectImage < totalImages - 1) {
+			setSelectImage(selectImage + 1);
 		}
 	}
 
@@ -39,12 +53,14 @@ export default function ProjectList({ projects }: ProjectListPros) {
 			} = await instance.get('/api/project/detail', { params });
 			setProjectDetail(projectDetail);
 			setProjectImages(projectImages);
+			setTotalImages(projectImages.length);
 		} catch (err) {
 			if (isAxiosError(err)) {
 				toast.error(err.response?.data.error || 'An error occurred');
 				setModalId(0);
 				setProjectDetail(null);
 				setProjectImages([]);
+				setTotalImages(0);
 			}
 		}
 	}, [modalId]);
@@ -59,6 +75,7 @@ export default function ProjectList({ projects }: ProjectListPros) {
 		setModalId(0);
 		setProjectDetail(null);
 		setProjectImages([]);
+		setTotalImages(0);
 	}
 
 	return (
@@ -101,24 +118,53 @@ export default function ProjectList({ projects }: ProjectListPros) {
 					))}
 				</div>
 			</div>
+			{/* TODO: 반응형 (태블릿, PC) */}
 			{modalId ? (
 				<ModalContainer closeModal={closeModal}>
 					<h4>프로젝트 상세</h4>
-					<div className="flex gap-4 mt-4">
-						<p className="whitespace-pre w-96">
+					<div className="w-[300px] flex flex-col gap-10 p-5">
+						<p className="whitespace-pre">
 							{projectDetail?.description}
 						</p>
-						<div>
-							{projectImages?.map((projectImage) => (
-								<div key={projectImage.id}>
-									<Image
-										width={384}
-										height={216}
-										src={projectImage.url}
-										alt={String(projectImage.id)}
-									/>
-								</div>
-							))}
+						<div className="w-full h-40 m-auto relative overflow-hidden">
+							<div className="flex absolute top-1/2 z-50 justify-between w-full -translate-y-1/2">
+								<button
+									className={[
+										"text-5xl font-bold text-sub cursor-pointer after:content-['<']",
+										!selectImage && 'opacity-60',
+									].join(' ')}
+									onClick={goPrevImage}
+								></button>
+								<button
+									className={[
+										"text-5xl font-bold text-sub cursor-pointer after:content-['>']",
+										selectImage === totalImages - 1 &&
+											'opacity-60',
+									].join(' ')}
+									onClick={goNextImage}
+								></button>
+							</div>
+							<div
+								className="flex items-center m-auto w-full h-full transition-transform"
+								style={{
+									transform: `translateX(${selectImage * -100}%)`,
+								}}
+							>
+								{projectImages?.map((projectImage) => (
+									<div
+										className="relative flex flex-grow flex-shrink-0 justify-center items-center w-full h-full"
+										key={projectImage.id}
+									>
+										<Image
+											className="object-cover"
+											fill
+											src={projectImage.url}
+											alt={String(projectImage.id)}
+										/>
+										{/* <img className='w-full h-full' src={projectImage.url} alt={projectImage.id} /> */}
+									</div>
+								))}
+							</div>
 						</div>
 					</div>
 				</ModalContainer>
