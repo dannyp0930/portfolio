@@ -220,6 +220,7 @@ function SkillComponent() {
 	}, [selectPage, selectCategory]);
 
 	// todo: orderby 추가
+	// todo: row 순서 추가
 	return (
 		<div className="m-5 py-10 rounded-lg bg-white">
 			<div className="p-4 pt-0">
