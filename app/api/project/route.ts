@@ -77,6 +77,17 @@ export async function GET(req: NextRequest) {
 						},
 					},
 				},
+				orderBy: [
+					{
+						endDate: {
+							sort: 'desc',
+							nulls: 'first',
+						},
+					},
+					{
+						startDate: 'desc',
+					},
+				],
 			});
 			const projectsWithDetailStatus = projects.map((project) => ({
 				...project,
