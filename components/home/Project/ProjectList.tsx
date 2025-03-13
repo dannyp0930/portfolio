@@ -14,6 +14,7 @@ export default function ProjectList({ projects }: ProjectListPros) {
 	const [projectDetail, setProjectDetail] = useState<ProjectDetail | null>();
 	const [projectImages, setProjectImages] = useState<ProjectImage[]>();
 	const [selectImage, setSelectImage] = useState<number>(0);
+	const [selectProjectTitle, setSelectProjectTitle] = useState<string>();
 	const total = projects.length;
 	const [totalImages, setTotalImages] = useState<number>(0);
 
@@ -51,6 +52,10 @@ export default function ProjectList({ projects }: ProjectListPros) {
 					data: { projectDetail, projectImages },
 				},
 			} = await instance.get('/api/project/detail', { params });
+			setSelectProjectTitle(
+				projects.find((project) => project.id === modalId)
+					?.title as string
+			);
 			setProjectDetail(projectDetail);
 			setProjectImages(projectImages);
 			setTotalImages(projectImages.length);
@@ -61,9 +66,10 @@ export default function ProjectList({ projects }: ProjectListPros) {
 				setProjectDetail(null);
 				setProjectImages([]);
 				setTotalImages(0);
+				setSelectProjectTitle('');
 			}
 		}
-	}, [modalId]);
+	}, [modalId, projects]);
 
 	useEffect(() => {
 		if (modalId) {
@@ -76,7 +82,7 @@ export default function ProjectList({ projects }: ProjectListPros) {
 		setProjectDetail(null);
 		setProjectImages([]);
 		setTotalImages(0);
-		console.log(12312312);
+		setSelectProjectTitle('');
 	}
 
 	return (
@@ -119,56 +125,60 @@ export default function ProjectList({ projects }: ProjectListPros) {
 					))}
 				</div>
 			</div>
-			{/* TODO: 반응형 (태블릿, PC) */}
 			{modalId ? (
 				<ModalContainer closeModal={closeModal}>
-					<h4>프로젝트 상세</h4>
-					<div className="w-[300px] flex flex-col gap-10 p-5">
-						<p className="whitespace-pre">
-							{projectDetail?.description}
-						</p>
-						{projectImages?.length ? (
-							<div className="w-full h-40 m-auto relative overflow-hidden">
-								<div className="flex absolute top-1/2 z-50 justify-between w-full -translate-y-1/2">
-									<button
-										className={[
-											"text-5xl font-bold text-sub cursor-pointer after:content-['<']",
-											!selectImage && 'opacity-60',
-										].join(' ')}
-										onClick={goPrevImage}
-									></button>
-									<button
-										className={[
-											"text-5xl font-bold text-sub cursor-pointer after:content-['>']",
-											selectImage === totalImages - 1 &&
-												'opacity-60',
-										].join(' ')}
-										onClick={goNextImage}
-									></button>
+					<div className="p-2">
+						<h4>{selectProjectTitle}</h4>
+						<div className="w-[280px] flex flex-col gap-10 mt-4 sm:w-[30rem] md:w-[38rem] lg:w-[55rem] lg:flex-row">
+							<p className="text-xs break-all whitespace-pre-line w-full sm:text-sm md:text-base">
+								{projectDetail?.description}
+							</p>
+							{projectImages?.length ? (
+								<div className="w-full m-auto relative overflow-hidden">
+									<div className="flex absolute top-1/2 z-50 justify-between w-full -translate-y-1/2">
+										<button
+											className={[
+												"text-5xl font-bold text-sub cursor-pointer after:content-['<']",
+												!selectImage && 'opacity-60',
+											].join(' ')}
+											onClick={goPrevImage}
+										></button>
+										<button
+											className={[
+												"text-5xl font-bold text-sub cursor-pointer after:content-['>']",
+												selectImage ===
+													totalImages - 1 &&
+													'opacity-60',
+											].join(' ')}
+											onClick={goNextImage}
+										></button>
+									</div>
+									<div
+										className="flex items-center m-auto w-full h-full aspect-video transition-transform"
+										style={{
+											transform: `translateX(${selectImage * -100}%)`,
+										}}
+									>
+										{projectImages?.map((projectImage) => (
+											<div
+												className="relative flex flex-grow flex-shrink-0 justify-center items-center w-full h-full"
+												key={projectImage.id}
+											>
+												<Image
+													className="object-cover"
+													fill
+													sizes="100%"
+													src={projectImage.url}
+													alt={String(
+														projectImage.id
+													)}
+												/>
+											</div>
+										))}
+									</div>
 								</div>
-								<div
-									className="flex items-center m-auto w-full h-full transition-transform"
-									style={{
-										transform: `translateX(${selectImage * -100}%)`,
-									}}
-								>
-									{projectImages?.map((projectImage) => (
-										<div
-											className="relative flex flex-grow flex-shrink-0 justify-center items-center w-full h-full"
-											key={projectImage.id}
-										>
-											<Image
-												className="object-cover"
-												fill
-												src={projectImage.url}
-												alt={String(projectImage.id)}
-											/>
-											{/* <img className='w-full h-full' src={projectImage.url} alt={projectImage.id} /> */}
-										</div>
-									))}
-								</div>
-							</div>
-						) : null}
+							) : null}
+						</div>
 					</div>
 				</ModalContainer>
 			) : null}

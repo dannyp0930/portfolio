@@ -21,7 +21,7 @@ model User {
 model Intro {
   id                Int   @id @default(autoincrement())
   title             String
-  description  String
+  description  String @db.Text
   resumeFileUrl String?
   bannerImageUrl String
   bannerImageUrlTablet String?
@@ -107,7 +107,7 @@ model Project {
 model ProjectDetail {
   id          Int           @id @default(autoincrement())
   projectId   Int           @unique
-  description String
+  description String        @db.Text
   images      ProjectImage[]
   project     Project       @relation(fields: [projectId], references: [id])
   createdAt DateTime @default(now())
@@ -128,7 +128,7 @@ model Career {
   companyName String
   startDate     DateTime
   endDate       DateTime?
-  description String
+  description String @db.Text
   position    String
   duty        String
   careerDetails CareerDetail[]
@@ -149,7 +149,7 @@ model CareerDetail {
 model Skill {
   id            Int   @id @default(autoincrement())
   title         String
-  description   String
+  description   String @db.Text
   level         Int
   imageUrl      String
   category      String?
