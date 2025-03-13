@@ -3,6 +3,7 @@ import { isAdmin } from '@/lib/isAdmin';
 import uploadToS3 from '@/lib/uploadToS3';
 import deleteFromS3 from '@/lib/deleteFromS3';
 import prisma from '@/lib/prisma';
+import { CATEGORY_ORDER } from '@/lib/constants';
 
 export async function POST(req: NextRequest) {
 	if (!isAdmin(req)) {
@@ -124,22 +125,13 @@ export async function GET(req: NextRequest) {
 				},
 				{} as Record<string, typeof skills>
 			);
-			const categoryOrder = [
-				'Language',
-				'Front-end',
-				'Back-end',
-				'Database',
-				'DevOps',
-				'Cloud',
-				'Tool',
-			];
-			const orderedCategories = categoryOrder.filter(
+			const orderedCategories = CATEGORY_ORDER.filter(
 				(category) => groupedSkills[category]
 			);
 			const otherCategories = Object.keys(groupedSkills)
 				.filter(
 					(category) =>
-						!categoryOrder.includes(category) &&
+						!CATEGORY_ORDER.includes(category) &&
 						category !== 'Uncategorized'
 				)
 				.sort((a, b) => a.localeCompare(b));
