@@ -10,7 +10,7 @@ export default function ProjectCard({ project, setModalId }: ProjectCardProps) {
 	return (
 		<div className="box-border flex flex-col justify-center w-5/6 gap-5 p-5 bg-white shadow-lg h-4/5 rounded-2xl md:h-5/6 md:p-12 lg:w-11/12">
 			<h1 className="flex flex-col md:flex-row lg:justify-between lg:items-center">
-				{project.title}
+				{project.title} {project.hasProjectDetail}
 				<span className="text-base">{project.organization}</span>
 			</h1>
 			<h4 className="break-keep">{project.intro}</h4>
@@ -60,15 +60,17 @@ export default function ProjectCard({ project, setModalId }: ProjectCardProps) {
 						/>
 					</a>
 				)}
-				<button
-					className="w-12 h-12 text-theme-sub"
-					onClick={() => setModalId(project.id)}
-				>
-					<FontAwesomeIcon
-						className="w-full h-full"
-						icon={faCircleInfo}
-					/>
-				</button>
+				{project.hasProjectDetail && (
+					<button
+						className="w-12 h-12 text-theme-sub"
+						onClick={() => setModalId(project.id)}
+					>
+						<FontAwesomeIcon
+							className="w-full h-full"
+							icon={faCircleInfo}
+						/>
+					</button>
+				)}
 			</div>
 		</div>
 	);

@@ -69,8 +69,23 @@ export async function GET(req: NextRequest) {
 			);
 		}
 		if (take === -1) {
-			const projects = await prisma.project.findMany();
-			return NextResponse.json({ data: projects }, { status: 200 });
+			const projects = await prisma.project.findMany({
+				include: {
+					projectDetail: {
+						select: {
+							id: true,
+						},
+					},
+				},
+			});
+			const projectsWithDetailStatus = projects.map((project) => ({
+				...project,
+				hasProjectDetail: !!project.projectDetail,
+			}));
+			return NextResponse.json(
+				{ data: projectsWithDetailStatus },
+				{ status: 200 }
+			);
 		}
 		const projects = await prisma.project.findMany({
 			skip: (page - 1) * take,

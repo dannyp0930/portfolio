@@ -16,12 +16,16 @@ declare global {
 		skills: Record<string, Skill[]>;
 	}
 
+	interface ProjectWithHasDetail extends Project {
+		hasProjectDetail: boolean;
+	}
+
 	interface ProjectListPros {
-		projects: Project[];
+		projects: ProjectWithHasDetail[];
 	}
 
 	interface ProjectCardProps {
-		project: Project;
+		project: ProjectWithHasDetail;
 		setModalId: Dispatch<SetStateAction<number>>;
 	}
 
