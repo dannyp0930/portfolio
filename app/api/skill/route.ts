@@ -3,7 +3,7 @@ import { isAdmin } from '@/lib/isAdmin';
 import uploadToS3 from '@/lib/uploadToS3';
 import deleteFromS3 from '@/lib/deleteFromS3';
 import prisma from '@/lib/prisma';
-import { CATEGORY_ORDER } from '@/lib/constants';
+import { SKILL_CATEGORY } from '@/lib/constants';
 
 export async function POST(req: NextRequest) {
 	if (!isAdmin(req)) {
@@ -102,6 +102,7 @@ export async function GET(req: NextRequest) {
 	const { searchParams } = new URL(req.url);
 	const id = searchParams.get('id');
 	const page = parseInt(searchParams.get('page') as string);
+	const category = searchParams.get('category');
 	const take = parseInt(searchParams.get('take') as string);
 	try {
 		if (id) {
@@ -125,13 +126,13 @@ export async function GET(req: NextRequest) {
 				},
 				{} as Record<string, typeof skills>
 			);
-			const orderedCategories = CATEGORY_ORDER.filter(
+			const orderedCategories = SKILL_CATEGORY.filter(
 				(category) => groupedSkills[category]
 			);
 			const otherCategories = Object.keys(groupedSkills)
 				.filter(
 					(category) =>
-						!CATEGORY_ORDER.includes(category) &&
+						!SKILL_CATEGORY.includes(category) &&
 						category !== 'Uncategorized'
 				)
 				.sort((a, b) => a.localeCompare(b));
@@ -151,10 +152,17 @@ export async function GET(req: NextRequest) {
 			);
 		}
 		const skills = await prisma.skill.findMany({
+			where: category
+				? category === 'Uncategorized'
+					? { OR: [{ category: null }, { category: '' }] }
+					: { category }
+				: {},
 			skip: (page - 1) * take,
 			take,
 		});
-		const totalCnt = await prisma.skill.count();
+		const totalCnt = await prisma.skill.count({
+			where: category ? { category } : {},
+		});
 		return NextResponse.json({ data: skills, totalCnt }, { status: 200 });
 	} catch (err) {
 		return NextResponse.json(

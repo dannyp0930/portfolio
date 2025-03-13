@@ -1,4 +1,4 @@
-export const CATEGORY_ORDER = [
+export const SKILL_CATEGORY = [
 	'Language',
 	'Frontend',
 	'Backend',

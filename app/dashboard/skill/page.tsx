@@ -4,9 +4,17 @@ import { formInstance, instance } from '@/app/api/instance';
 import ImageInput from '@/components/common/ImageInput';
 import AdminPagination from '@/components/dashboard/AdminPagination';
 import { Button } from '@/components/ui/button';
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from '@/components/ui/select';
+import { SKILL_CATEGORY } from '@/lib/constants';
 import { isAxiosError } from 'axios';
 import Image from 'next/image';
-import { useSearchParams } from 'next/navigation';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import {
 	ChangeEvent,
 	Fragment,
@@ -28,6 +36,8 @@ export default function Skill() {
 }
 
 function SkillComponent() {
+	const router = useRouter();
+	const pathname = usePathname();
 	const searchParams = useSearchParams();
 	const [load, setLoad] = useState<boolean>(true);
 	const [title, setTitle] = useState<string>('');
@@ -41,6 +51,7 @@ function SkillComponent() {
 	const [updateSkillId, setUpdateSkillId] = useState<number | null>();
 	const [updateSkill, setUpdateSkill] = useState<Skill | null>();
 	const [newImage, setNewImage] = useState<File | null>();
+	const [selectCategory, setSelectCategory] = useState<string>();
 	const imageRef = useRef<HTMLInputElement>(null);
 	const take = 20;
 
@@ -164,6 +175,7 @@ function SkillComponent() {
 	const getSkill = useCallback(async () => {
 		const params = {
 			page: selectPage,
+			category: selectCategory,
 			take,
 		};
 		try {
@@ -174,11 +186,21 @@ function SkillComponent() {
 			setTotalCnt(totalCnt);
 			setLoad(false);
 		} catch (err) {
-			console.log(err);
+			if (isAxiosError(err)) {
+				toast.error(err.response?.data.error || 'An error occurred');
+			}
 		} finally {
 			setLoad(false);
 		}
-	}, [selectPage, take]);
+	}, [selectPage, selectCategory, take]);
+
+	function handleCategoryChange(value: string) {
+		if (value !== 'All') {
+			router.push(`${pathname}?c=${value}`);
+		} else {
+			router.push(pathname);
+		}
+	}
 
 	useEffect(() => {
 		if (load) {
@@ -187,20 +209,35 @@ function SkillComponent() {
 	}, [load, getSkill]);
 
 	useEffect(() => {
-		const parmasPage = searchParams.get('page');
-		if (parmasPage) {
-			setSelectPage(parseInt(parmasPage));
-		}
+		const paramsPage = searchParams.get('p') || '1';
+		const paramsCategory = searchParams.get('c') || '';
+		setSelectPage(parseInt(paramsPage));
+		setSelectCategory(paramsCategory);
 	}, [searchParams]);
 
 	useEffect(() => {
 		setLoad(true);
-	}, [selectPage]);
+	}, [selectPage, selectCategory]);
 
-	// todo: caegory 필터링
 	// todo: orderby 추가
 	return (
 		<div className="m-5 py-10 rounded-lg bg-white">
+			<div className="p-4 pt-0">
+				<Select onValueChange={handleCategoryChange}>
+					<SelectTrigger className="w-[180px]">
+						<SelectValue placeholder="카테고리" />
+					</SelectTrigger>
+					<SelectContent>
+						<SelectItem value="All">전체</SelectItem>
+						{SKILL_CATEGORY.map((category) => (
+							<SelectItem key={category} value={category}>
+								{category}
+							</SelectItem>
+						))}
+						<SelectItem value="Uncategorized">미분류</SelectItem>
+					</SelectContent>
+				</Select>
+			</div>
 			<table className="w-full border-collapse table-fixed [&_th]:border [&_th]:px-2 [&_th]:py-1 [&_th:first-of-type]:border-l-0 [&_th:last-of-type]:border-r-0 [&_td]:border [&_td]:px-2 [&_td]:py-1 [&_td]:overflow-auto [&_td:first-of-type]:border-l-0 [&_td:last-of-type]:border-r-0">
 				<thead>
 					<tr>

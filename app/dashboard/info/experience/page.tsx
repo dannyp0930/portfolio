@@ -173,7 +173,7 @@ function ExperienceContent() {
 	}, [load, getExperience]);
 
 	useEffect(() => {
-		const parmasPage = searchParams.get('page');
+		const parmasPage = searchParams.get('p');
 		if (parmasPage) {
 			setSelectPage(parseInt(parmasPage));
 		}

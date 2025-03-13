@@ -7,7 +7,8 @@ import {
 	PaginationNext,
 	PaginationPrevious,
 } from '@/components/ui/pagination';
-import { useEffect, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
+import { useCallback, useEffect, useState } from 'react';
 
 export default function AdminPagination({
 	className,
@@ -16,8 +17,17 @@ export default function AdminPagination({
 	take,
 	size = 5,
 }: AdminPaginationProps) {
+	const searchParams = useSearchParams();
 	const totalPages = Math.ceil(totalCnt / take);
 	const [pagesArray, setPagesArray] = useState<number[]>([]);
+	const createQueryString = useCallback(
+		(name: string, value: string) => {
+			const params = new URLSearchParams(searchParams.toString());
+			params.set(name, value);
+			return params.toString();
+		},
+		[searchParams]
+	);
 	useEffect(() => {
 		if (totalPages > size) {
 			let startPage = Math.max(1, page - Math.floor(size / 2));
@@ -39,7 +49,9 @@ export default function AdminPagination({
 			<PaginationContent>
 				<PaginationItem>
 					{totalPages > size && page > 1 ? (
-						<PaginationPrevious href={`?page=${page - 1}`} />
+						<PaginationPrevious
+							href={`?${createQueryString('p', (page - 1).toString())}`}
+						/>
 					) : (
 						<PaginationPrevious aria-disabled="true" />
 					)}
@@ -53,7 +65,7 @@ export default function AdminPagination({
 					<PaginationItem key={item}>
 						<PaginationLink
 							isActive={page === item}
-							href={`?page=${item}`}
+							href={`?${createQueryString('p', item.toString())}`}
 						>
 							{item}
 						</PaginationLink>
@@ -66,7 +78,9 @@ export default function AdminPagination({
 				)}
 				<PaginationItem>
 					{page < totalPages ? (
-						<PaginationNext href={`?page=${page + 1}`} />
+						<PaginationNext
+							href={`?${createQueryString('p', (page + 1).toString())}`}
+						/>
 					) : (
 						<PaginationNext aria-disabled="true" />
 					)}
