@@ -55,7 +55,9 @@ export async function GET(req: NextRequest) {
 			return NextResponse.json({ data: experience }, { status: 200 });
 		}
 		if (take === -1) {
-			const experiences = await prisma.experience.findMany();
+			const experiences = await prisma.experience.findMany({
+				orderBy: { startDate: 'desc' },
+			});
 			return NextResponse.json({ data: experiences }, { status: 200 });
 		}
 		const experiences = await prisma.experience.findMany({

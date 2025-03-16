@@ -53,7 +53,9 @@ export async function GET(req: NextRequest) {
 			return NextResponse.json({ data: education }, { status: 200 });
 		}
 		if (take === -1) {
-			const educations = await prisma.education.findMany();
+			const educations = await prisma.education.findMany({
+				orderBy: { startDate: 'desc' },
+			});
 			return NextResponse.json({ data: educations }, { status: 200 });
 		}
 		const educations = await prisma.education.findMany({

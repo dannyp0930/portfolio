@@ -56,7 +56,9 @@ export async function GET(req: NextRequest) {
 			return NextResponse.json({ data: language }, { status: 200 });
 		}
 		if (take === -1) {
-			const languages = await prisma.language.findMany();
+			const languages = await prisma.language.findMany({
+				orderBy: { examDate: 'desc' },
+			});
 			return NextResponse.json({ data: languages }, { status: 200 });
 		}
 		const languages = await prisma.language.findMany({
