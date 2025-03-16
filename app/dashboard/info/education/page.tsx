@@ -16,6 +16,7 @@ import {
 	useState,
 } from 'react';
 import { toast } from 'sonner';
+import SortIcon from '@/components/dashboard/SortIcon';
 
 export default function Education() {
 	return (
@@ -38,6 +39,8 @@ function EducationContent() {
 	const [updateEducationId, setUpdateEducationId] = useState<number | null>();
 	const [updateEducation, setUpdateEducation] = useState<Education | null>();
 	const take = 20;
+	const [orderBy, setOrderBy] = useState<string>('id');
+	const [order, setOrder] = useState<Order>('desc');
 
 	async function handleCreateEducation(e: MouseEvent<HTMLButtonElement>) {
 		e.preventDefault();
@@ -144,10 +147,22 @@ function EducationContent() {
 		};
 	}
 
+	const handleSort = (column: string) => {
+		if (orderBy === column) {
+			setOrder(order === 'asc' ? 'desc' : 'asc');
+		} else {
+			setOrderBy(column);
+			setOrder('asc');
+		}
+		setLoad(true);
+	};
+
 	const getEducation = useCallback(async () => {
 		const params = {
 			page: selectPage,
 			take,
+			orderBy,
+			order,
 		};
 		try {
 			const {
@@ -161,7 +176,7 @@ function EducationContent() {
 				toast.error(err.response?.data.error || 'An error occurred');
 			}
 		}
-	}, [selectPage, take]);
+	}, [selectPage, take, orderBy, order]);
 
 	useEffect(() => {
 		if (load) {
@@ -185,11 +200,59 @@ function EducationContent() {
 			<table className="w-full border-collapse table-fixed [&_th]:border [&_th]:px-2 [&_th]:py-1 [&_th:first-of-type]:border-l-0 [&_th:last-of-type]:border-r-0 [&_td]:border [&_td]:px-2 [&_td]:py-1 [&_td]:overflow-auto [&_td:first-of-type]:border-l-0 [&_td:last-of-type]:border-r-0">
 				<thead>
 					<tr>
-						<th>ID</th>
-						<th>학교명</th>
+						<th
+							className="cursor-pointer relative"
+							onClick={() => handleSort('id')}
+						>
+							ID
+							<span className="absolute right-2 bottom-1/2 translate-y-1/2">
+								<SortIcon
+									orderBy={orderBy}
+									currentColumn="id"
+									order={order}
+								/>
+							</span>
+						</th>
+						<th
+							className="cursor-pointer relative"
+							onClick={() => handleSort('schoolName')}
+						>
+							학교명
+							<span className="absolute right-2 bottom-1/2 translate-y-1/2">
+								<SortIcon
+									orderBy={orderBy}
+									currentColumn="schoolName"
+									order={order}
+								/>
+							</span>
+						</th>
 						<th>학적</th>
-						<th>입학</th>
-						<th>졸업</th>
+						<th
+							className="cursor-pointer relative"
+							onClick={() => handleSort('startDate')}
+						>
+							입학
+							<span className="absolute right-2 bottom-1/2 translate-y/2">
+								<SortIcon
+									orderBy={orderBy}
+									currentColumn="startDate"
+									order={order}
+								/>
+							</span>
+						</th>
+						<th
+							className="cursor-pointer relative"
+							onClick={() => handleSort('endDate')}
+						>
+							졸업
+							<span className="absolute right-2 bottom-1/2 translate-y/2">
+								<SortIcon
+									orderBy={orderBy}
+									currentColumn="endDate"
+									order={order}
+								/>
+							</span>
+						</th>
 						<th></th>
 					</tr>
 				</thead>

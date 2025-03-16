@@ -41,9 +41,9 @@ function SkillComponent() {
 	const pathname = usePathname();
 	const searchParams = useSearchParams();
 	const [load, setLoad] = useState<boolean>(true);
-	const [title, setTitle] = useState<string>('');
 	const [orderBy, setOrderBy] = useState<string>('id');
-	const [order, setOrder] = useState<'asc' | 'desc'>('desc');
+	const [order, setOrder] = useState<Order>('desc');
+	const [title, setTitle] = useState<string>('');
 	const [description, setDescription] = useState<string>('');
 	const [level, setLevel] = useState<number>(1);
 	const [image, setImage] = useState<File | null>();
@@ -175,6 +175,16 @@ function SkillComponent() {
 		};
 	}
 
+	const handleSort = (column: string) => {
+		if (orderBy === column) {
+			setOrder(order === 'asc' ? 'desc' : 'asc');
+		} else {
+			setOrderBy(column);
+			setOrder('asc');
+		}
+		setLoad(true);
+	};
+
 	const getSkill = useCallback(async () => {
 		const params = {
 			page: selectPage,
@@ -198,16 +208,6 @@ function SkillComponent() {
 			setLoad(false);
 		}
 	}, [selectPage, selectCategory, take, orderBy, order]);
-
-	const handleSort = (column: string) => {
-		if (orderBy === column) {
-			setOrder(order === 'asc' ? 'desc' : 'asc');
-		} else {
-			setOrderBy(column);
-			setOrder('asc');
-		}
-		setLoad(true);
-	};
 
 	function handleCategoryChange(value: string) {
 		if (value !== 'All') {
@@ -235,7 +235,6 @@ function SkillComponent() {
 	}, [selectPage, selectCategory]);
 
 	// todo: orderby 추가
-	// todo: row 순서 추가
 	return (
 		<div className="m-5 py-10 rounded-lg bg-white">
 			<div className="p-4 pt-0">

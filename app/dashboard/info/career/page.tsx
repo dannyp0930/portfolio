@@ -16,6 +16,7 @@ import {
 	useState,
 } from 'react';
 import { toast } from 'sonner';
+import SortIcon from '@/components/dashboard/SortIcon';
 
 export default function Career() {
 	return (
@@ -39,6 +40,8 @@ function CareerContent() {
 	const [updateCareerId, setUpdateCareerId] = useState<number | null>();
 	const [updateCareer, setUpdateCareer] = useState<CareerOverview | null>();
 	const take = 20;
+	const [orderBy, setOrderBy] = useState<string>('id');
+	const [order, setOrder] = useState<Order>('desc');
 
 	async function handleCreateCareer(e: MouseEvent<HTMLButtonElement>) {
 		e.preventDefault();
@@ -145,10 +148,22 @@ function CareerContent() {
 		};
 	}
 
+	const handleSort = (column: string) => {
+		if (orderBy === column) {
+			setOrder(order === 'asc' ? 'desc' : 'asc');
+		} else {
+			setOrderBy(column);
+			setOrder('asc');
+		}
+		setLoad(true);
+	};
+
 	const getCareer = useCallback(async () => {
 		const params = {
 			page: selectPage,
 			take,
+			orderBy,
+			order,
 		};
 		try {
 			const {
@@ -162,7 +177,7 @@ function CareerContent() {
 				toast.error(err.response?.data.error || 'An error occurred');
 			}
 		}
-	}, [selectPage, take]);
+	}, [selectPage, take, orderBy, order]);
 
 	useEffect(() => {
 		if (load) {
@@ -186,12 +201,60 @@ function CareerContent() {
 			<table className="w-full border-collapse table-fixed [&_th]:border [&_th]:px-2 [&_th]:py-1 [&_th:first-of-type]:border-l-0 [&_th:last-of-type]:border-r-0 [&_td]:border [&_td]:px-2 [&_td]:py-1 [&_td]:overflow-auto [&_td:first-of-type]:border-l-0 [&_td:last-of-type]:border-r-0">
 				<thead>
 					<tr>
-						<th>ID</th>
-						<th>조직</th>
+						<th
+							className="cursor-pointer relative"
+							onClick={() => handleSort('id')}
+						>
+							ID
+							<span className="absolute right-2 bottom-1/2 translate-y-1/2">
+								<SortIcon
+									orderBy={orderBy}
+									currentColumn="id"
+									order={order}
+								/>
+							</span>
+						</th>
+						<th
+							className="cursor-pointer relative"
+							onClick={() => handleSort('organization')}
+						>
+							조직
+							<span className="absolute right-2 bottom-1/2 translate-y-1/2">
+								<SortIcon
+									orderBy={orderBy}
+									currentColumn="organization"
+									order={order}
+								/>
+							</span>
+						</th>
 						<th>직무</th>
 						<th>설명</th>
-						<th>시작</th>
-						<th>종료</th>
+						<th
+							className="cursor-pointer relative"
+							onClick={() => handleSort('startDate')}
+						>
+							시작
+							<span className="absolute right-2 bottom-1/2 translate-y/2">
+								<SortIcon
+									orderBy={orderBy}
+									currentColumn="startDate"
+									order={order}
+								/>
+							</span>
+						</th>
+						<th
+							className="cursor-pointer relative"
+							onClick={() => handleSort('endDate')}
+						>
+							종료
+							<span className="absolute right-2 bottom-1/2 translate-y/2">
+								<SortIcon
+									orderBy={orderBy}
+									currentColumn="endDate"
+									order={order}
+								/>
+							</span>
+						</th>
 						<th></th>
 					</tr>
 				</thead>

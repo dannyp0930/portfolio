@@ -15,6 +15,7 @@ import {
 	useState,
 } from 'react';
 import { toast } from 'sonner';
+import SortIcon from '@/components/dashboard/SortIcon';
 
 export default function Contact() {
 	return (
@@ -36,6 +37,8 @@ function ContactContent() {
 	const [updateContactId, setUpdateContactId] = useState<number | null>();
 	const [updateContact, setUpdateContact] = useState<Contact | null>();
 	const take = 20;
+	const [orderBy, setOrderBy] = useState<string>('id');
+	const [order, setOrder] = useState<Order>('desc');
 
 	async function handleCreateContact(e: MouseEvent<HTMLButtonElement>) {
 		e.preventDefault();
@@ -130,10 +133,22 @@ function ContactContent() {
 		};
 	}
 
+	const handleSort = (column: string) => {
+		if (orderBy === column) {
+			setOrder(order === 'asc' ? 'desc' : 'asc');
+		} else {
+			setOrderBy(column);
+			setOrder('asc');
+		}
+		setLoad(true);
+	};
+
 	const getContact = useCallback(async () => {
 		const params = {
 			page: selectPage,
 			take,
+			orderBy,
+			order,
 		};
 		try {
 			const {
@@ -147,7 +162,7 @@ function ContactContent() {
 				toast.error(err.response?.data.error || 'An error occurred');
 			}
 		}
-	}, [selectPage, take]);
+	}, [selectPage, take, orderBy, order]);
 
 	useEffect(() => {
 		if (load) {
@@ -171,10 +186,58 @@ function ContactContent() {
 			<table className="w-full border-collapse table-fixed [&_th]:border [&_th]:px-2 [&_th]:py-1 [&_th:first-of-type]:border-l-0 [&_th:last-of-type]:border-r-0 [&_td]:border [&_td]:px-2 [&_td]:py-1 [&_td]:overflow-auto [&_td:first-of-type]:border-l-0 [&_td:last-of-type]:border-r-0">
 				<thead>
 					<tr>
-						<th>ID</th>
-						<th>타입</th>
-						<th>값</th>
-						<th>라벨</th>
+						<th
+							className="cursor-pointer relative"
+							onClick={() => handleSort('id')}
+						>
+							ID
+							<span className="absolute right-2 bottom-1/2 translate-y-1/2">
+								<SortIcon
+									orderBy={orderBy}
+									currentColumn="id"
+									order={order}
+								/>
+							</span>
+						</th>
+						<th
+							className="cursor-pointer relative"
+							onClick={() => handleSort('type')}
+						>
+							타입
+							<span className="absolute right-2 bottom-1/2 translate-y-1/2">
+								<SortIcon
+									orderBy={orderBy}
+									currentColumn="type"
+									order={order}
+								/>
+							</span>
+						</th>
+						<th
+							className="cursor-pointer relative"
+							onClick={() => handleSort('value')}
+						>
+							값
+							<span className="absolute right-2 bottom-1/2 translate-y-1/2">
+								<SortIcon
+									orderBy={orderBy}
+									currentColumn="value"
+									order={order}
+								/>
+							</span>
+						</th>
+						<th
+							className="cursor-pointer relative"
+							onClick={() => handleSort('label')}
+						>
+							라벨
+							<span className="absolute right-2 bottom-1/2 translate-y-1/2">
+								<SortIcon
+									orderBy={orderBy}
+									currentColumn="label"
+									order={order}
+								/>
+							</span>
+						</th>
 						<th></th>
 					</tr>
 				</thead>

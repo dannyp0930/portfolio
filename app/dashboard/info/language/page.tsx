@@ -16,6 +16,7 @@ import {
 	useState,
 } from 'react';
 import { toast } from 'sonner';
+import SortIcon from '@/components/dashboard/SortIcon';
 
 export default function Language() {
 	return (
@@ -38,6 +39,8 @@ function LanguageContent() {
 	const [updateLanguageId, setUpdateLanguageId] = useState<number | null>();
 	const [updateLanguage, setUpdateLanguage] = useState<Language | null>();
 	const take = 20;
+	const [orderBy, setOrderBy] = useState<string>('id');
+	const [order, setOrder] = useState<Order>('desc');
 
 	async function handleCreateLanguage(e: MouseEvent<HTMLButtonElement>) {
 		e.preventDefault();
@@ -141,10 +144,22 @@ function LanguageContent() {
 		};
 	}
 
+	const handleSort = (column: string) => {
+		if (orderBy === column) {
+			setOrder(order === 'asc' ? 'desc' : 'asc');
+		} else {
+			setOrderBy(column);
+			setOrder('asc');
+		}
+		setLoad(true);
+	};
+
 	const getLanguage = useCallback(async () => {
 		const params = {
 			page: selectPage,
 			take,
+			orderBy,
+			order,
 		};
 		try {
 			const {
@@ -158,7 +173,7 @@ function LanguageContent() {
 				toast.error(err.response?.data.error || 'An error occurred');
 			}
 		}
-	}, [selectPage, take]);
+	}, [selectPage, take, orderBy, order]);
 
 	useEffect(() => {
 		if (load) {
@@ -182,11 +197,59 @@ function LanguageContent() {
 			<table className="w-full border-collapse table-fixed [&_th]:border [&_th]:px-2 [&_th]:py-1 [&_th:first-of-type]:border-l-0 [&_th:last-of-type]:border-r-0 [&_td]:border [&_td]:px-2 [&_td]:py-1 [&_td]:overflow-auto [&_td:first-of-type]:border-l-0 [&_td:last-of-type]:border-r-0">
 				<thead>
 					<tr>
-						<th>ID</th>
-						<th>언어</th>
-						<th>자격</th>
-						<th>시험일자</th>
-						<th>주관</th>
+						<th
+							className="cursor-pointer relative"
+							onClick={() => handleSort('id')}
+						>
+							ID
+							<span className="absolute right-2 bottom-1/2 translate-y-1/2">
+								<SortIcon
+									orderBy={orderBy}
+									currentColumn="id"
+									order={order}
+								/>
+							</span>
+						</th>
+						<th
+							className="cursor-pointer relative"
+							onClick={() => handleSort('languageName')}
+						>
+							언어명
+							<span className="absolute right-2 bottom-1/2 translate-y-1/2">
+								<SortIcon
+									orderBy={orderBy}
+									currentColumn="languageName"
+									order={order}
+								/>
+							</span>
+						</th>
+						<th
+							className="cursor-pointer relative"
+							onClick={() => handleSort('proficiency')}
+						>
+							숙련도
+							<span className="absolute right-2 bottom-1/2 translate-y-1/2">
+								<SortIcon
+									orderBy={orderBy}
+									currentColumn="proficiency"
+									order={order}
+								/>
+							</span>
+						</th>
+						<th
+							className="cursor-pointer relative"
+							onClick={() => handleSort('examDate')}
+						>
+							시험일
+							<span className="absolute right-2 bottom-1/2 translate-y/2">
+								<SortIcon
+									orderBy={orderBy}
+									currentColumn="examDate"
+									order={order}
+								/>
+							</span>
+						</th>
+						<th>기관</th>
 						<th></th>
 					</tr>
 				</thead>

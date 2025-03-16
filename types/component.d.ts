@@ -31,6 +31,14 @@ declare global {
 		take: number;
 		size?: number;
 	}
+
+	interface SortIconProps {
+		orderBy: string;
+		currentColumn: string;
+		order: Order;
+	}
+
+	type Order = 'asc' | 'desc';
 }
 
 export {};

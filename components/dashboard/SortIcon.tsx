@@ -1,9 +1,3 @@
-interface SortIconProps {
-	orderBy: string;
-	currentColumn: string;
-	order: string;
-}
-
 export default function SortIcon({
 	orderBy,
 	currentColumn,

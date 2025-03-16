@@ -43,6 +43,8 @@ export async function GET(req: NextRequest) {
 	const id = searchParams.get('id');
 	const page = parseInt(searchParams.get('page') as string);
 	const take = parseInt(searchParams.get('take') as string);
+	const orderBy = searchParams.get('orderBy') || 'id';
+	const order = searchParams.get('order') || 'desc';
 	try {
 		if (id) {
 			const career = await prisma.career.findUnique({
@@ -82,6 +84,9 @@ export async function GET(req: NextRequest) {
 		const careers = await prisma.career.findMany({
 			skip: (page - 1) * take,
 			take,
+			orderBy: {
+				[orderBy]: order,
+			},
 		});
 		const totalCnt = await prisma.career.count();
 		return NextResponse.json({ data: careers, totalCnt }, { status: 200 });

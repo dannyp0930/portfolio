@@ -2,6 +2,7 @@
 
 import { instance } from '@/app/api/instance';
 import AdminPagination from '@/components/dashboard/AdminPagination';
+import SortIcon from '@/components/dashboard/SortIcon';
 import { Button } from '@/components/ui/button';
 import { isAxiosError } from 'axios';
 import dayjs from 'dayjs';
@@ -21,6 +22,8 @@ export default function Career() {
 function CareerComponent() {
 	const searchParams = useSearchParams();
 	const [load, setLoad] = useState<boolean>(true);
+	const [orderBy, setOrderBy] = useState<string>('id');
+	const [order, setOrder] = useState<Order>('desc');
 	const [selectPage, setSelectPage] = useState<number>(1);
 	const [careers, setCareers] = useState<Career[]>([]);
 	const [totalCnt, setTotalCnt] = useState<number>(0);
@@ -52,10 +55,22 @@ function CareerComponent() {
 		};
 	}
 
+	const handleSort = (column: string) => {
+		if (orderBy === column) {
+			setOrder(order === 'asc' ? 'desc' : 'asc');
+		} else {
+			setOrderBy(column);
+			setOrder('asc');
+		}
+		setLoad(true);
+	};
+
 	const getCareer = useCallback(async () => {
 		const params = {
 			page: selectPage,
 			take,
+			orderBy,
+			order,
 		};
 		try {
 			const {
@@ -65,11 +80,13 @@ function CareerComponent() {
 			setTotalCnt(totalCnt);
 			setLoad(false);
 		} catch (err) {
-			console.log(err);
+			if (isAxiosError(err)) {
+				toast.error(err.response?.data.error || 'An error occurred');
+			}
 		} finally {
 			setLoad(false);
 		}
-	}, [selectPage, take]);
+	}, [selectPage, take, orderBy, order]);
 
 	useEffect(() => {
 		if (load) {
@@ -98,13 +115,61 @@ function CareerComponent() {
 			<table className="w-full border-collapse table-fixed [&_th]:border [&_th]:px-2 [&_th]:py-1 [&_th:first-of-type]:border-l-0 [&_th:last-of-type]:border-r-0 [&_td]:border [&_td]:px-2 [&_td]:py-1 [&_td]:overflow-auto [&_td:first-of-type]:border-l-0 [&_td:last-of-type]:border-r-0">
 				<thead>
 					<tr>
-						<th>ID</th>
-						<th>회사</th>
+						<th
+							className="cursor-pointer relative"
+							onClick={() => handleSort('id')}
+						>
+							ID
+							<span className="absolute right-2 bottom-1/2 translate-y-1/2">
+								<SortIcon
+									orderBy={orderBy}
+									currentColumn="id"
+									order={order}
+								/>
+							</span>
+						</th>
+						<th
+							className="cursor-pointer relative"
+							onClick={() => handleSort('companyName')}
+						>
+							회사
+							<span className="absolute right-2 bottom-1/2 translate-y-1/2">
+								<SortIcon
+									orderBy={orderBy}
+									currentColumn="companyName"
+									order={order}
+								/>
+							</span>
+						</th>
 						<th>설명</th>
 						<th>직무</th>
 						<th>업무 상세</th>
-						<th>근무 시작</th>
-						<th>근무 종료</th>
+						<th
+							className="cursor-pointer relative"
+							onClick={() => handleSort('startDate')}
+						>
+							근무 시작
+							<span className="absolute right-2 bottom-1/2 translate-y-1/2">
+								<SortIcon
+									orderBy={orderBy}
+									currentColumn="startDate"
+									order={order}
+								/>
+							</span>
+						</th>
+						<th
+							className="cursor-pointer relative"
+							onClick={() => handleSort('endDate')}
+						>
+							근무 종료
+							<span className="absolute right-2 bottom-1/2 translate-y-1/2">
+								<SortIcon
+									orderBy={orderBy}
+									currentColumn="endDate"
+									order={order}
+								/>
+							</span>
+						</th>
 						<th></th>
 					</tr>
 				</thead>
