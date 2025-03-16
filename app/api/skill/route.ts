@@ -104,6 +104,8 @@ export async function GET(req: NextRequest) {
 	const page = parseInt(searchParams.get('page') as string);
 	const category = searchParams.get('category');
 	const take = parseInt(searchParams.get('take') as string);
+	const orderBy = searchParams.get('orderBy') || 'id';
+	const order = searchParams.get('order') || 'desc';
 	try {
 		if (id) {
 			const skill = await prisma.skill.findUnique({
@@ -159,6 +161,9 @@ export async function GET(req: NextRequest) {
 				: {},
 			skip: (page - 1) * take,
 			take,
+			orderBy: {
+				[orderBy]: order,
+			},
 		});
 		const totalCnt = await prisma.skill.count({
 			where: category ? { category } : {},

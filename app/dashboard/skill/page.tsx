@@ -3,6 +3,7 @@
 import { formInstance, instance } from '@/app/api/instance';
 import ImageInput from '@/components/common/ImageInput';
 import AdminPagination from '@/components/dashboard/AdminPagination';
+import SortIcon from '@/components/dashboard/SortIcon';
 import { Button } from '@/components/ui/button';
 import {
 	Select,
@@ -41,6 +42,8 @@ function SkillComponent() {
 	const searchParams = useSearchParams();
 	const [load, setLoad] = useState<boolean>(true);
 	const [title, setTitle] = useState<string>('');
+	const [orderBy, setOrderBy] = useState<string>('id');
+	const [order, setOrder] = useState<'asc' | 'desc'>('desc');
 	const [description, setDescription] = useState<string>('');
 	const [level, setLevel] = useState<number>(1);
 	const [image, setImage] = useState<File | null>();
@@ -177,6 +180,8 @@ function SkillComponent() {
 			page: selectPage,
 			category: selectCategory,
 			take,
+			orderBy,
+			order,
 		};
 		try {
 			const {
@@ -192,7 +197,17 @@ function SkillComponent() {
 		} finally {
 			setLoad(false);
 		}
-	}, [selectPage, selectCategory, take]);
+	}, [selectPage, selectCategory, take, orderBy, order]);
+
+	const handleSort = (column: string) => {
+		if (orderBy === column) {
+			setOrder(order === 'asc' ? 'desc' : 'asc');
+		} else {
+			setOrderBy(column);
+			setOrder('asc');
+		}
+		setLoad(true);
+	};
 
 	function handleCategoryChange(value: string) {
 		if (value !== 'All') {
@@ -242,12 +257,60 @@ function SkillComponent() {
 			<table className="w-full border-collapse table-fixed [&_th]:border [&_th]:px-2 [&_th]:py-1 [&_th:first-of-type]:border-l-0 [&_th:last-of-type]:border-r-0 [&_td]:border [&_td]:px-2 [&_td]:py-1 [&_td]:overflow-auto [&_td:first-of-type]:border-l-0 [&_td:last-of-type]:border-r-0">
 				<thead>
 					<tr>
-						<th>ID</th>
-						<th>이름</th>
-						<th>설명</th>
-						<th>수준</th>
+						<th
+							className="cursor-pointer relative"
+							onClick={() => handleSort('id')}
+						>
+							ID
+							<span className="absolute right-2 bottom-1/2 translate-y-1/2">
+								<SortIcon
+									orderBy={orderBy}
+									currentColumn="id"
+									order={order}
+								/>
+							</span>
+						</th>
+						<th
+							className="cursor-pointer relative"
+							onClick={() => handleSort('title')}
+						>
+							이름
+							<span className="absolute right-2 bottom-1/2 translate-y-1/2">
+								<SortIcon
+									orderBy={orderBy}
+									currentColumn="title"
+									order={order}
+								/>
+							</span>
+						</th>
+						<th className="cursor-pointer">설명</th>
+						<th
+							className="cursor-pointer relative"
+							onClick={() => handleSort('level')}
+						>
+							수준
+							<span className="absolute right-2 bottom-1/2 translate-y-1/2">
+								<SortIcon
+									orderBy={orderBy}
+									currentColumn="level"
+									order={order}
+								/>
+							</span>
+						</th>
 						<th>이미지</th>
-						<th>카테고리</th>
+						<th
+							className="cursor-pointer relative"
+							onClick={() => handleSort('category')}
+						>
+							카테고리
+							<span className="absolute right-2 bottom-1/2 translate-y-1/2">
+								<SortIcon
+									orderBy={orderBy}
+									currentColumn="category"
+									order={order}
+								/>
+							</span>
+						</th>
 						<th></th>
 					</tr>
 				</thead>
