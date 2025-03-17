@@ -7,40 +7,19 @@ import { toast } from 'sonner';
 import { isAxiosError } from 'axios';
 import { instance } from '@/app/api/instance';
 import Image from 'next/image';
+import {
+	Carousel,
+	CarouselContent,
+	CarouselItem,
+	CarouselNext,
+	CarouselPrevious,
+} from '@/components/ui/carousel';
 
 export default function ProjectList({ projects }: ProjectListPros) {
-	const [select, setSelect] = useState<number>(0);
 	const [modalId, setModalId] = useState<number>(0);
 	const [projectDetail, setProjectDetail] = useState<ProjectDetail | null>();
 	const [projectImages, setProjectImages] = useState<ProjectImage[]>();
-	const [selectImage, setSelectImage] = useState<number>(0);
 	const [selectProjectTitle, setSelectProjectTitle] = useState<string>();
-	const total = projects.length;
-	const [totalImages, setTotalImages] = useState<number>(0);
-
-	function goPrev() {
-		if (select) {
-			setSelect(select - 1);
-		}
-	}
-
-	function goNext() {
-		if (select < total - 1) {
-			setSelect(select + 1);
-		}
-	}
-
-	function goPrevImage() {
-		if (selectImage) {
-			setSelectImage(selectImage - 1);
-		}
-	}
-
-	function goNextImage() {
-		if (selectImage < totalImages - 1) {
-			setSelectImage(selectImage + 1);
-		}
-	}
 
 	const getProjectDetail = useCallback(async () => {
 		try {
@@ -58,14 +37,12 @@ export default function ProjectList({ projects }: ProjectListPros) {
 			);
 			setProjectDetail(projectDetail);
 			setProjectImages(projectImages);
-			setTotalImages(projectImages.length);
 		} catch (err) {
 			if (isAxiosError(err)) {
 				toast.error(err.response?.data.error || 'An error occurred');
 				setModalId(0);
 				setProjectDetail(null);
 				setProjectImages([]);
-				setTotalImages(0);
 				setSelectProjectTitle('');
 			}
 		}
@@ -81,50 +58,29 @@ export default function ProjectList({ projects }: ProjectListPros) {
 		setModalId(0);
 		setProjectDetail(null);
 		setProjectImages([]);
-		setTotalImages(0);
 		setSelectProjectTitle('');
 	}
 
 	return (
 		<section
 			id="project"
-			className="flex flex-col justify-center items-center py-12 md:py-16 lg:py-28"
+			className="flex flex-col justify-center items-center py-12 md:py-16 lg:py-28 gap-5"
 		>
 			<h1>Project</h1>
-			<div className="w-11/12 lg:w-[1280px] lg:max-w-[90%] h-[500px] m-auto relative overflow-hidden">
-				<div className="flex absolute top-1/2 z-50 justify-between w-full -translate-y-1/2">
-					<button
-						className={[
-							"text-5xl font-bold text-sub cursor-pointer after:content-['<']",
-							!select && 'opacity-60',
-						].join(' ')}
-						onClick={goPrev}
-					></button>
-					<button
-						className={[
-							"text-5xl font-bold text-sub cursor-pointer after:content-['>']",
-							select === total - 1 && 'opacity-60',
-						].join(' ')}
-						onClick={goNext}
-					></button>
-				</div>
-				<div
-					className="flex items-center m-auto w-11/12 h-full transition-transform md:w-3/4 lg:w-4/5"
-					style={{ transform: `translateX(${select * -100}%)` }}
-				>
+			<Carousel className="w-4/5 lg:w-[1280px] lg:max-w-[90%] m-auto">
+				<CarouselContent>
 					{projects.map((project) => (
-						<div
-							className="flex flex-grow flex-shrink-0 justify-center items-center w-full h-full"
-							key={project.id}
-						>
+						<CarouselItem key={project.id}>
 							<ProjectCard
 								project={project}
 								setModalId={setModalId}
 							/>
-						</div>
+						</CarouselItem>
 					))}
-				</div>
-			</div>
+				</CarouselContent>
+				<CarouselPrevious />
+				<CarouselNext />
+			</Carousel>
 			{modalId ? (
 				<ModalContainer closeModal={closeModal}>
 					<div className="p-2">
@@ -133,7 +89,30 @@ export default function ProjectList({ projects }: ProjectListPros) {
 							<p className="text-xs break-all whitespace-pre-line w-full sm:text-sm md:text-base">
 								{projectDetail?.description}
 							</p>
-							{projectImages?.length ? (
+							{projectImages?.length && (
+								<Carousel className="w-4/5 lg:w-[1280px] lg:max-w-[90%] m-auto">
+									<CarouselContent>
+										{projectImages?.map((projectImage) => (
+											// <div
+											// 	className="relative flex flex-grow flex-shrink-0 justify-center items-center w-full h-full"
+											// 	key={projectImage.id}
+											// >
+											// </div>
+											<Image
+												key={projectImage.id}
+												className="object-cover"
+												fill
+												sizes="100%"
+												src={projectImage.url}
+												alt={String(projectImage.id)}
+											/>
+										))}
+									</CarouselContent>
+									<CarouselPrevious />
+									<CarouselNext />
+								</Carousel>
+							)}
+							{/* {projectImages?.length ? (
 								<div className="w-full m-auto relative overflow-hidden">
 									<div className="flex absolute top-1/2 z-50 justify-between w-full -translate-y-1/2">
 										<button
@@ -177,7 +156,7 @@ export default function ProjectList({ projects }: ProjectListPros) {
 										))}
 									</div>
 								</div>
-							) : null}
+							) : null} */}
 						</div>
 					</div>
 				</ModalContainer>

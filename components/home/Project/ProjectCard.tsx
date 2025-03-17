@@ -8,7 +8,7 @@ import dayjs from 'dayjs';
 
 export default function ProjectCard({ project, setModalId }: ProjectCardProps) {
 	return (
-		<div className="box-border flex flex-col justify-center w-5/6 gap-5 p-5 bg-white shadow-lg h-4/5 rounded-2xl md:h-5/6 md:p-12 lg:w-11/12">
+		<div className="box-border flex flex-col justify-center w-full gap-5 p-5 bg-white shadow-lg h-full rounded-2xl md:h-5/6 md:p-12">
 			<h1 className="flex flex-col md:flex-row lg:justify-between lg:items-center">
 				{project.title} {project.hasProjectDetail}
 				<span className="text-base">{project.organization}</span>
