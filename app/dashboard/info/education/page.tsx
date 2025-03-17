@@ -232,7 +232,7 @@ function EducationContent() {
 							onClick={() => handleSort('startDate')}
 						>
 							입학
-							<span className="absolute right-2 bottom-1/2 translate-y/2">
+							<span className="absolute right-2 bottom-1/2 translate-y-1/2">
 								<SortIcon
 									orderBy={orderBy}
 									currentColumn="startDate"
@@ -245,7 +245,7 @@ function EducationContent() {
 							onClick={() => handleSort('endDate')}
 						>
 							졸업
-							<span className="absolute right-2 bottom-1/2 translate-y/2">
+							<span className="absolute right-2 bottom-1/2 translate-y-1/2">
 								<SortIcon
 									orderBy={orderBy}
 									currentColumn="endDate"

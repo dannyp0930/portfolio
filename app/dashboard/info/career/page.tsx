@@ -234,7 +234,7 @@ function CareerContent() {
 							onClick={() => handleSort('startDate')}
 						>
 							시작
-							<span className="absolute right-2 bottom-1/2 translate-y/2">
+							<span className="absolute right-2 bottom-1/2 translate-y-1/2">
 								<SortIcon
 									orderBy={orderBy}
 									currentColumn="startDate"
@@ -247,7 +247,7 @@ function CareerContent() {
 							onClick={() => handleSort('endDate')}
 						>
 							종료
-							<span className="absolute right-2 bottom-1/2 translate-y/2">
+							<span className="absolute right-2 bottom-1/2 translate-y-1/2">
 								<SortIcon
 									orderBy={orderBy}
 									currentColumn="endDate"

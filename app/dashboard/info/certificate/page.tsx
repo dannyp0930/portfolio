@@ -243,7 +243,7 @@ function CertificateContent() {
 							onClick={() => handleSort('issueDate')}
 						>
 							발급일
-							<span className="absolute right-2 bottom-1/2 translate-y/2">
+							<span className="absolute right-2 bottom-1/2 translate-y-1/2">
 								<SortIcon
 									orderBy={orderBy}
 									currentColumn="issueDate"

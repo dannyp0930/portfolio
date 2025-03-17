@@ -241,7 +241,7 @@ function LanguageContent() {
 							onClick={() => handleSort('examDate')}
 						>
 							시험일
-							<span className="absolute right-2 bottom-1/2 translate-y/2">
+							<span className="absolute right-2 bottom-1/2 translate-y-1/2">
 								<SortIcon
 									orderBy={orderBy}
 									currentColumn="examDate"
