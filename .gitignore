@@ -1,6 +1,4 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
-
-# dependencies
+# Dependencies
 /node_modules
 /.pnp
 .pnp.*
@@ -10,83 +8,52 @@
 !.yarn/releases
 !.yarn/versions
 
-# testing
-/coverage
-
-# next.js
+# Build/Production
+/build
 /.next/
 /out/
+*.tsbuildinfo
 
-# production
-/build
+# Testing
+/coverage
 
-# misc
-.DS_Store
-*.pem
+# Environment
+.env*
+.env
+.env.*
 
-# debug
+# Logs
+*.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files (can opt-in for committing if needed)
-.env*
+# System
+.DS_Store
+*.pem
 
-# vercel
-.vercel
-
-# typescript
-*.tsbuildinfo
-next-env.d.ts
-# Created by https://www.toptal.com/developers/gitignore/api/visualstudiocode,react
-# Edit at https://www.toptal.com/developers/gitignore?templates=visualstudiocode,react
-
-### react ###
-.DS_*
-*.log
-logs
-**/*.backup.*
-**/*.back.*
-
-node_modules
-bower_components
-
-*.sublime*
-
-psd
-thumb
-sketch
-
-### VisualStudioCode ###
+# IDE
 .vscode/*
 !.vscode/settings.json
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
 !.vscode/*.code-snippets
-
-# Local History for Visual Studio Code
+.idea
 .history/
-
-# Built Visual Studio Code Extensions
-*.vsix
-
-### VisualStudioCode Patch ###
-# Ignore all local history of files
-.history
 .ionide
 
-# dist
-build
-
-# env
-.env
-.env.*
-
-# package-lock
+# Package management
 package-lock.json
 
-.idea
+# Next.js
+next-env.d.ts
 
-# End of https://www.toptal.com/developers/gitignore/api/visualstudiocode,react
+# Miscellaneous
+*.sublime*
+psd
+thumb
+sketch
+**/*.backup.*
+**/*.back.*
