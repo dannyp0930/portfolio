@@ -70,7 +70,7 @@ export default function ProjectList({ projects }: ProjectListPros) {
 			<Carousel className="w-4/5 lg:w-[1280px] lg:max-w-[90%] m-auto">
 				<CarouselContent>
 					{projects.map((project) => (
-						<CarouselItem key={project.id}>
+						<CarouselItem key={project.id} className="md:basis-1/2">
 							<ProjectCard
 								project={project}
 								setModalId={setModalId}
@@ -85,63 +85,17 @@ export default function ProjectList({ projects }: ProjectListPros) {
 				<ModalContainer closeModal={closeModal}>
 					<div className="p-2">
 						<h4>{selectProjectTitle}</h4>
-						<div className="w-[280px] flex flex-col gap-10 mt-4 sm:w-[30rem] md:w-[38rem] lg:w-[55rem] lg:flex-row">
-							<p className="text-xs break-all whitespace-pre-line w-full sm:text-sm md:text-base">
+						<div className="w-[280px] flex flex-col gap-10 mt-4 sm:w-[30rem] md:w-[35rem] lg:w-[55rem] lg:flex-row">
+							<p className="text-xs break-all whitespace-pre-line w-full sm:text-sm md:text-base lg:w-[40%]">
 								{projectDetail?.description}
 							</p>
 							{projectImages?.length && (
-								<Carousel className="w-4/5 lg:w-[1280px] lg:max-w-[90%] m-auto">
+								<Carousel className="w-2/3 lg:w-[35%] m-auto">
 									<CarouselContent>
 										{projectImages?.map((projectImage) => (
-											// <div
-											// 	className="relative flex flex-grow flex-shrink-0 justify-center items-center w-full h-full"
-											// 	key={projectImage.id}
-											// >
-											// </div>
-											<Image
+											<CarouselItem
 												key={projectImage.id}
-												className="object-cover"
-												fill
-												sizes="100%"
-												src={projectImage.url}
-												alt={String(projectImage.id)}
-											/>
-										))}
-									</CarouselContent>
-									<CarouselPrevious />
-									<CarouselNext />
-								</Carousel>
-							)}
-							{/* {projectImages?.length ? (
-								<div className="w-full m-auto relative overflow-hidden">
-									<div className="flex absolute top-1/2 z-50 justify-between w-full -translate-y-1/2">
-										<button
-											className={[
-												"text-5xl font-bold text-sub cursor-pointer after:content-['<']",
-												!selectImage && 'opacity-60',
-											].join(' ')}
-											onClick={goPrevImage}
-										></button>
-										<button
-											className={[
-												"text-5xl font-bold text-sub cursor-pointer after:content-['>']",
-												selectImage ===
-													totalImages - 1 &&
-													'opacity-60',
-											].join(' ')}
-											onClick={goNextImage}
-										></button>
-									</div>
-									<div
-										className="flex items-center m-auto w-full h-full aspect-video transition-transform"
-										style={{
-											transform: `translateX(${selectImage * -100}%)`,
-										}}
-									>
-										{projectImages?.map((projectImage) => (
-											<div
-												className="relative flex flex-grow flex-shrink-0 justify-center items-center w-full h-full"
-												key={projectImage.id}
+												className="relative w-full aspect-video"
 											>
 												<Image
 													className="object-cover"
@@ -152,11 +106,13 @@ export default function ProjectList({ projects }: ProjectListPros) {
 														projectImage.id
 													)}
 												/>
-											</div>
+											</CarouselItem>
 										))}
-									</div>
-								</div>
-							) : null} */}
+									</CarouselContent>
+									<CarouselPrevious />
+									<CarouselNext />
+								</Carousel>
+							)}
 						</div>
 					</div>
 				</ModalContainer>
