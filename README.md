@@ -73,6 +73,9 @@ $ yarn docker:build
 # DB 마이그레이션
 $ yarn migrate:dev
 
+# DB Seed (처음 한번만 실행)
+$ yarn db:seed
+
 # 어플리케이션 실행
 $ yarn dev
 ```
