@@ -85,17 +85,17 @@ export default function ProjectList({ projects }: ProjectListPros) {
 				<ModalContainer closeModal={closeModal}>
 					<div className="p-2">
 						<h4>{selectProjectTitle}</h4>
-						<div className="w-[280px] flex flex-col gap-10 mt-4 sm:w-[30rem] md:w-[35rem] lg:w-[55rem] lg:flex-row">
-							<p className="text-xs break-all whitespace-pre-line w-full sm:text-sm md:text-base lg:w-[40%]">
+						<div className="w-[280px] flex flex-col gap-10 mt-4 sm:w-[30rem] md:w-[35rem] lg:w-[50rem] lg:flex-row">
+							<p className="text-xs break-all whitespace-pre-line w-full sm:text-sm md:text-base lg:w-[45%]">
 								{projectDetail?.description}
 							</p>
-							{projectImages?.length && (
-								<Carousel className="w-2/3 lg:w-[35%] m-auto">
+							{projectImages?.length !== 0 && (
+								<Carousel className="w-2/3 lg:w-[40%] m-auto">
 									<CarouselContent>
 										{projectImages?.map((projectImage) => (
 											<CarouselItem
 												key={projectImage.id}
-												className="relative w-full aspect-video"
+												className="relative w-full aspect-[4/3]"
 											>
 												<Image
 													className="object-cover"
