@@ -16,6 +16,16 @@ import {
 import { usePathname } from 'next/navigation';
 
 export default function AdminSidebar() {
+	const adminRoutes = [
+		{
+			title: 'Info',
+			url: '/dashboard',
+		},
+		{
+			title: 'User',
+			url: '/dashboard/user',
+		},
+	];
 	const infoRoutes = [
 		{
 			title: 'Contact',
@@ -70,16 +80,21 @@ export default function AdminSidebar() {
 			</SidebarHeader>
 			<SidebarContent>
 				<SidebarGroup>
+					<SidebarGroupLabel>Admin</SidebarGroupLabel>
 					<SidebarGroupContent>
 						<SidebarMenu>
-							<SidebarMenuItem>
-								<SidebarMenuButton
-									asChild
-									isActive={pathname === '/dashboard'}
-								>
-									<Link href="/dashboard">Intro</Link>
-								</SidebarMenuButton>
-							</SidebarMenuItem>
+							{adminRoutes.map((route) => (
+								<SidebarMenuItem key={route.title}>
+									<SidebarMenuButton
+										asChild
+										isActive={pathname === route.url}
+									>
+										<Link href={route.url}>
+											{route.title}
+										</Link>
+									</SidebarMenuButton>
+								</SidebarMenuItem>
+							))}
 						</SidebarMenu>
 					</SidebarGroupContent>
 				</SidebarGroup>

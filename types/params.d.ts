@@ -5,6 +5,9 @@ declare global {
 	interface CareerUpdateParams {
 		params: Promise<{ careerId: string }>;
 	}
+	interface UserUpdateParams {
+		params: Promise<{ userId: string }>;
+	}
 }
 
 export {};

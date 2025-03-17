@@ -243,3 +243,4 @@ github repository에 환경 변수 등록 필수
 - Schema 순서 추가
 - grafana 등 로깅
 - zustand 도입(상태관리)
+- dashboard 로그인 여부 확인

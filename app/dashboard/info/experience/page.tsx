@@ -43,7 +43,7 @@ function ExperienceContent() {
 		useState<Experience | null>();
 	const take = 20;
 	const [orderBy, setOrderBy] = useState<string>('id');
-	const [order, setOrder] = useState<Order>('asc');
+	const [order, setOrder] = useState<Order>('desc');
 
 	async function handleCreateExperience(e: MouseEvent<HTMLButtonElement>) {
 		e.preventDefault();
