@@ -125,11 +125,15 @@ server {
 
 ### .env
 ```
+MYSQL_USER=""
 MYSQL_PASSWORD=""
+MYSQL_DATABASE=""
+MYSQL_SHADOW_DATABASE=""
+DATABASE_URL="mysql://${MYSQL_USER}:${MYSQL_PASSWORD}@localhost:3306/${MYSQL_DATABASE}"
+SHADOW_DATABASE_URL="mysql://${MYSQL_USER}:${MYSQL_PASSWORD}@localhost:3306/${MYSQL_SHADOW_DATABASE}"
+
 JWT_SECRET=""
 JWT_REFRESH_SECRET=""
-DATABASE_URL=""
-SHADOW_DATABASE_URL=""
 
 AWS_ACCESS_KEY_ID=""
 AWS_SECRET_ACCESS_KEY=""
@@ -142,6 +146,10 @@ ADMIN_PASSWORD=""
 
 API_URL=""
 ```
+- 아래 명령어로 각 `JWT_SECRET`/`JWT_REFRESH_SECRET` 생성
+  ```bash
+  $ node -e "console.log(require('crypto').randomBytes(64).toString('hex'))"
+  ```
 
 ### .github/deploy.yml
 ```yml
