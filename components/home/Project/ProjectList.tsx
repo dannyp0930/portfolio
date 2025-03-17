@@ -81,7 +81,7 @@ export default function ProjectList({ projects }: ProjectListPros) {
 				<CarouselPrevious />
 				<CarouselNext />
 			</Carousel>
-			{modalId ? (
+			{modalId !== 0 && (
 				<ModalContainer closeModal={closeModal}>
 					<div className="p-2">
 						<h4>{selectProjectTitle}</h4>
@@ -116,7 +116,7 @@ export default function ProjectList({ projects }: ProjectListPros) {
 						</div>
 					</div>
 				</ModalContainer>
-			) : null}
+			)}
 		</section>
 	);
 }

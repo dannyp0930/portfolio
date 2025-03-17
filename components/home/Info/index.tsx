@@ -63,11 +63,11 @@ export default function Info({
 			id="info"
 			className="flex flex-col items-center justify-center gap-5 py-12 md:py-16 lg:py-28"
 		>
-			{selectItemIdx ? (
+			{selectItemIdx !== 0 && (
 				<ModalContainer closeModal={closeModal}>
 					<div dangerouslySetInnerHTML={{ __html: selectItem }}></div>
 				</ModalContainer>
-			) : null}
+			)}
 			<h1>Info</h1>
 			<div className="grid grid-cols-1 grid-rows-6 gap-5 w-72 md:w-3/4 md:grid-cols-2 md:grid-rows-3 md:gap-10 lg:w-1/2">
 				<div

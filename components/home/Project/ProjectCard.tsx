@@ -16,9 +16,7 @@ export default function ProjectCard({ project, setModalId }: ProjectCardProps) {
 			<h4 className="break-keep">{project.intro}</h4>
 			<p>
 				{dayjs(project.startDate).format('YYYY.MM.DD')} ~{' '}
-				{project.endDate
-					? dayjs(project.endDate).format('YYYY.MM.DD')
-					: null}
+				{project.endDate && dayjs(project.endDate).format('YYYY.MM.DD')}
 			</p>
 			<div className="flex items-center gap-5 mt-3 lg:gap-12">
 				{project.github && (
