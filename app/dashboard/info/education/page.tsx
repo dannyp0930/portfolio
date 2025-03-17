@@ -215,13 +215,13 @@ function EducationContent() {
 						</th>
 						<th
 							className="cursor-pointer relative"
-							onClick={() => handleSort('schoolName')}
+							onClick={() => handleSort('institutionName')}
 						>
 							학교명
 							<span className="absolute right-2 bottom-1/2 translate-y-1/2">
 								<SortIcon
 									orderBy={orderBy}
-									currentColumn="schoolName"
+									currentColumn="institutionName"
 									order={order}
 								/>
 							</span>
