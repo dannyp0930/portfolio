@@ -111,12 +111,8 @@ export default function Dashboard() {
 				to: emails,
 				subject: `[${new Date().toLocaleDateString()}]: 포트폴리오`,
 				text: '포트폴리오 입니다.',
-				attachments: resumeUrl && [
-					{
-						filename: `${new Date().toLocaleDateString()}-포트폴리오.pdf`,
-						path: resumeUrl,
-					},
-				],
+				filename: `${new Date().toLocaleDateString()}-포트폴리오.pdf`,
+				path: resumeUrl,
 			};
 			const {
 				data: { message },
@@ -221,7 +217,11 @@ export default function Dashboard() {
 							onChange={setBannerMobile}
 						/>
 					</div>
-					<Button onClick={handleSubmitMail}>테스트</Button>
+					<div>
+						<Button onClick={handleSubmitMail}>
+							포트폴리오 전송
+						</Button>
+					</div>
 					<Button type="submit">저장</Button>
 				</form>
 			</Form>

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import nodemailer from 'nodemailer';
 import prisma from '@/lib/prisma';
+import axios from 'axios';
 
 const transporter = nodemailer.createTransport({
 	service: 'gmail',
@@ -11,7 +12,7 @@ const transporter = nodemailer.createTransport({
 });
 
 export async function POST(req: NextRequest) {
-	const { to, subject, text, html, attachments } = await req.json();
+	const { to, subject, text, html, filename, path } = await req.json();
 	const recipients = Array.isArray(to) ? to : [to];
 	const mailCount = await prisma.mailLog.count({
 		where: {
@@ -27,6 +28,7 @@ export async function POST(req: NextRequest) {
 		);
 	}
 	try {
+		const response = await axios.get(path, { responseType: 'arraybuffer' });
 		for (const recipient of recipients) {
 			const mailOptions = {
 				from: process.env.GMAIL_USER,
@@ -34,7 +36,15 @@ export async function POST(req: NextRequest) {
 				subject,
 				text,
 				html,
-				attachments: attachments || [],
+				attachments:
+					filename && path
+						? [
+								{
+									filename,
+									content: Buffer.from(response.data),
+								},
+							]
+						: [],
 			};
 			await transporter.sendMail(mailOptions);
 			await prisma.mailLog.create({
