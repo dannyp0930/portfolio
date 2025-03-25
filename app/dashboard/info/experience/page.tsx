@@ -57,7 +57,7 @@ function ExperienceContent() {
 			const {
 				data: { message },
 				status,
-			} = await instance.post('/api/info/experience', body);
+			} = await instance.post('/info/experience', body);
 			if (status === 200) {
 				toast.success(message);
 				setOrganization('');
@@ -85,7 +85,7 @@ function ExperienceContent() {
 			const {
 				data: { message },
 				status,
-			} = await instance.put('/api/info/experience', body);
+			} = await instance.put('/info/experience', body);
 			if (status === 200) {
 				toast.success(message);
 				setUpdateExperienceId(null);
@@ -108,7 +108,7 @@ function ExperienceContent() {
 				const {
 					data: { message },
 					status,
-				} = await instance.delete('/api/info/experience', {
+				} = await instance.delete('/info/experience', {
 					data: body,
 				});
 				if (status === 200) {
@@ -160,7 +160,7 @@ function ExperienceContent() {
 		try {
 			const {
 				data: { data, totalCnt },
-			} = await instance.get('/api/info/experience', { params });
+			} = await instance.get('/info/experience', { params });
 			setExperiences(data);
 			setTotalCnt(totalCnt);
 			setLoad(false);

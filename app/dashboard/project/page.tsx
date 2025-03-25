@@ -37,7 +37,7 @@ function ProjectComponent() {
 				const {
 					data: { message },
 					status,
-				} = await instance.delete('/api/project', {
+				} = await instance.delete('/project', {
 					data: body,
 				});
 				if (status === 200) {
@@ -75,7 +75,7 @@ function ProjectComponent() {
 		try {
 			const {
 				data: { data, totalCnt },
-			} = await instance.get('/api/project', { params });
+			} = await instance.get('/project', { params });
 			setProjects(data);
 			setTotalCnt(totalCnt);
 			setLoad(false);

@@ -54,7 +54,7 @@ function EducationContent() {
 			const {
 				data: { message },
 				status,
-			} = await instance.post('/api/info/education', body);
+			} = await instance.post('/info/education', body);
 			if (status === 200) {
 				toast.success(message);
 				setInstitutionName('');
@@ -82,7 +82,7 @@ function EducationContent() {
 			const {
 				data: { message },
 				status,
-			} = await instance.put('/api/info/education', body);
+			} = await instance.put('/info/education', body);
 			if (status === 200) {
 				toast.success(message);
 				setUpdateEducationId(null);
@@ -105,7 +105,7 @@ function EducationContent() {
 				const {
 					data: { message },
 					status,
-				} = await instance.delete('/api/info/education', {
+				} = await instance.delete('/info/education', {
 					data: body,
 				});
 				if (status === 200) {
@@ -167,7 +167,7 @@ function EducationContent() {
 		try {
 			const {
 				data: { data, totalCnt },
-			} = await instance.get('/api/info/education', { params });
+			} = await instance.get('/info/education', { params });
 			setEducations(data);
 			setTotalCnt(totalCnt);
 			setLoad(false);

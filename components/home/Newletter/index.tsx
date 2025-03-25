@@ -15,7 +15,7 @@ export default function Nesletter() {
 			const {
 				data: { message },
 				status,
-			} = await instance.post('/api/subscription', { email });
+			} = await instance.post('/subscription', { email });
 			if (status === 200) {
 				toast.success(message);
 				(

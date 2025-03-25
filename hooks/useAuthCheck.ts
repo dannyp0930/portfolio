@@ -11,9 +11,9 @@ export default function useAuthCheck() {
 			try {
 				const {
 					data: { user },
-				} = await instance.post('/api/refresh');
+				} = await instance.post('/refresh');
 				if (user) {
-					const { data } = await instance.post('/api/verify');
+					const { data } = await instance.post('/verify');
 					if (data.user) {
 						if (!data.user.isAdmin) {
 							router.push('/');

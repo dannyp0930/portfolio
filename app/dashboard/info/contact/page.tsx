@@ -47,7 +47,7 @@ function ContactContent() {
 			const {
 				data: { message },
 				status,
-			} = await instance.post('/api/info/contact', body);
+			} = await instance.post('/info/contact', body);
 			if (status === 200) {
 				toast.success(message);
 				setType('');
@@ -70,7 +70,7 @@ function ContactContent() {
 			const {
 				data: { message },
 				status,
-			} = await instance.put('/api/info/contact', body);
+			} = await instance.put('/info/contact', body);
 			if (status === 200) {
 				toast.success(message);
 				setUpdateContactId(null);
@@ -93,7 +93,7 @@ function ContactContent() {
 				const {
 					data: { message },
 					status,
-				} = await instance.delete('/api/info/contact', { data: body });
+				} = await instance.delete('/info/contact', { data: body });
 				if (status === 200) {
 					toast.success(message);
 					setUpdateContactId(null);
@@ -153,7 +153,7 @@ function ContactContent() {
 		try {
 			const {
 				data: { data, totalCnt },
-			} = await instance.get('/api/info/contact', { params });
+			} = await instance.get('/info/contact', { params });
 			setContacts(data);
 			setTotalCnt(totalCnt);
 			setLoad(false);

@@ -41,7 +41,7 @@ export default function UserUpdate({ params }: UserUpdateParams) {
 			const params = { id: userId };
 			const {
 				data: { data },
-			} = await instance.get('/api/user', { params });
+			} = await instance.get('/user', { params });
 			form.setValue('email', data.email);
 			form.setValue('isAdmin', data.isAdmin);
 			setLoad(false);
@@ -66,7 +66,7 @@ export default function UserUpdate({ params }: UserUpdateParams) {
 			const {
 				data: { message },
 				status,
-			} = await instance.put('/api/user', body);
+			} = await instance.put('/user', body);
 			if (status === 200) {
 				toast.success(message);
 			}

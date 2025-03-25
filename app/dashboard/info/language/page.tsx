@@ -54,7 +54,7 @@ function LanguageContent() {
 			const {
 				data: { message },
 				status,
-			} = await instance.post('/api/info/language', body);
+			} = await instance.post('/info/language', body);
 			if (status === 200) {
 				toast.success(message);
 				setLanguageName('');
@@ -81,7 +81,7 @@ function LanguageContent() {
 			const {
 				data: { message },
 				status,
-			} = await instance.put('/api/info/language', body);
+			} = await instance.put('/info/language', body);
 			if (status === 200) {
 				toast.success(message);
 				setUpdateLanguageId(null);
@@ -104,7 +104,7 @@ function LanguageContent() {
 				const {
 					data: { message },
 					status,
-				} = await instance.delete('/api/info/language', { data: body });
+				} = await instance.delete('/info/language', { data: body });
 				if (status === 200) {
 					toast.success(message);
 					setUpdateLanguageId(null);
@@ -164,7 +164,7 @@ function LanguageContent() {
 		try {
 			const {
 				data: { data, totalCnt },
-			} = await instance.get('/api/info/language', { params });
+			} = await instance.get('/info/language', { params });
 			setLanguages(data);
 			setTotalCnt(totalCnt);
 			setLoad(false);

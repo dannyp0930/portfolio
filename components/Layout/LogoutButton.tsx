@@ -14,7 +14,7 @@ export function LogoutButton() {
 			const {
 				data: { message },
 				status,
-			} = await instance.post('/api/logout');
+			} = await instance.post('/logout');
 			if (status === 200) {
 				toast.success(message);
 				router.push('/');

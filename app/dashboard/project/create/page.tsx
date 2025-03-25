@@ -58,7 +58,7 @@ export default function ProjectCreate() {
 			const {
 				data: { message },
 				status,
-			} = await instance.post('/api/project', body);
+			} = await instance.post('/project', body);
 			if (status === 200) {
 				toast.success(message);
 				router.push('/dashboard/project');

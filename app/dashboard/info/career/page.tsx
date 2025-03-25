@@ -56,7 +56,7 @@ function CareerContent() {
 			const {
 				data: { message },
 				status,
-			} = await instance.post('/api/info/career', body);
+			} = await instance.post('/info/career', body);
 			if (status === 200) {
 				toast.success(message);
 				setOrganization('');
@@ -85,7 +85,7 @@ function CareerContent() {
 			const {
 				data: { message },
 				status,
-			} = await instance.put('/api/info/career', body);
+			} = await instance.put('/info/career', body);
 			if (status === 200) {
 				toast.success(message);
 				setUpdateCareerId(null);
@@ -108,7 +108,7 @@ function CareerContent() {
 				const {
 					data: { message },
 					status,
-				} = await instance.delete('/api/info/career', { data: body });
+				} = await instance.delete('/info/career', { data: body });
 				if (status === 200) {
 					toast.success(message);
 					setUpdateCareerId(null);
@@ -168,7 +168,7 @@ function CareerContent() {
 		try {
 			const {
 				data: { data, totalCnt },
-			} = await instance.get('/api/info/career', { params });
+			} = await instance.get('/info/career', { params });
 			setCareers(data);
 			setTotalCnt(totalCnt);
 			setLoad(false);

@@ -49,7 +49,7 @@ export default function Dashboard() {
 		try {
 			const {
 				data: { data },
-			} = await instance.get('/api/intro');
+			} = await instance.get('/intro');
 			form.setValue('title', data.title);
 			form.setValue('description', data.description);
 			if (data.resumeFileUrl) {
@@ -89,7 +89,7 @@ export default function Dashboard() {
 			const {
 				data: { message },
 				status,
-			} = await formInstance.put('/api/intro', body);
+			} = await formInstance.put('/intro', body);
 			if (status === 200) {
 				toast.success(message);
 			}

@@ -4,7 +4,7 @@ import { serverInstance } from '@/app/api/instance';
 export default async function Career() {
 	const {
 		data: { data: careers },
-	} = await serverInstance.get('/api/career', { params: { take: -1 } });
+	} = await serverInstance.get('/career', { params: { take: -1 } });
 	return (
 		<section
 			id="career"

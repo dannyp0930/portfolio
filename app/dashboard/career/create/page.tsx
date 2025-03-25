@@ -52,7 +52,7 @@ export default function CareerCreate() {
 			const {
 				data: { message },
 				status,
-			} = await instance.post('/api/career', body);
+			} = await instance.post('/career', body);
 			if (status === 200) {
 				toast.success(message);
 				router.push('/dashboard/career');

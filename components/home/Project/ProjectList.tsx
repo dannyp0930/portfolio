@@ -30,7 +30,7 @@ export default function ProjectList({ projects }: ProjectListPros) {
 				data: {
 					data: { projectDetail, projectImages },
 				},
-			} = await instance.get('/api/project/detail', { params });
+			} = await instance.get('/project/detail', { params });
 			setSelectProjectTitle(
 				projects.find((project) => project.id === modalId)
 					?.title as string

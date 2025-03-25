@@ -41,7 +41,7 @@ export default function UserCreate() {
 			const {
 				data: { message },
 				status,
-			} = await instance.post('/api/user', values);
+			} = await instance.post('/user', values);
 			if (status === 200) {
 				toast.success(message);
 				router.push('/dashboard/user');

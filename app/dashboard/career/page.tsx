@@ -37,7 +37,7 @@ function CareerComponent() {
 				const {
 					data: { message },
 					status,
-				} = await instance.delete('/api/career', {
+				} = await instance.delete('/career', {
 					data: body,
 				});
 				if (status === 200) {
@@ -75,7 +75,7 @@ function CareerComponent() {
 		try {
 			const {
 				data: { data, totalCnt },
-			} = await instance.get('/api/career', { params });
+			} = await instance.get('/career', { params });
 			setCareers(data);
 			setTotalCnt(totalCnt);
 			setLoad(false);

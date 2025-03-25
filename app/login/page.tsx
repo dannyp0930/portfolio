@@ -19,7 +19,7 @@ export default function Login() {
 			const body = { email, password };
 			const {
 				data: { user },
-			} = await instance.post('/api/login', body);
+			} = await instance.post('/login', body);
 			if (user.isAdmin) {
 				window.location.href = '/dashboard';
 			} else {

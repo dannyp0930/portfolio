@@ -20,18 +20,18 @@ async function fetchData() {
 			certificatesResponse,
 			skillsResponse,
 		] = await Promise.all([
-			serverInstance.get('/api/intro'),
-			serverInstance.get('/api/info/contact', { params: { take: -1 } }),
-			serverInstance.get('/api/info/education', { params: { take: -1 } }),
-			serverInstance.get('/api/info/experience', {
+			serverInstance.get('/intro'),
+			serverInstance.get('/info/contact', { params: { take: -1 } }),
+			serverInstance.get('/info/education', { params: { take: -1 } }),
+			serverInstance.get('/info/experience', {
 				params: { take: -1 },
 			}),
-			serverInstance.get('/api/info/career', { params: { take: -1 } }),
-			serverInstance.get('/api/info/language', { params: { take: -1 } }),
-			serverInstance.get('/api/info/certificate', {
+			serverInstance.get('/info/career', { params: { take: -1 } }),
+			serverInstance.get('/info/language', { params: { take: -1 } }),
+			serverInstance.get('/info/certificate', {
 				params: { take: -1 },
 			}),
-			serverInstance.get('/api/skill', { params: { take: -1 } }),
+			serverInstance.get('/skill', { params: { take: -1 } }),
 		]);
 
 		return {

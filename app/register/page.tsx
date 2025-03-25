@@ -21,7 +21,7 @@ export default function Register() {
 				email,
 				password,
 			};
-			const res = await instance.post('/api/register', body);
+			const res = await instance.post('/register', body);
 			if (res.data.userId) {
 				router.push('/login');
 			} else {

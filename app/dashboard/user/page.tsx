@@ -37,7 +37,7 @@ function UserComponent() {
 				const {
 					data: { message },
 					status,
-				} = await instance.delete('/api/user', {
+				} = await instance.delete('/user', {
 					data: body,
 				});
 				if (status === 200) {
@@ -75,7 +75,7 @@ function UserComponent() {
 		try {
 			const {
 				data: { data, totalCnt },
-			} = await instance.get('/api/user', { params });
+			} = await instance.get('/user', { params });
 			setUsers(data);
 			setTotalCnt(totalCnt);
 			setLoad(false);

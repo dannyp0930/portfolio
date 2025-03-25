@@ -55,7 +55,7 @@ function CertificateContent() {
 			const {
 				data: { message },
 				status,
-			} = await instance.post('/api/info/certificate', body);
+			} = await instance.post('/info/certificate', body);
 			if (status === 200) {
 				toast.success(message);
 				setCertificateName('');
@@ -81,7 +81,7 @@ function CertificateContent() {
 			const {
 				data: { message },
 				status,
-			} = await instance.put('/api/info/certificate', body);
+			} = await instance.put('/info/certificate', body);
 			if (status === 200) {
 				toast.success(message);
 				setUpdateCertificateId(null);
@@ -104,7 +104,7 @@ function CertificateContent() {
 				const {
 					data: { message },
 					status,
-				} = await instance.delete('/api/info/certificate', {
+				} = await instance.delete('/info/certificate', {
 					data: body,
 				});
 				if (status === 200) {
@@ -166,7 +166,7 @@ function CertificateContent() {
 		try {
 			const {
 				data: { data, totalCnt },
-			} = await instance.get('/api/info/certificate', { params });
+			} = await instance.get('/info/certificate', { params });
 			setCertificates(data);
 			setTotalCnt(totalCnt);
 			setLoad(false);

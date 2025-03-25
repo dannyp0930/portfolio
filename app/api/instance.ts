@@ -14,17 +14,19 @@ const httpsAgent =
 		: undefined;
 
 const instance = axios.create({
+	baseURL: '/api',
 	...commonConfig,
 	httpsAgent,
 });
 
 const serverInstance = axios.create({
-	baseURL: process.env.API_URL,
+	baseURL: process.env.API_URL + '/api',
 	...commonConfig,
 	httpsAgent,
 });
 
 const formInstance = axios.create({
+	baseURL: '/api',
 	headers: {
 		'Content-Type': 'multipart/form-data',
 	},

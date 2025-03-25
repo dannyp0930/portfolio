@@ -72,7 +72,7 @@ function SkillComponent() {
 			const {
 				data: { message },
 				status,
-			} = await formInstance.post('/api/skill', formData);
+			} = await formInstance.post('/skill', formData);
 			if (status === 200) {
 				toast.success(message);
 				setTitle('');
@@ -108,7 +108,7 @@ function SkillComponent() {
 			const {
 				data: { message },
 				status,
-			} = await formInstance.put('/api/skill', formData);
+			} = await formInstance.put('/skill', formData);
 			if (status === 200) {
 				toast.success(message);
 				setUpdateSkillId(null);
@@ -133,7 +133,7 @@ function SkillComponent() {
 				const {
 					data: { message },
 					status,
-				} = await instance.delete('/api/skill', {
+				} = await instance.delete('/skill', {
 					data: body,
 				});
 				if (status === 200) {
@@ -196,7 +196,7 @@ function SkillComponent() {
 		try {
 			const {
 				data: { data, totalCnt },
-			} = await instance.get('/api/skill', { params });
+			} = await instance.get('/skill', { params });
 			setSkills(data);
 			setTotalCnt(totalCnt);
 			setLoad(false);

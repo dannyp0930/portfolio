@@ -81,7 +81,7 @@ export default function ProjectUpdate({ params }: ProjectUpdateParams) {
 			const params = { id: projectId };
 			const {
 				data: { data },
-			} = await instance.get('/api/project', { params });
+			} = await instance.get('/project', { params });
 			(Object.keys(formSchema.shape) as (keyof formSchemaType)[]).forEach(
 				async (key) => {
 					const value = data[key];
@@ -130,7 +130,7 @@ export default function ProjectUpdate({ params }: ProjectUpdateParams) {
 			const {
 				data: { message },
 				status,
-			} = await instance.put('/api/project', body);
+			} = await instance.put('/project', body);
 			if (status === 200) {
 				toast.success(message);
 			}
@@ -153,7 +153,7 @@ export default function ProjectUpdate({ params }: ProjectUpdateParams) {
 				const {
 					status,
 					data: { id, message },
-				} = await instance.post('/api/project/detail', body);
+				} = await instance.post('/project/detail', body);
 				if (status === 200) {
 					toast.success(message);
 					setProjectDetailId(id);
@@ -162,7 +162,7 @@ export default function ProjectUpdate({ params }: ProjectUpdateParams) {
 				const {
 					data: { message },
 					status,
-				} = await instance.put('/api/project/detail', body);
+				} = await instance.put('/project/detail', body);
 				if (status === 200) {
 					toast.success(message);
 				}
@@ -183,7 +183,7 @@ export default function ProjectUpdate({ params }: ProjectUpdateParams) {
 				const {
 					data: { message },
 					status,
-				} = await formInstance.post('/api/project/image', formData);
+				} = await formInstance.post('/project/image', formData);
 				if (status === 200) {
 					toast.success(message);
 					if (imageRef.current) {
@@ -210,7 +210,7 @@ export default function ProjectUpdate({ params }: ProjectUpdateParams) {
 			const {
 				data: { message },
 				status,
-			} = await formInstance.put('/api/project/image', formData);
+			} = await formInstance.put('/project/image', formData);
 			if (status === 200) {
 				toast.success(message);
 			}
@@ -231,7 +231,7 @@ export default function ProjectUpdate({ params }: ProjectUpdateParams) {
 				const {
 					data: { message },
 					status,
-				} = await instance.delete('/api/project/image', { data: body });
+				} = await instance.delete('/project/image', { data: body });
 				if (status === 200) {
 					toast.success(message);
 				}

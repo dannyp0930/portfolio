@@ -27,7 +27,7 @@ export default function Subscription() {
 			const {
 				data: { message },
 				status,
-			} = await instance.post('/api/subscription', body);
+			} = await instance.post('/subscription', body);
 			if (status === 200) {
 				toast.success(message);
 				setEmail('');
@@ -49,7 +49,7 @@ export default function Subscription() {
 				const {
 					data: { message },
 					status,
-				} = await instance.patch('/api/subscription', body);
+				} = await instance.patch('/subscription', body);
 				if (status === 200) {
 					toast.success(message);
 				}
@@ -73,7 +73,7 @@ export default function Subscription() {
 				const {
 					data: { message },
 					status,
-				} = await instance.delete('/api/subscription', { data: body });
+				} = await instance.delete('/subscription', { data: body });
 				if (status === 200) {
 					toast.success(message);
 				}
@@ -109,7 +109,7 @@ export default function Subscription() {
 		try {
 			const {
 				data: { data, totalCnt },
-			} = await instance.get('/api/subscription', { params });
+			} = await instance.get('/subscription', { params });
 			setSubscriptions(data);
 			setTotalCnt(totalCnt);
 			setLoad(false);

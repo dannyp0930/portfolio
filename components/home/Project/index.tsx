@@ -4,6 +4,6 @@ import { serverInstance } from '@/app/api/instance';
 export default async function Project() {
 	const {
 		data: { data: projects },
-	} = await serverInstance.get('/api/project', { params: { take: -1 } });
+	} = await serverInstance.get('/project', { params: { take: -1 } });
 	return <ProjectList projects={projects} />;
 }

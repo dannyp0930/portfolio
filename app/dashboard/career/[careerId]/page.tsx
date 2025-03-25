@@ -77,7 +77,7 @@ export default function CareerUpdate({ params }: CareerUpdateParams) {
 			const params = { id: careerId };
 			const {
 				data: { data },
-			} = await instance.get('/api/career', { params });
+			} = await instance.get('/career', { params });
 			(Object.keys(formSchema.shape) as (keyof formSchemaType)[]).forEach(
 				async (key) => {
 					const value = data[key];
@@ -121,7 +121,7 @@ export default function CareerUpdate({ params }: CareerUpdateParams) {
 			const {
 				data: { message },
 				status,
-			} = await instance.put('/api/career', body);
+			} = await instance.put('/career', body);
 			if (status === 200) {
 				toast.success(message);
 			}
@@ -143,7 +143,7 @@ export default function CareerUpdate({ params }: CareerUpdateParams) {
 			const {
 				data: { message },
 				status,
-			} = await instance.post('/api/career/detail', body);
+			} = await instance.post('/career/detail', body);
 			if (status === 200) {
 				toast.success(message);
 				detailForm.setValue('title', '');
@@ -185,7 +185,7 @@ export default function CareerUpdate({ params }: CareerUpdateParams) {
 			const {
 				data: { message },
 				status,
-			} = await instance.put('/api/career/detail', body);
+			} = await instance.put('/career/detail', body);
 			if (status === 200) {
 				toast.success(message);
 				detailForm.setValue('title', '');
@@ -209,7 +209,7 @@ export default function CareerUpdate({ params }: CareerUpdateParams) {
 				const {
 					data: { message },
 					status,
-				} = await instance.delete('/api/career/detail', { data: body });
+				} = await instance.delete('/career/detail', { data: body });
 				if (status === 200) {
 					toast.success(message);
 					setCareerDetailUpdateId(null);
