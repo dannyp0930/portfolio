@@ -2,57 +2,47 @@
 
 import { instance } from '@/app/api/instance';
 import AdminPagination from '@/components/dashboard/AdminPagination';
-import { Button } from '@/components/ui/button';
 import SortIcon from '@/components/dashboard/SortIcon';
+import { Button } from '@/components/ui/button';
 import { isAxiosError } from 'axios';
 import { useSearchParams } from 'next/navigation';
 import {
 	ChangeEvent,
 	Fragment,
 	MouseEvent,
-	Suspense,
 	useCallback,
 	useEffect,
 	useState,
 } from 'react';
 import { toast } from 'sonner';
 
-export default function Contact() {
-	return (
-		<Suspense>
-			<ContactContent />
-		</Suspense>
-	);
-}
-
-function ContactContent() {
+export default function Subscription() {
 	const searchParams = useSearchParams();
 	const [load, setLoad] = useState<boolean>(true);
-	const [type, setType] = useState<string>('');
-	const [value, setValue] = useState<string>('');
-	const [label, setLabel] = useState<string>('');
+	const [email, setEmail] = useState<string>('');
 	const [selectPage, setSelectPage] = useState<number>(1);
-	const [contacts, setContacts] = useState<Contact[]>([]);
+	const [subscriptions, setSubscriptions] = useState<Subscription[]>([]);
 	const [totalCnt, setTotalCnt] = useState<number>(0);
-	const [updateContactId, setUpdateContactId] = useState<number | null>();
-	const [updateContact, setUpdateContact] = useState<Contact | null>();
+	const [updateSubscriptionId, setUpdateSubscriptionId] = useState<
+		string | null
+	>();
+	const [updateSubscription, setUpdateSubscription] =
+		useState<Subscription | null>();
 	const take = 20;
 	const [orderBy, setOrderBy] = useState<string>('id');
 	const [order, setOrder] = useState<Order>('desc');
 
-	async function handleCreateContact(e: MouseEvent<HTMLButtonElement>) {
+	async function handleCreateSubscription(e: MouseEvent<HTMLButtonElement>) {
 		e.preventDefault();
 		try {
-			const body = { type, value, label };
+			const body = { email };
 			const {
 				data: { message },
 				status,
-			} = await instance.post('/api/info/contact', body);
+			} = await instance.post('/api/subscription', body);
 			if (status === 200) {
 				toast.success(message);
-				setType('');
-				setValue('');
-				setLabel('');
+				setEmail('');
 			}
 		} catch (err) {
 			if (isAxiosError(err)) {
@@ -63,18 +53,18 @@ function ContactContent() {
 		}
 	}
 
-	async function handleUpdateContact(e: MouseEvent<HTMLButtonElement>) {
+	async function handleUpdateSubscription(e: MouseEvent<HTMLButtonElement>) {
 		e.preventDefault();
 		try {
-			const body = { ...updateContact };
+			const body = { ...updateSubscription };
 			const {
 				data: { message },
 				status,
-			} = await instance.put('/api/info/contact', body);
+			} = await instance.put('/api/subscription', body);
 			if (status === 200) {
 				toast.success(message);
-				setUpdateContactId(null);
-				setUpdateContact(null);
+				setUpdateSubscriptionId(null);
+				setUpdateSubscription(null);
 			}
 		} catch (err) {
 			if (isAxiosError(err)) {
@@ -85,19 +75,19 @@ function ContactContent() {
 		}
 	}
 
-	function handleDeleteContact(contactId: number) {
+	function handleDeleteSubscription(subscriptionId: string) {
 		return async (e: MouseEvent<HTMLButtonElement>) => {
 			e.preventDefault();
 			try {
-				const body = { id: contactId };
+				const body = { id: subscriptionId };
 				const {
 					data: { message },
 					status,
-				} = await instance.delete('/api/info/contact', { data: body });
+				} = await instance.delete('/api/subscription', { data: body });
 				if (status === 200) {
 					toast.success(message);
-					setUpdateContactId(null);
-					setUpdateContact(null);
+					setUpdateSubscriptionId(null);
+					setUpdateSubscription(null);
 				}
 			} catch (err) {
 				if (isAxiosError(err)) {
@@ -111,25 +101,25 @@ function ContactContent() {
 		};
 	}
 
-	function selectUpdateContact(contact?: Contact) {
+	function selectUpdateSubscription(subscription?: Subscription) {
 		return (e: MouseEvent<HTMLButtonElement>) => {
 			e.preventDefault();
-			if (contact) {
-				setUpdateContactId(contact.id);
-				setUpdateContact(contact);
+			if (subscription) {
+				setUpdateSubscriptionId(subscription.id);
+				setUpdateSubscription(subscription);
 			} else {
-				setUpdateContactId(null);
-				setUpdateContact(null);
+				setUpdateSubscriptionId(null);
+				setUpdateSubscription(null);
 			}
 		};
 	}
 
-	function changeSelectUpdateContact(key: keyof Contact) {
+	function changeSelectUpdateSubscription(key: keyof Subscription) {
 		return (e: ChangeEvent<HTMLInputElement>) => {
-			setUpdateContact({
-				...updateContact,
+			setUpdateSubscription({
+				...updateSubscription,
 				[key]: e.target.value,
-			} as Contact);
+			} as Subscription);
 		};
 	}
 
@@ -143,7 +133,7 @@ function ContactContent() {
 		setLoad(true);
 	};
 
-	const getContact = useCallback(async () => {
+	const getSubscription = useCallback(async () => {
 		const params = {
 			page: selectPage,
 			take,
@@ -153,8 +143,8 @@ function ContactContent() {
 		try {
 			const {
 				data: { data, totalCnt },
-			} = await instance.get('/api/info/contact', { params });
-			setContacts(data);
+			} = await instance.get('/api/subscription', { params });
+			setSubscriptions(data);
 			setTotalCnt(totalCnt);
 			setLoad(false);
 		} catch (err) {
@@ -166,9 +156,9 @@ function ContactContent() {
 
 	useEffect(() => {
 		if (load) {
-			getContact();
+			getSubscription();
 		}
-	}, [load, getContact]);
+	}, [load, getSubscription]);
 
 	useEffect(() => {
 		const parmasPage = searchParams.get('p');
@@ -188,52 +178,13 @@ function ContactContent() {
 					<tr>
 						<th
 							className="cursor-pointer relative"
-							onClick={() => handleSort('id')}
+							onClick={() => handleSort('email')}
 						>
-							ID
+							이메일
 							<span className="absolute right-2 bottom-1/2 translate-y-1/2">
 								<SortIcon
 									orderBy={orderBy}
-									currentColumn="id"
-									order={order}
-								/>
-							</span>
-						</th>
-						<th
-							className="cursor-pointer relative"
-							onClick={() => handleSort('type')}
-						>
-							타입
-							<span className="absolute right-2 bottom-1/2 translate-y-1/2">
-								<SortIcon
-									orderBy={orderBy}
-									currentColumn="type"
-									order={order}
-								/>
-							</span>
-						</th>
-						<th
-							className="cursor-pointer relative"
-							onClick={() => handleSort('value')}
-						>
-							값
-							<span className="absolute right-2 bottom-1/2 translate-y-1/2">
-								<SortIcon
-									orderBy={orderBy}
-									currentColumn="value"
-									order={order}
-								/>
-							</span>
-						</th>
-						<th
-							className="cursor-pointer relative"
-							onClick={() => handleSort('label')}
-						>
-							라벨
-							<span className="absolute right-2 bottom-1/2 translate-y-1/2">
-								<SortIcon
-									orderBy={orderBy}
-									currentColumn="label"
+									currentColumn="email"
 									order={order}
 								/>
 							</span>
@@ -243,96 +194,61 @@ function ContactContent() {
 				</thead>
 				<tbody>
 					<tr>
-						<td></td>
 						<td>
 							<input
 								className="w-full focus:outline-none"
-								type="text"
-								value={type}
+								type="email"
+								value={email}
 								required
-								onChange={(e) => setType(e.target.value)}
-							/>
-						</td>
-						<td>
-							<input
-								className="w-full focus:outline-none"
-								type="text"
-								value={value}
-								required
-								onChange={(e) => setValue(e.target.value)}
-							/>
-						</td>
-						<td>
-							<input
-								className="w-full focus:outline-none"
-								type="text"
-								value={label}
-								required
-								onChange={(e) => setLabel(e.target.value)}
+								onChange={(e) => setEmail(e.target.value)}
 							/>
 						</td>
 						<td>
 							<div className="flex justify-center">
-								<Button size="sm" onClick={handleCreateContact}>
+								<Button
+									size="sm"
+									onClick={handleCreateSubscription}
+								>
 									추가
 								</Button>
 							</div>
 						</td>
 					</tr>
-					{contacts.map((contact) => (
+					{subscriptions.map((subscription) => (
 						<tr
-							key={contact.id}
+							key={subscription.id}
 							className={
-								contact.id === updateContactId
+								subscription.id === updateSubscriptionId
 									? 'ring-inset ring-2 ring-theme-sub'
 									: ''
 							}
 						>
-							{contact.id === updateContactId ? (
+							{subscription.id === updateSubscriptionId ? (
 								<Fragment>
-									<td>{contact.id}</td>
 									<td>
 										<input
 											className="w-full focus:outline-none"
-											onChange={changeSelectUpdateContact(
-												'type'
+											onChange={changeSelectUpdateSubscription(
+												'email'
 											)}
-											type="text"
-											value={updateContact?.type}
-										/>
-									</td>
-									<td>
-										<input
-											className="w-full focus:outline-none"
-											onChange={changeSelectUpdateContact(
-												'value'
-											)}
-											type="text"
-											value={updateContact?.value}
-										/>
-									</td>
-									<td>
-										<input
-											className="w-full focus:outline-none"
-											onChange={changeSelectUpdateContact(
-												'label'
-											)}
-											type="text"
-											value={updateContact?.label}
+											type="email"
+											value={updateSubscription?.email}
 										/>
 									</td>
 									<td>
 										<div className="flex gap-2 justify-center">
 											<Button
 												size="sm"
-												onClick={handleUpdateContact}
+												onClick={
+													handleUpdateSubscription
+												}
 											>
 												저장
 											</Button>
 											<Button
 												variant="secondary"
 												size="sm"
-												onClick={selectUpdateContact()}
+												onClick={selectUpdateSubscription()}
 											>
 												취소
 											</Button>
@@ -341,16 +257,13 @@ function ContactContent() {
 								</Fragment>
 							) : (
 								<Fragment>
-									<td>{contact.id}</td>
-									<td>{contact.type}</td>
-									<td>{contact.value}</td>
-									<td>{contact.label}</td>
+									<td>{subscription.email}</td>
 									<td>
 										<div className="flex gap-2 justify-center">
 											<Button
 												size="sm"
-												onClick={selectUpdateContact(
-													contact
+												onClick={selectUpdateSubscription(
+													subscription
 												)}
 											>
 												수정
@@ -358,8 +271,8 @@ function ContactContent() {
 											<Button
 												variant="destructive"
 												size="sm"
-												onClick={handleDeleteContact(
-													contact.id
+												onClick={handleDeleteSubscription(
+													subscription.id
 												)}
 											>
 												삭제

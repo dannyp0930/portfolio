@@ -25,6 +25,10 @@ export default function AdminSidebar() {
 			title: 'User',
 			url: '/dashboard/user',
 		},
+		{
+			title: 'Subscription',
+			url: '/dashboard/subscription',
+		},
 	];
 	const infoRoutes = [
 		{

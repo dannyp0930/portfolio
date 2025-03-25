@@ -1,5 +1,6 @@
 import {
 	User as PrismaUser,
+	Subscription as PrismaSubscription,
 	Intro as PrismaIntro,
 	Contact as PrismaContact,
 	Education as PrismaEducation,
@@ -17,6 +18,7 @@ import {
 
 declare global {
 	type User = PrismaUser;
+	type Subscription = PrismaSubscription;
 	type Intro = PrismaIntro;
 	type Contact = PrismaContact;
 	type Education = PrismaEducation;
