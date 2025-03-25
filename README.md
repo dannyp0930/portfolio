@@ -215,7 +215,6 @@ github repository에 환경 변수 등록 필수
   - 주기별 or 게시글 별 뉴스레터 전송
 - Schema 순서 추가
 - grafana 등 로깅
-- zustand 도입(상태관리)
 - 사용자
   - 회원가입/email/비밀번호 찾기 고도화
   - 마이페이지
