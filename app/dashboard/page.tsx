@@ -16,7 +16,7 @@ import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
 import { formInstance, instance } from '@/app/api/instance';
-import { useCallback, useEffect, useState } from 'react';
+import { MouseEvent, useCallback, useEffect, useState } from 'react';
 import ImageInput from '@/components/common/ImageInput';
 import { Label } from '@/components/ui/label';
 import FileInput from '@/components/common/FileInput';
@@ -99,6 +99,36 @@ export default function Dashboard() {
 			}
 		} finally {
 			setLoad(true);
+		}
+	}
+	async function handleSubmitMail(e: MouseEvent<HTMLButtonElement>) {
+		e.preventDefault();
+		try {
+			const {
+				data: { data: emails },
+			} = await instance.get('/email');
+			const body = {
+				to: emails,
+				subject: `[${new Date().toLocaleDateString()}]: 포트폴리오`,
+				text: '포트폴리오 입니다.',
+				attachments: resumeUrl && [
+					{
+						filename: `${new Date().toLocaleDateString()}-포트폴리오.pdf`,
+						path: resumeUrl,
+					},
+				],
+			};
+			const {
+				data: { message },
+				status,
+			} = await instance.post('/mail', body);
+			if (status === 200) {
+				toast.success(message);
+			}
+		} catch (err) {
+			if (isAxiosError(err)) {
+				toast.error(err.response?.data.error || 'An error occurred');
+			}
 		}
 	}
 	return (
@@ -191,6 +221,7 @@ export default function Dashboard() {
 							onChange={setBannerMobile}
 						/>
 					</div>
+					<Button onClick={handleSubmitMail}>테스트</Button>
 					<Button type="submit">저장</Button>
 				</form>
 			</Form>

@@ -144,6 +144,9 @@ S3_REGION=""
 ADMIN_EMAIL=""
 ADMIN_PASSWORD=""
 
+GMAIL_USER=""
+GMAIL_PASSWORD=""
+
 API_URL=""
 ```
 - 아래 명령어로 각 `JWT_SECRET`/`JWT_REFRESH_SECRET` 생성
@@ -208,9 +211,11 @@ github repository에 환경 변수 등록 필수
 
 ## ToDo List
 - 뉴스레터 
-  - 회원 구독
-  - 비회원 구독
+  - 회원 구독 (여부 스키마)
+  - 비회원 구독 (O)
   - 첫 구독 시 이력서 전송
+  - 구독 메일 기능
+- 메일 로그 주기 삭제
 - 블로그
   - 주기별 or 게시글 별 뉴스레터 전송
 - Schema 순서 추가
