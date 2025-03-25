@@ -52,7 +52,6 @@ export async function PUT(req: NextRequest) {
 			if (password) {
 				data.password = await bcrypt.hash(password, 10);
 			}
-			console.log(data);
 			await prisma.user.update({ where: { id }, data });
 		});
 		return NextResponse.json({ message: 'OK' }, { status: 200 });

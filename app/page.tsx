@@ -3,6 +3,7 @@ import Info from '@/components/home/Info';
 import Skills from '@/components/home/Skills';
 import Project from '@/components/home/Project';
 import Career from '@/components/home/Career';
+import Nesletter from '@/components/home/Newletter';
 import Footer from '@/components/Layout/Footer';
 import Header from '@/components/Layout/Header';
 import { serverInstance } from '@/app/api/instance';
@@ -86,6 +87,7 @@ export default async function Home() {
 				<Skills skills={skills} />
 				<Project />
 				<Career />
+				<Nesletter />
 			</article>
 			<Footer />
 		</>
