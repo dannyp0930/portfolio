@@ -20,6 +20,9 @@ export async function POST(req: NextRequest) {
 		}
 		const hashedPassword = await bcrypt.hash(password, 10);
 		await prisma.$transaction(async (prisma) => {
+			await prisma.subscription.deleteMany({
+				where: { email },
+			});
 			await prisma.user.create({
 				data: {
 					email,
@@ -44,6 +47,12 @@ export async function PUT(req: NextRequest) {
 	try {
 		const { id, email, password, isAdmin } = await req.json();
 		await prisma.$transaction(async (prisma) => {
+			const user = await prisma.user.findUnique({ where: { id } });
+			if (user?.email !== email) {
+				await prisma.subscription.deleteMany({
+					where: { email },
+				});
+			}
 			const data: { email: string; isAdmin: boolean; password?: string } =
 				{
 					email,
