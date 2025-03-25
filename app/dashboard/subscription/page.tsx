@@ -146,7 +146,7 @@ export default function Subscription() {
 							className="cursor-pointer relative"
 							onClick={() => handleSort('email')}
 						>
-							이메일
+							Email
 							<span className="absolute right-2 bottom-1/2 translate-y-1/2">
 								<SortIcon
 									orderBy={orderBy}
