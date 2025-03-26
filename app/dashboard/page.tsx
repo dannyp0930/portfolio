@@ -45,6 +45,8 @@ export default function Dashboard() {
 		defaultValues: {
 			title: '',
 			description: '',
+			mailSubject: '',
+			mailText: '',
 		},
 	});
 

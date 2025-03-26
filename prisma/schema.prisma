@@ -37,8 +37,8 @@ model Intro {
   bannerImageUrlTablet String?
   bannerImageUrlMobile String?
   mailSubject String?
-  mailText String?
-  mailHtml String?
+  mailText String? @db.Text
+  mailHtml String? @db.Text
   createdAt         DateTime @default(now())
   updatedAt         DateTime? @updatedAt
 }

@@ -76,6 +76,8 @@ export async function PUT(req: NextRequest) {
 				data: {
 					title: data.title as string,
 					description: data.description as string,
+					mailSubject: data.mailSubject as string,
+					mailText: data.mailText as string,
 					...(newResumeFileUrl && {
 						resumeFileUrl: newResumeFileUrl,
 					}),
