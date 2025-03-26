@@ -1,0 +1,4 @@
+-- AlterTable
+ALTER TABLE `Intro` ADD COLUMN `mailHtml` VARCHAR(191) NULL,
+    ADD COLUMN `mailSubject` VARCHAR(191) NULL,
+    ADD COLUMN `mailText` VARCHAR(191) NULL;

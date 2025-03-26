@@ -25,6 +25,8 @@ import { Textarea } from '@/components/ui/textarea';
 const formSchema = z.object({
 	title: z.string().min(1, { message: '제목을 입력하세요.' }),
 	description: z.string().min(1, { message: '소개를 입력하세요.' }),
+	mailSubject: z.string().optional(),
+	mailText: z.string().optional(),
 });
 
 export default function Dashboard() {
@@ -53,6 +55,8 @@ export default function Dashboard() {
 			} = await instance.get('/intro');
 			form.setValue('title', data.title);
 			form.setValue('description', data.description);
+			form.setValue('mailSubject', data.mailSubject);
+			form.setValue('mailText', data.mailText);
 			if (data.resumeFileUrl) {
 				setResumeUrl(data.resumeFileUrl);
 			}
@@ -102,24 +106,20 @@ export default function Dashboard() {
 			setLoad(true);
 		}
 	}
-	async function handleSubmitMail(e: MouseEvent<HTMLFormElement>) {
+	async function handleSubmitMail(e: MouseEvent<HTMLButtonElement>) {
 		e.preventDefault();
 		setSendMail(true);
 		const toastId = toast.loading('Sending Mail...');
-		const subject = e.currentTarget.elements.namedItem(
-			'subject'
-		) as HTMLInputElement;
-		const text = e.currentTarget.elements.namedItem(
-			'text'
-		) as HTMLTextAreaElement;
+		const subject = form.getValues('mailSubject');
+		const text = form.getValues('mailText');
 		try {
 			const {
 				data: { data: emails },
 			} = await instance.get('/email');
 			const body = {
 				to: emails,
-				subject: subject.value,
-				text: text.value,
+				subject,
+				text,
 				filename: `${new Date().toLocaleDateString()}-포트폴리오.pdf`,
 				path: resumeUrl,
 			};
@@ -129,8 +129,6 @@ export default function Dashboard() {
 			} = await instance.post('/mail', body);
 			if (status === 200) {
 				toast.success(message);
-				subject.value = '';
-				text.value = '';
 			}
 		} catch (err) {
 			if (isAxiosError(err)) {
@@ -232,31 +230,57 @@ export default function Dashboard() {
 							onChange={setBannerMobile}
 						/>
 					</div>
-					<Button type="submit">저장</Button>
+					<h4>포트폴리오 메일</h4>
+					<FormField
+						control={form.control}
+						name="mailSubject"
+						render={({ field }) => (
+							<FormItem>
+								<div className="flex gap-4 items-center">
+									<FormLabel className="flex-shrink-0 w-20">
+										제목
+									</FormLabel>
+									<FormControl className="w-48">
+										<Input placeholder="제목" {...field} />
+									</FormControl>
+									<FormMessage />
+								</div>
+							</FormItem>
+						)}
+					/>
+					<FormField
+						control={form.control}
+						name="mailText"
+						render={({ field }) => (
+							<FormItem>
+								<div className="flex gap-4 items-center">
+									<FormLabel className="flex-shrink-0 w-20">
+										본문
+									</FormLabel>
+									<FormControl className="w-80">
+										<Textarea
+											className="resize-none w-96 h-40"
+											placeholder="본문"
+											{...field}
+										/>
+									</FormControl>
+									<FormMessage />
+								</div>
+							</FormItem>
+						)}
+					/>
+					<div className="space-x-4">
+						<Button type="submit">저장</Button>
+						<Button
+							onClick={handleSubmitMail}
+							disabled={sendMail}
+							type="submit"
+						>
+							전송
+						</Button>
+					</div>
 				</form>
 			</Form>
-			<form onSubmit={handleSubmitMail} className="space-y-8 mt-10">
-				<h4>포트폴리오 메일 전송</h4>
-				<div className="flex gap-4 items-center">
-					<Label className="w-20" htmlFor="subject">
-						제목
-					</Label>
-					<Input id="subject" className="w-40" placeholder="제목" />
-				</div>
-				<div className="flex gap-4 items-center">
-					<Label className="w-20" htmlFor="text">
-						내용
-					</Label>
-					<Textarea
-						id="text"
-						className="resize-none w-96 h-40"
-						placeholder="내용"
-					/>
-				</div>
-				<Button disabled={sendMail} type="submit">
-					전송
-				</Button>
-			</form>
 		</div>
 	);
 }
