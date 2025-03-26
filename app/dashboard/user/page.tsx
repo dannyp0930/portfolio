@@ -29,7 +29,7 @@ function UserComponent() {
 	const [orderBy, setOrderBy] = useState<string>('createdAt');
 	const [order, setOrder] = useState<Order>('desc');
 
-	function handleDeleteUser(userId: number) {
+	function handleDeleteUser(userId: string) {
 		return async (e: MouseEvent<HTMLButtonElement>) => {
 			e.preventDefault();
 			try {
@@ -130,6 +130,19 @@ function UserComponent() {
 						</th>
 						<th
 							className="cursor-pointer relative"
+							onClick={() => handleSort('subscribed')}
+						>
+							구독
+							<span className="absolute right-2 bottom-1/2 translate-y-1/2">
+								<SortIcon
+									orderBy={orderBy}
+									currentColumn="subscribed"
+									order={order}
+								/>
+							</span>
+						</th>
+						<th
+							className="cursor-pointer relative"
 							onClick={() => handleSort('createdAt')}
 						>
 							생성일
@@ -182,6 +195,35 @@ function UserComponent() {
 								)}
 								{user.email}
 							</td>
+							<td className="text-center">
+								{user.subscribed ? (
+									<svg
+										xmlns="http://www.w3.org/2000/svg"
+										fill="none"
+										viewBox="0 0 24 24"
+										className="size-5 stroke-2 stroke-current inline"
+									>
+										<path
+											strokeLinecap="round"
+											strokeLinejoin="round"
+											d="m4.5 12.75 6 6 9-13.5"
+										/>
+									</svg>
+								) : (
+									<svg
+										xmlns="http://www.w3.org/2000/svg"
+										fill="none"
+										viewBox="0 0 24 24"
+										className="size-5 stroke-2 stroke-current inline"
+									>
+										<path
+											strokeLinecap="round"
+											strokeLinejoin="round"
+											d="M6 18 18 6M6 6l12 12"
+										/>
+									</svg>
+								)}
+							</td>
 							<td>
 								{dayjs(user.createdAt).format('YYYY-MM-DD')}
 							</td>
@@ -200,9 +242,7 @@ function UserComponent() {
 									<Button
 										variant="destructive"
 										size="sm"
-										onClick={handleDeleteUser(
-											Number(user.id)
-										)}
+										onClick={handleDeleteUser(user.id)}
 									>
 										삭제
 									</Button>

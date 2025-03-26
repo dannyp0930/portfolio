@@ -22,6 +22,7 @@ import { z } from 'zod';
 const formSchema = z.object({
 	email: z.string().email({ message: '올바른 이메일 형식을 입력하세요.' }),
 	password: z.string().optional(),
+	subscribed: z.boolean(),
 	isAdmin: z.boolean(),
 });
 
@@ -33,6 +34,7 @@ export default function UserUpdate({ params }: UserUpdateParams) {
 		defaultValues: {
 			email: '',
 			password: '',
+			subscribed: false,
 			isAdmin: false,
 		},
 	});
@@ -43,6 +45,7 @@ export default function UserUpdate({ params }: UserUpdateParams) {
 				data: { data },
 			} = await instance.get('/user', { params });
 			form.setValue('email', data.email);
+			form.setValue('subscribed', data.subscribed);
 			form.setValue('isAdmin', data.isAdmin);
 			setLoad(false);
 		} catch (err) {
@@ -115,6 +118,26 @@ export default function UserUpdate({ params }: UserUpdateParams) {
 											type="password"
 											{...field}
 											autoComplete="new-password"
+										/>
+									</FormControl>
+									<FormMessage />
+								</div>
+							</FormItem>
+						)}
+					/>
+					<FormField
+						control={form.control}
+						name="subscribed"
+						render={({ field }) => (
+							<FormItem>
+								<div className="flex gap-4 items-center">
+									<FormLabel className="flex-shrink-0 w-20">
+										뉴스레터 구독
+									</FormLabel>
+									<FormControl>
+										<Checkbox
+											checked={field.value}
+											onCheckedChange={field.onChange}
 										/>
 									</FormControl>
 									<FormMessage />

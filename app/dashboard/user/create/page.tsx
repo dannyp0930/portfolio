@@ -22,6 +22,7 @@ import { z } from 'zod';
 const formSchema = z.object({
 	email: z.string().email({ message: '올바른 이메일 형식을 입력하세요.' }),
 	password: z.string({ message: '비밀번호를 입력하세요' }),
+	subscribed: z.boolean(),
 	isAdmin: z.boolean(),
 });
 
@@ -32,6 +33,7 @@ export default function UserCreate() {
 		defaultValues: {
 			email: '',
 			password: '',
+			subscribed: false,
 			isAdmin: false,
 		},
 	});
@@ -90,6 +92,26 @@ export default function UserCreate() {
 											placeholder="비밀번호"
 											type="password"
 											{...field}
+										/>
+									</FormControl>
+									<FormMessage />
+								</div>
+							</FormItem>
+						)}
+					/>
+					<FormField
+						control={form.control}
+						name="subscribed"
+						render={({ field }) => (
+							<FormItem>
+								<div className="flex gap-4 items-center">
+									<FormLabel className="flex-shrink-0 w-20">
+										뉴스레터 구독
+									</FormLabel>
+									<FormControl>
+										<Checkbox
+											checked={field.value}
+											onCheckedChange={field.onChange}
 										/>
 									</FormControl>
 									<FormMessage />

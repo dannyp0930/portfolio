@@ -11,7 +11,10 @@ export async function GET(req: NextRequest) {
 			where: { isActive: true },
 			select: { email: true },
 		});
-		const users = await prisma.user.findMany({ select: { email: true } });
+		const users = await prisma.user.findMany({
+			where: { subscribed: true },
+			select: { email: true },
+		});
 		const emails = [...users, ...subscriptions].map((email) => email.email);
 		return NextResponse.json({ data: emails }, { status: 200 });
 	} catch (err) {

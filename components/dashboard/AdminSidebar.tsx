@@ -13,7 +13,12 @@ import {
 	SidebarMenuButton,
 	SidebarMenuItem,
 } from '@/components/ui/sidebar';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
+import { Button } from '@/components/ui/button';
+import { MouseEvent } from 'react';
+import { instance } from '@/app/api/instance';
+import { toast } from 'sonner';
+import { isAxiosError } from 'axios';
 
 export default function AdminSidebar() {
 	const adminRoutes = [
@@ -71,6 +76,25 @@ export default function AdminSidebar() {
 		},
 	];
 	const pathname = usePathname();
+	const router = useRouter();
+
+	async function handleLogout(e: MouseEvent<HTMLButtonElement>) {
+		e.preventDefault();
+		try {
+			const {
+				data: { message },
+				status,
+			} = await instance.post('/logout');
+			if (status === 200) {
+				toast.success(message);
+				router.push('/');
+			}
+		} catch (err) {
+			if (isAxiosError(err)) {
+				toast.error(err.response?.data.error || 'An error occurred');
+			}
+		}
+	}
 	return (
 		<Sidebar>
 			<SidebarHeader>
@@ -141,7 +165,11 @@ export default function AdminSidebar() {
 					</SidebarGroupContent>
 				</SidebarGroup>
 			</SidebarContent>
-			<SidebarFooter />
+			<SidebarFooter>
+				<Button onClick={handleLogout} variant="destructive">
+					Logout
+				</Button>
+			</SidebarFooter>
 		</Sidebar>
 	);
 }

@@ -3,7 +3,7 @@ import bcrypt from 'bcrypt';
 import prisma from '@/lib/prisma';
 
 export async function POST(req: NextRequest) {
-	const { email, password } = await req.json();
+	const { email, password, subscribed } = await req.json();
 	try {
 		const existingUser = await prisma.user.findUnique({
 			where: { email },
@@ -19,6 +19,7 @@ export async function POST(req: NextRequest) {
 			data: {
 				email,
 				password: hashedPassword,
+				subscribed,
 			},
 		});
 		return NextResponse.json(

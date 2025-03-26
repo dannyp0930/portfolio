@@ -8,7 +8,7 @@ export async function POST(req: NextRequest) {
 		return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
 	}
 	try {
-		const { email, password, isAdmin } = await req.json();
+		const { email, password, subscribed, isAdmin } = await req.json();
 		const existingUser = await prisma.user.findUnique({
 			where: { email },
 		});
@@ -27,6 +27,7 @@ export async function POST(req: NextRequest) {
 				data: {
 					email,
 					password: hashedPassword,
+					subscribed,
 					isAdmin,
 				},
 			});
@@ -45,7 +46,7 @@ export async function PUT(req: NextRequest) {
 		return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
 	}
 	try {
-		const { id, email, password, isAdmin } = await req.json();
+		const { id, email, password, subscribed, isAdmin } = await req.json();
 		await prisma.$transaction(async (prisma) => {
 			const user = await prisma.user.findUnique({ where: { id } });
 			if (user?.email !== email) {
@@ -53,11 +54,16 @@ export async function PUT(req: NextRequest) {
 					where: { email },
 				});
 			}
-			const data: { email: string; isAdmin: boolean; password?: string } =
-				{
-					email,
-					isAdmin,
-				};
+			const data: {
+				email: string;
+				isAdmin: boolean;
+				password?: string;
+				subscribed: boolean;
+			} = {
+				email,
+				subscribed,
+				isAdmin,
+			};
 			if (password) {
 				data.password = await bcrypt.hash(password, 10);
 			}
@@ -90,7 +96,9 @@ export async function GET(req: NextRequest) {
 			return NextResponse.json(
 				{
 					data: {
+						id: user?.id,
 						email: user?.email,
+						subscribed: user?.subscribed,
 						isAdmin: user?.isAdmin,
 					},
 				},
@@ -106,6 +114,7 @@ export async function GET(req: NextRequest) {
 			select: {
 				id: true,
 				email: true,
+				subscribed: true,
 				isAdmin: true,
 				createdAt: true,
 				updatedAt: true,

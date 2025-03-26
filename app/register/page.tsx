@@ -8,8 +8,9 @@ import Link from 'next/link';
 import { isAxiosError } from 'axios';
 
 export default function Register() {
-	const [email, setEmail] = useState('');
-	const [password, setPassword] = useState('');
+	const [email, setEmail] = useState<string>('');
+	const [password, setPassword] = useState<string>('');
+	const [subscribed, setSubscribed] = useState<boolean>(false);
 	const router = useRouter();
 
 	useAuthCheck();
@@ -20,6 +21,7 @@ export default function Register() {
 			const body = {
 				email,
 				password,
+				subscribed,
 			};
 			const res = await instance.post('/register', body);
 			if (res.data.userId) {
@@ -72,6 +74,21 @@ export default function Register() {
 							onChange={(e) => setPassword(e.target.value)}
 						/>
 					</div>
+					<div className="flex gap-x-2 gap-y-1 flex-wrap">
+						<label className="text-xs" htmlFor="subscribed">
+							Newsletter
+						</label>
+						<input
+							id="subscribed"
+							className="border border-theme-sub accent-theme-sub"
+							type="checkbox"
+							onChange={(e) => setSubscribed(e.target.checked)}
+						/>
+						<p className="w-full text-xs opacity-50">
+							By subscribing to the newsletter, you&apos;ll
+							receive regular portfolio updates.
+						</p>
+					</div>
 					<button
 						className="bg-theme-sub text-theme w-full p-2 rounded mt-4"
 						type="submit"
@@ -81,7 +98,7 @@ export default function Register() {
 				</form>
 				<div>
 					<Link className="text-sm hover:underline" href="/login">
-						로그인
+						Login
 					</Link>
 				</div>
 			</div>
