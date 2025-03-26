@@ -103,6 +103,7 @@ export default function Dashboard() {
 	}
 	async function handleSubmitMail(e: MouseEvent<HTMLFormElement>) {
 		e.preventDefault();
+		const toastId = toast.loading('Processing your request...');
 		const subject = e.currentTarget.elements.namedItem(
 			'subject'
 		) as HTMLInputElement;
@@ -133,6 +134,8 @@ export default function Dashboard() {
 			if (isAxiosError(err)) {
 				toast.error(err.response?.data.error || 'An error occurred');
 			}
+		} finally {
+			toast.dismiss(toastId);
 		}
 	}
 	return (
