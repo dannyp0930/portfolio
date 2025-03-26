@@ -37,6 +37,7 @@ export default function Dashboard() {
 	const [bannerUrl, setBannerUrl] = useState<string>();
 	const [bannerUrlTablet, setBannerUrlTablet] = useState<string>();
 	const [bannerUrlMobile, setBannerUrlMobile] = useState<string>();
+	const [sendMail, setSendMail] = useState<boolean>(false);
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
@@ -103,7 +104,8 @@ export default function Dashboard() {
 	}
 	async function handleSubmitMail(e: MouseEvent<HTMLFormElement>) {
 		e.preventDefault();
-		const toastId = toast.loading('Processing your request...');
+		setSendMail(true);
+		const toastId = toast.loading('Sending Mail...');
 		const subject = e.currentTarget.elements.namedItem(
 			'subject'
 		) as HTMLInputElement;
@@ -136,6 +138,7 @@ export default function Dashboard() {
 			}
 		} finally {
 			toast.dismiss(toastId);
+			setSendMail(false);
 		}
 	}
 	return (
@@ -250,7 +253,9 @@ export default function Dashboard() {
 						placeholder="내용"
 					/>
 				</div>
-				<Button type="submit">전송</Button>
+				<Button disabled={sendMail} type="submit">
+					전송
+				</Button>
 			</form>
 		</div>
 	);

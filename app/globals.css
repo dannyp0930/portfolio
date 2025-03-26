@@ -26,8 +26,8 @@
 		src: url('./fonts/KBO-Dia-Gothic-bold.woff');
 	}
   :root {
-		--background: 28, 100%, 86% /* 0 0% 100% */;
-		--foreground: 3, 33%, 24% /* 0 0% 3.9% */;
+		--background: 0 0% 100%;
+		--foreground: 0 0% 3.9%;
 		--card: 0 0% 100%;
 		--card-foreground: 0 0% 3.9%;
 		--popover: 0 0% 100%;
