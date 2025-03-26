@@ -8,21 +8,17 @@ import { toast } from 'sonner';
 export default function Nesletter() {
 	const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
-		const email = (
-			e.currentTarget.elements.namedItem('email') as HTMLInputElement
-		).value;
+		const email = e.currentTarget.elements.namedItem(
+			'email'
+		) as HTMLInputElement;
 		try {
 			const {
 				data: { message },
 				status,
-			} = await instance.post('/subscription', { email });
+			} = await instance.post('/subscription', { email: email.value });
 			if (status === 200) {
 				toast.success(message);
-				(
-					e.currentTarget.elements.namedItem(
-						'email'
-					) as HTMLInputElement
-				).value = '';
+				email.value = '';
 			}
 		} catch (err) {
 			if (isAxiosError(err)) {
