@@ -6,10 +6,18 @@ import SortIcon from '@/components/dashboard/SortIcon';
 import { Button } from '@/components/ui/button';
 import { isAxiosError } from 'axios';
 import { useSearchParams } from 'next/navigation';
-import { MouseEvent, useCallback, useEffect, useState } from 'react';
+import { MouseEvent, Suspense, useCallback, useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
 export default function Subscription() {
+	return (
+		<Suspense>
+			<SubscriptionComponent />
+		</Suspense>
+	);
+}
+
+function SubscriptionComponent() {
 	const searchParams = useSearchParams();
 	const [load, setLoad] = useState<boolean>(true);
 	const [email, setEmail] = useState<string>('');
