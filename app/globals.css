@@ -98,7 +98,7 @@
     @apply border-border outline-ring/50;
 	}
 	body {
-		@apply bg-background text-foreground scroll-smooth font-kbo;
+		@apply bg-background text-theme-sub scroll-smooth font-kbo;
 	}
 	h1 {
 		@apply text-4xl font-bold;
@@ -117,16 +117,5 @@
 	}
 	h6 {
 		@apply text-base font-bold;
-	}
-}
-
-
-
-@layer base {
-  * {
-    @apply border-border outline-ring/50;
-	}
-  body {
-    @apply bg-background text-foreground;
 	}
 }
