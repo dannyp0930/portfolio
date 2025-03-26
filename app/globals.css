@@ -98,7 +98,7 @@
     @apply border-border outline-ring/50;
 	}
 	body {
-		@apply bg-background text-theme-sub scroll-smooth font-kbo;
+		@apply bg-background text-theme-sub scroll-smooth font-kbo min-w-[320px];
 	}
 	h1 {
 		@apply text-4xl font-bold;
