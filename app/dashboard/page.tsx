@@ -9,18 +9,19 @@ import {
 	FormLabel,
 	FormMessage,
 } from '@/components/ui/form';
+import ImageInput from '@/components/common/ImageInput';
+import FileInput from '@/components/common/FileInput';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { formInstance, instance } from '@/app/api/instance';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { isAxiosError } from 'axios';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
-import { formInstance, instance } from '@/app/api/instance';
+import dayjs from 'dayjs';
 import { MouseEvent, useCallback, useEffect, useState } from 'react';
-import ImageInput from '@/components/common/ImageInput';
-import { Label } from '@/components/ui/label';
-import FileInput from '@/components/common/FileInput';
-import { Textarea } from '@/components/ui/textarea';
 
 const formSchema = z.object({
 	title: z.string().min(1, { message: '제목을 입력하세요.' }),
@@ -122,7 +123,7 @@ export default function Dashboard() {
 				to: emails,
 				subject,
 				text,
-				filename: `${new Date().toLocaleDateString()}-포트폴리오.pdf`,
+				filename: `[${dayjs(new Date()).format('YYYY-MM-DD')}]-포트폴리오.pdf`,
 				path: resumeUrl,
 			};
 			const {
