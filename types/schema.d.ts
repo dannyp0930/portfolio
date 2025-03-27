@@ -1,37 +1,21 @@
-import {
-	User as PrismaUser,
-	Subscription as PrismaSubscription,
-	Intro as PrismaIntro,
-	Contact as PrismaContact,
-	Education as PrismaEducation,
-	Experience as PrismaExperience,
-	CareerOverview as PrismaCareerOverview,
-	Language as PrismaLanguage,
-	Certificate as PrismaCertificate,
-	Project as PrismaProject,
-	ProjectDetail as PrismaProjectDetail,
-	ProjectImage as PrismaProjectImage,
-	Career as PrismaCareer,
-	CareerDetail as PrismaCareerDetail,
-	Skill as PrismaSkill,
-} from '@prisma/client';
+import * as Prisma from '@prisma/client';
 
 declare global {
-	type User = PrismaUser;
-	type Subscription = PrismaSubscription;
-	type Intro = PrismaIntro;
-	type Contact = PrismaContact;
-	type Education = PrismaEducation;
-	type Experience = PrismaExperience;
-	type CareerOverview = PrismaCareerOverview;
-	type Language = PrismaLanguage;
-	type Certificate = PrismaCertificate;
-	type Project = PrismaProject;
-	type ProjectDetail = PrismaProjectDetail;
-	type ProjectImage = PrismaProjectImage;
-	type Career = PrismaCareer;
-	type CareerDetail = PrismaCareerDetail;
-	type Skill = PrismaSkill;
+	type User = Prisma.User;
+	type Subscription = Prisma.Subscription;
+	type Intro = Prisma.Intro;
+	type Contact = Prisma.Contact;
+	type Education = Prisma.Education;
+	type Experience = Prisma.Experience;
+	type CareerOverview = Prisma.CareerOverview;
+	type Language = Prisma.Language;
+	type Certificate = Prisma.Certificate;
+	type Project = Prisma.Project;
+	type ProjectDetail = Prisma.ProjectDetail;
+	type ProjectImage = Prisma.ProjectImage;
+	type Career = Prisma.Career;
+	type CareerDetail = Prisma.CareerDetail;
+	type Skill = Prisma.Skill;
 }
 
 export {};
