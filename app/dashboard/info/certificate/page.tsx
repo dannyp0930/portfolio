@@ -52,7 +52,7 @@ function CertificateContent() {
 			issueDate,
 			issuingOrganization,
 		};
-		const erroRes = validateAndShowRequiredFields(fields);
+		const erroRes = validateAndShowRequiredFields(fields, 'certificate');
 		if (erroRes) return true;
 		try {
 			const body = {

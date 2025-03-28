@@ -54,7 +54,7 @@ function ExperienceContent() {
 			startDate,
 			endDate,
 		};
-		const erroRes = validateAndShowRequiredFields(fields);
+		const erroRes = validateAndShowRequiredFields(fields, 'experience');
 		if (erroRes) return true;
 		try {
 			const body = {

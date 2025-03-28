@@ -51,7 +51,7 @@ function EducationContent() {
 			startDate,
 			endDate,
 		};
-		const erroRes = validateAndShowRequiredFields(fields);
+		const erroRes = validateAndShowRequiredFields(fields, 'education');
 		if (erroRes) return true;
 		try {
 			const body = {

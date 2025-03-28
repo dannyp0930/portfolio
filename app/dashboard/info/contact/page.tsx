@@ -48,7 +48,7 @@ function ContactContent() {
 			value,
 			label,
 		};
-		const erroRes = validateAndShowRequiredFields(fields);
+		const erroRes = validateAndShowRequiredFields(fields, 'contact');
 		if (erroRes) return true;
 		try {
 			const body = { type, value, label };

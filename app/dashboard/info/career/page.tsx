@@ -52,7 +52,7 @@ function CareerContent() {
 			description,
 			startDate,
 		};
-		const erroRes = validateAndShowRequiredFields(fields);
+		const erroRes = validateAndShowRequiredFields(fields, 'careerOverview');
 		if (erroRes) return true;
 		try {
 			const body = {

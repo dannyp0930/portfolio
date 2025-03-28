@@ -51,7 +51,7 @@ function LanguageContent() {
 			examDate,
 			institution,
 		};
-		const erroRes = validateAndShowRequiredFields(fields);
+		const erroRes = validateAndShowRequiredFields(fields, 'language');
 		if (erroRes) return true;
 		try {
 			const body = {
