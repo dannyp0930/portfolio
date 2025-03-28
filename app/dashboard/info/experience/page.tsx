@@ -76,7 +76,7 @@ function ExperienceContent() {
 			}
 		} catch (err) {
 			if (isAxiosError(err)) {
-				toast.error(err.response?.data.error || 'An error occurred');
+				toast.error(err.response?.data.error || '오류가 발생했습니다');
 			}
 		} finally {
 			setLoad(true);
@@ -102,7 +102,7 @@ function ExperienceContent() {
 			}
 		} catch (err) {
 			if (isAxiosError(err)) {
-				toast.error(err.response?.data.error || 'An error occurred');
+				toast.error(err.response?.data.error || '오류가 발생했습니다');
 			}
 		} finally {
 			setLoad(true);
@@ -128,7 +128,7 @@ function ExperienceContent() {
 			} catch (err) {
 				if (isAxiosError(err)) {
 					toast.error(
-						err.response?.data.error || 'An error occurred'
+						err.response?.data.error || '오류가 발생했습니다'
 					);
 				}
 			} finally {
@@ -175,7 +175,7 @@ function ExperienceContent() {
 			setLoad(false);
 		} catch (err) {
 			if (isAxiosError(err)) {
-				toast.error(err.response?.data.error || 'An error occurred');
+				toast.error(err.response?.data.error || '오류가 발생했습니다');
 			}
 		}
 	}, [selectPage, take, orderBy, order]);

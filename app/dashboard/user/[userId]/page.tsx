@@ -50,7 +50,7 @@ export default function UserUpdate({ params }: UserUpdateParams) {
 			setLoad(false);
 		} catch (err) {
 			if (isAxiosError(err)) {
-				toast.error(err.response?.data.error || 'An error occurred');
+				toast.error(err.response?.data.error || '오류가 발생했습니다');
 			}
 		}
 	}, [form, userId]);
@@ -75,7 +75,7 @@ export default function UserUpdate({ params }: UserUpdateParams) {
 			}
 		} catch (err) {
 			if (isAxiosError(err)) {
-				toast.error(err.response?.data.error || 'An error occurred');
+				toast.error(err.response?.data.error || '오류가 발생했습니다');
 			}
 		}
 	}

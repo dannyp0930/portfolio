@@ -1,5 +1,5 @@
 import { toast } from 'sonner';
-import errorMessages from '@/lib/locales/errorMessages';
+import errorMessages from '@/lib/constants/errorMessages';
 
 export function validateAndShowRequiredFields(
 	fields: Record<string, string>,
@@ -17,7 +17,7 @@ export function validateAndShowRequiredFields(
 		}
 	}
 	if (errors.length > 0) {
-		toast.error('Field Error', {
+		toast.error('입력 확인', {
 			description: errors.map((error, index) => (
 				<div key={index}>{error.message}</div>
 			)),

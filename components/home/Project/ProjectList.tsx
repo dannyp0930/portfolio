@@ -39,7 +39,7 @@ export default function ProjectList({ projects }: ProjectListPros) {
 			setProjectImages(projectImages);
 		} catch (err) {
 			if (isAxiosError(err)) {
-				toast.error(err.response?.data.error || 'An error occurred');
+				toast.error(err.response?.data.error || '오류가 발생했습니다');
 				setModalId(0);
 				setProjectDetail(null);
 				setProjectImages([]);
