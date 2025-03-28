@@ -17,6 +17,7 @@ import {
 } from 'react';
 import { toast } from 'sonner';
 import SortIcon from '@/components/dashboard/SortIcon';
+import { validateAndShowRequiredFields } from '@/lib/utils/validation';
 
 export default function Language() {
 	return (
@@ -44,6 +45,14 @@ function LanguageContent() {
 
 	async function handleCreateLanguage(e: MouseEvent<HTMLButtonElement>) {
 		e.preventDefault();
+		const fields = {
+			languageName,
+			proficiency,
+			examDate,
+			institution,
+		};
+		const erroRes = validateAndShowRequiredFields(fields);
+		if (erroRes) return true;
 		try {
 			const body = {
 				languageName,
