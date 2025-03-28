@@ -17,6 +17,7 @@ import {
 } from 'react';
 import { toast } from 'sonner';
 import SortIcon from '@/components/dashboard/SortIcon';
+import { validateAndShowRequiredFields } from '@/lib/utils/validation';
 
 export default function Career() {
 	return (
@@ -45,6 +46,14 @@ function CareerContent() {
 
 	async function handleCreateCareer(e: MouseEvent<HTMLButtonElement>) {
 		e.preventDefault();
+		const fields = {
+			organization,
+			position,
+			description,
+			startDate,
+		};
+		const erroRes = validateAndShowRequiredFields(fields);
+		if (erroRes) return true;
 		try {
 			const body = {
 				organization,

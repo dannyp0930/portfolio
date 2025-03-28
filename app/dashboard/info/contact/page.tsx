@@ -16,6 +16,7 @@ import {
 	useState,
 } from 'react';
 import { toast } from 'sonner';
+import { validateAndShowRequiredFields } from '@/lib/utils/validation';
 
 export default function Contact() {
 	return (
@@ -42,6 +43,13 @@ function ContactContent() {
 
 	async function handleCreateContact(e: MouseEvent<HTMLButtonElement>) {
 		e.preventDefault();
+		const fields = {
+			type,
+			value,
+			label,
+		};
+		const erroRes = validateAndShowRequiredFields(fields);
+		if (erroRes) return true;
 		try {
 			const body = { type, value, label };
 			const {

@@ -17,6 +17,7 @@ import {
 } from 'react';
 import { toast } from 'sonner';
 import SortIcon from '@/components/dashboard/SortIcon';
+import { validateAndShowRequiredFields } from '@/lib/utils/validation';
 
 export default function Education() {
 	return (
@@ -44,6 +45,14 @@ function EducationContent() {
 
 	async function handleCreateEducation(e: MouseEvent<HTMLButtonElement>) {
 		e.preventDefault();
+		const fields = {
+			institutionName,
+			degreeStatus,
+			startDate,
+			endDate,
+		};
+		const erroRes = validateAndShowRequiredFields(fields);
+		if (erroRes) return true;
 		try {
 			const body = {
 				institutionName,

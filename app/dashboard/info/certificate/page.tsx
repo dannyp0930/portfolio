@@ -17,6 +17,7 @@ import {
 } from 'react';
 import { toast } from 'sonner';
 import SortIcon from '@/components/dashboard/SortIcon';
+import { validateAndShowRequiredFields } from '@/lib/utils/validation';
 
 export default function Certificate() {
 	return (
@@ -46,6 +47,13 @@ function CertificateContent() {
 
 	async function handleCreateCertificate(e: MouseEvent<HTMLButtonElement>) {
 		e.preventDefault();
+		const fields = {
+			certificateName,
+			issueDate,
+			issuingOrganization,
+		};
+		const erroRes = validateAndShowRequiredFields(fields);
+		if (erroRes) return true;
 		try {
 			const body = {
 				certificateName,

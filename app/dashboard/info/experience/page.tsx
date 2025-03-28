@@ -17,6 +17,7 @@ import {
 } from 'react';
 import { toast } from 'sonner';
 import SortIcon from '@/components/dashboard/SortIcon';
+import { validateAndShowRequiredFields } from '@/lib/utils/validation';
 
 export default function Experience() {
 	return (
@@ -47,6 +48,14 @@ function ExperienceContent() {
 
 	async function handleCreateExperience(e: MouseEvent<HTMLButtonElement>) {
 		e.preventDefault();
+		const fields = {
+			organization,
+			description,
+			startDate,
+			endDate,
+		};
+		const erroRes = validateAndShowRequiredFields(fields);
+		if (erroRes) return true;
 		try {
 			const body = {
 				organization,
