@@ -20,7 +20,7 @@ export default function Subscription() {
 function SubscriptionComponent() {
 	const searchParams = useSearchParams();
 	const [load, setLoad] = useState<boolean>(true);
-	const [email, setEmail] = useState<string>('');
+	const [email, setEmail] = useState<string>();
 	const [selectPage, setSelectPage] = useState<number>(1);
 	const [subscriptions, setSubscriptions] = useState<Subscription[]>([]);
 	const [totalCnt, setTotalCnt] = useState<number>(0);
