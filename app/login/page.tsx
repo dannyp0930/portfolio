@@ -72,21 +72,21 @@ export default function Login() {
 						Login
 					</button>
 				</form>
-				<div className="flex justify-between">
+				<div className="flex justify-between mt-5 pt-5 border-t-2">
 					<Link
 						className="text-sm hover:underline"
 						href="/find/email"
 					>
-						이메일 찾기
+						Find Email
 					</Link>
 					<Link
 						className="text-sm hover:underline"
 						href="/find/password"
 					>
-						비밀번호 찾기
+						Find Password
 					</Link>
 					<Link className="text-sm hover:underline" href="/register">
-						회원가입
+						Register
 					</Link>
 				</div>
 			</div>
