@@ -33,7 +33,7 @@ export default function FindEmail() {
 	return (
 		<article className="h-dvh flex justify-center items-center">
 			<div className="w-96 h-fit bg-white p-10 rounded-xl flex flex-col gap-4">
-				<h1>이메일 찾기</h1>
+				<h1>Find Email</h1>
 				<form onSubmit={handleSubmit} className="flex flex-col gap-3">
 					<div className="flex flex-col gap-1">
 						<label className="text-xs" htmlFor="email">
