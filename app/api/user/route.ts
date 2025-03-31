@@ -8,7 +8,8 @@ export async function POST(req: NextRequest) {
 		return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
 	}
 	try {
-		const { email, password, subscribed, isAdmin } = await req.json();
+		const { email, name, phone, password, subscribed, isAdmin } =
+			await req.json();
 		const existingUser = await prisma.user.findUnique({
 			where: { email },
 		});
@@ -16,6 +17,15 @@ export async function POST(req: NextRequest) {
 			return NextResponse.json(
 				{ error: 'User already exists' },
 				{ status: 409 }
+			);
+		}
+		const existingPhone = await prisma.user.findUnique({
+			where: { phone },
+		});
+		if (existingPhone) {
+			return NextResponse.json(
+				{ error: '이미 사용 중인 전화번호입니다' },
+				{ status: 400 }
 			);
 		}
 		const hashedPassword = await bcrypt.hash(password, 10);
@@ -26,6 +36,8 @@ export async function POST(req: NextRequest) {
 			await prisma.user.create({
 				data: {
 					email,
+					name,
+					phone,
 					password: hashedPassword,
 					subscribed,
 					isAdmin,
@@ -46,7 +58,17 @@ export async function PUT(req: NextRequest) {
 		return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
 	}
 	try {
-		const { id, email, password, subscribed, isAdmin } = await req.json();
+		const { id, email, name, phone, password, subscribed, isAdmin } =
+			await req.json();
+		const existingPhone = await prisma.user.findUnique({
+			where: { phone },
+		});
+		if (existingPhone) {
+			return NextResponse.json(
+				{ error: '이미 사용 중인 전화번호입니다' },
+				{ status: 400 }
+			);
+		}
 		await prisma.$transaction(async (prisma) => {
 			const user = await prisma.user.findUnique({ where: { id } });
 			if (user?.email !== email) {
@@ -56,11 +78,15 @@ export async function PUT(req: NextRequest) {
 			}
 			const data: {
 				email: string;
+				name: string;
+				phone: string;
 				isAdmin: boolean;
 				password?: string;
 				subscribed: boolean;
 			} = {
 				email,
+				name,
+				phone,
 				subscribed,
 				isAdmin,
 			};
@@ -98,6 +124,8 @@ export async function GET(req: NextRequest) {
 					data: {
 						id: user?.id,
 						email: user?.email,
+						name: user?.name,
+						phone: user?.phone,
 						subscribed: user?.subscribed,
 						isAdmin: user?.isAdmin,
 					},
@@ -114,6 +142,8 @@ export async function GET(req: NextRequest) {
 			select: {
 				id: true,
 				email: true,
+				name: true,
+				phone: true,
 				subscribed: true,
 				isAdmin: true,
 				createdAt: true,

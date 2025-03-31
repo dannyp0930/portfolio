@@ -12,15 +12,25 @@ import {
 	FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { formatPhoneNumber } from '@/lib/formatUtils';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { isAxiosError } from 'axios';
 import { useRouter } from 'next/navigation';
+import { ChangeEvent } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
 
 const formSchema = z.object({
 	email: z.string().email({ message: '올바른 이메일 형식을 입력하세요.' }),
+	name: z.string().min(1, { message: '이름을 입력하세요.' }),
+	phone: z.union([
+		z.string().regex(/^\d{2,3}-\d{3,4}-\d{4}$/, {
+			message: '올바른 번호 형식이 아닙니다.',
+		}),
+		z.literal(''),
+		z.null(),
+	]),
 	password: z.string({ message: '비밀번호를 입력하세요' }),
 	subscribed: z.boolean(),
 	isAdmin: z.boolean(),
@@ -32,12 +42,17 @@ export default function UserCreate() {
 		resolver: zodResolver(formSchema),
 		defaultValues: {
 			email: '',
+			name: '',
+			phone: '',
 			password: '',
 			subscribed: false,
 			isAdmin: false,
 		},
 	});
-
+	function handlePhoneNumber(e: ChangeEvent<HTMLInputElement>) {
+		const value = (e.target as HTMLInputElement).value;
+		form.setValue('phone', formatPhoneNumber(value));
+	}
 	async function handleSubmit(values: z.infer<typeof formSchema>) {
 		try {
 			const {
@@ -72,6 +87,44 @@ export default function UserCreate() {
 									</FormLabel>
 									<FormControl className="w-48">
 										<Input placeholder="Email" {...field} />
+									</FormControl>
+									<FormMessage />
+								</div>
+							</FormItem>
+						)}
+					/>
+					<FormField
+						control={form.control}
+						name="name"
+						render={({ field }) => (
+							<FormItem>
+								<div className="flex gap-4 items-center">
+									<FormLabel className="flex-shrink-0 w-20">
+										이름
+									</FormLabel>
+									<FormControl className="w-48">
+										<Input placeholder="이름" {...field} />
+									</FormControl>
+									<FormMessage />
+								</div>
+							</FormItem>
+						)}
+					/>
+					<FormField
+						control={form.control}
+						name="phone"
+						render={({ field }) => (
+							<FormItem>
+								<div className="flex gap-4 items-center">
+									<FormLabel className="flex-shrink-0 w-20">
+										휴대전화
+									</FormLabel>
+									<FormControl className="w-48">
+										<Input
+											placeholder="000-0000-0000"
+											{...field}
+											onChange={handlePhoneNumber}
+										/>
 									</FormControl>
 									<FormMessage />
 								</div>

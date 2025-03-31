@@ -130,6 +130,32 @@ function UserComponent() {
 						</th>
 						<th
 							className="cursor-pointer relative"
+							onClick={() => handleSort('name')}
+						>
+							이름
+							<span className="absolute right-2 bottom-1/2 translate-y-1/2">
+								<SortIcon
+									orderBy={orderBy}
+									currentColumn="name"
+									order={order}
+								/>
+							</span>
+						</th>
+						<th
+							className="cursor-pointer relative"
+							onClick={() => handleSort('phone')}
+						>
+							휴대전화
+							<span className="absolute right-2 bottom-1/2 translate-y-1/2">
+								<SortIcon
+									orderBy={orderBy}
+									currentColumn="phone"
+									order={order}
+								/>
+							</span>
+						</th>
+						<th
+							className="cursor-pointer relative"
 							onClick={() => handleSort('subscribed')}
 						>
 							구독
@@ -195,6 +221,8 @@ function UserComponent() {
 								)}
 								{user.email}
 							</td>
+							<td>{user.name}</td>
+							<td>{user.phone}</td>
 							<td className="text-center">
 								{user.subscribed ? (
 									<svg

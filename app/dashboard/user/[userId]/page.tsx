@@ -12,15 +12,24 @@ import {
 	FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { formatPhoneNumber } from '@/lib/formatUtils';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { isAxiosError } from 'axios';
-import { use, useCallback, useEffect, useState } from 'react';
+import { ChangeEvent, use, useCallback, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
 
 const formSchema = z.object({
 	email: z.string().email({ message: '올바른 이메일 형식을 입력하세요.' }),
+	name: z.string().min(1, { message: '이름을 입력하세요.' }),
+	phone: z.union([
+		z.string().regex(/^\d{2,3}-\d{3,4}-\d{4}$/, {
+			message: '올바른 번호 형식이 아닙니다.',
+		}),
+		z.literal(''),
+		z.null(),
+	]),
 	password: z.string().optional(),
 	subscribed: z.boolean(),
 	isAdmin: z.boolean(),
@@ -33,6 +42,8 @@ export default function UserUpdate({ params }: UserUpdateParams) {
 		resolver: zodResolver(formSchema),
 		defaultValues: {
 			email: '',
+			name: '',
+			phone: '',
 			password: '',
 			subscribed: false,
 			isAdmin: false,
@@ -45,6 +56,8 @@ export default function UserUpdate({ params }: UserUpdateParams) {
 				data: { data },
 			} = await instance.get('/user', { params });
 			form.setValue('email', data.email);
+			form.setValue('name', data.name);
+			form.setValue('phone', data.phone);
 			form.setValue('subscribed', data.subscribed);
 			form.setValue('isAdmin', data.isAdmin);
 			setLoad(false);
@@ -54,7 +67,10 @@ export default function UserUpdate({ params }: UserUpdateParams) {
 			}
 		}
 	}, [form, userId]);
-
+	function handlePhoneNumber(e: ChangeEvent<HTMLInputElement>) {
+		const value = (e.target as HTMLInputElement).value;
+		form.setValue('phone', formatPhoneNumber(value));
+	}
 	useEffect(() => {
 		if (load) {
 			getUser();
@@ -97,6 +113,44 @@ export default function UserUpdate({ params }: UserUpdateParams) {
 									</FormLabel>
 									<FormControl className="w-48">
 										<Input placeholder="Email" {...field} />
+									</FormControl>
+									<FormMessage />
+								</div>
+							</FormItem>
+						)}
+					/>
+					<FormField
+						control={form.control}
+						name="name"
+						render={({ field }) => (
+							<FormItem>
+								<div className="flex gap-4 items-center">
+									<FormLabel className="flex-shrink-0 w-20">
+										이름
+									</FormLabel>
+									<FormControl className="w-48">
+										<Input placeholder="이름" {...field} />
+									</FormControl>
+									<FormMessage />
+								</div>
+							</FormItem>
+						)}
+					/>
+					<FormField
+						control={form.control}
+						name="phone"
+						render={({ field }) => (
+							<FormItem>
+								<div className="flex gap-4 items-center">
+									<FormLabel className="flex-shrink-0 w-20">
+										휴대전화
+									</FormLabel>
+									<FormControl className="w-48">
+										<Input
+											placeholder="000-0000-0000"
+											{...field}
+											onChange={handlePhoneNumber}
+										/>
 									</FormControl>
 									<FormMessage />
 								</div>
