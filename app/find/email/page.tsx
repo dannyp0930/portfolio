@@ -72,9 +72,9 @@ export default function FindEmail() {
 			</div>
 			{email && (
 				<ModalContainer closeModal={() => setEmail('')}>
-					<h3 className="font-bold text-lg">이메일 찾기 결과</h3>
+					<h3 className="font-bold text-lg">Email Found</h3>
 					<p className="mt-4 text-gray-700">
-						회원님의 이메일은 <br />
+						Your email address is <br />
 						<span className="font-medium text-blue-600">
 							{email.slice(0, 3) +
 								'*'.repeat(
@@ -86,8 +86,6 @@ export default function FindEmail() {
 								) +
 								email.slice(email.indexOf('@'))}
 						</span>
-						<br />
-						입니다.
 					</p>
 				</ModalContainer>
 			)}
