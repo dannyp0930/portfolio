@@ -17,6 +17,7 @@ import {
 } from 'react';
 import { toast } from 'sonner';
 import SortIcon from '@/components/dashboard/SortIcon';
+import { validateAndShowRequiredFields } from '@/lib/utils/validation';
 
 export default function Certificate() {
 	return (
@@ -46,6 +47,13 @@ function CertificateContent() {
 
 	async function handleCreateCertificate(e: MouseEvent<HTMLButtonElement>) {
 		e.preventDefault();
+		const fields = {
+			certificateName,
+			issueDate,
+			issuingOrganization,
+		};
+		const erroRes = validateAndShowRequiredFields(fields, 'certificate');
+		if (erroRes) return true;
 		try {
 			const body = {
 				certificateName,
@@ -64,7 +72,7 @@ function CertificateContent() {
 			}
 		} catch (err) {
 			if (isAxiosError(err)) {
-				toast.error(err.response?.data.error || 'An error occurred');
+				toast.error(err.response?.data.error || '오류가 발생했습니다');
 			}
 		} finally {
 			setLoad(true);
@@ -89,7 +97,7 @@ function CertificateContent() {
 			}
 		} catch (err) {
 			if (isAxiosError(err)) {
-				toast.error(err.response?.data.error || 'An error occurred');
+				toast.error(err.response?.data.error || '오류가 발생했습니다');
 			}
 		} finally {
 			setLoad(true);
@@ -115,7 +123,7 @@ function CertificateContent() {
 			} catch (err) {
 				if (isAxiosError(err)) {
 					toast.error(
-						err.response?.data.error || 'An error occurred'
+						err.response?.data.error || '오류가 발생했습니다'
 					);
 				}
 			} finally {
@@ -172,7 +180,7 @@ function CertificateContent() {
 			setLoad(false);
 		} catch (err) {
 			if (isAxiosError(err)) {
-				toast.error(err.response?.data.error || 'An error occurred');
+				toast.error(err.response?.data.error || '오류가 발생했습니다');
 			}
 		}
 	}, [selectPage, take, orderBy, order]);

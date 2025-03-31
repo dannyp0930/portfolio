@@ -16,6 +16,7 @@ import {
 	useState,
 } from 'react';
 import { toast } from 'sonner';
+import { validateAndShowRequiredFields } from '@/lib/utils/validation';
 
 export default function Contact() {
 	return (
@@ -42,6 +43,13 @@ function ContactContent() {
 
 	async function handleCreateContact(e: MouseEvent<HTMLButtonElement>) {
 		e.preventDefault();
+		const fields = {
+			type,
+			value,
+			label,
+		};
+		const erroRes = validateAndShowRequiredFields(fields, 'contact');
+		if (erroRes) return true;
 		try {
 			const body = { type, value, label };
 			const {
@@ -56,7 +64,7 @@ function ContactContent() {
 			}
 		} catch (err) {
 			if (isAxiosError(err)) {
-				toast.error(err.response?.data.error || 'An error occurred');
+				toast.error(err.response?.data.error || '오류가 발생했습니다');
 			}
 		} finally {
 			setLoad(true);
@@ -78,7 +86,7 @@ function ContactContent() {
 			}
 		} catch (err) {
 			if (isAxiosError(err)) {
-				toast.error(err.response?.data.error || 'An error occurred');
+				toast.error(err.response?.data.error || '오류가 발생했습니다');
 			}
 		} finally {
 			setLoad(true);
@@ -102,7 +110,7 @@ function ContactContent() {
 			} catch (err) {
 				if (isAxiosError(err)) {
 					toast.error(
-						err.response?.data.error || 'An error occurred'
+						err.response?.data.error || '오류가 발생했습니다'
 					);
 				}
 			} finally {
@@ -159,7 +167,7 @@ function ContactContent() {
 			setLoad(false);
 		} catch (err) {
 			if (isAxiosError(err)) {
-				toast.error(err.response?.data.error || 'An error occurred');
+				toast.error(err.response?.data.error || '오류가 발생했습니다');
 			}
 		}
 	}, [selectPage, take, orderBy, order]);

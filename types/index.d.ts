@@ -36,6 +36,11 @@ declare global {
 	interface CareerWidthDetails extends Career {
 		details: CareerDetail[];
 	}
+
+	interface ValidationError {
+		field: string;
+		message: string;
+	}
 }
 
 export {};

@@ -6,6 +6,12 @@ import { isAdmin } from '@/lib/isAdmin';
 export async function POST(req: NextRequest) {
 	const { email } = await req.json();
 	try {
+		if (!email || typeof email !== 'string' || !email.trim()) {
+			return NextResponse.json(
+				{ error: 'Email is required' },
+				{ status: 400 }
+			);
+		}
 		const existingUser = await prisma.user.findUnique({
 			where: { email },
 		});

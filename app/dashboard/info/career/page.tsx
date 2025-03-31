@@ -17,6 +17,7 @@ import {
 } from 'react';
 import { toast } from 'sonner';
 import SortIcon from '@/components/dashboard/SortIcon';
+import { validateAndShowRequiredFields } from '@/lib/utils/validation';
 
 export default function Career() {
 	return (
@@ -45,6 +46,14 @@ function CareerContent() {
 
 	async function handleCreateCareer(e: MouseEvent<HTMLButtonElement>) {
 		e.preventDefault();
+		const fields = {
+			organization,
+			position,
+			description,
+			startDate,
+		};
+		const erroRes = validateAndShowRequiredFields(fields, 'careerOverview');
+		if (erroRes) return true;
 		try {
 			const body = {
 				organization,
@@ -67,7 +76,7 @@ function CareerContent() {
 			}
 		} catch (err) {
 			if (isAxiosError(err)) {
-				toast.error(err.response?.data.error || 'An error occurred');
+				toast.error(err.response?.data.error || '오류가 발생했습니다');
 			}
 		} finally {
 			setLoad(true);
@@ -93,7 +102,7 @@ function CareerContent() {
 			}
 		} catch (err) {
 			if (isAxiosError(err)) {
-				toast.error(err.response?.data.error || 'An error occurred');
+				toast.error(err.response?.data.error || '오류가 발생했습니다');
 			}
 		} finally {
 			setLoad(true);
@@ -117,7 +126,7 @@ function CareerContent() {
 			} catch (err) {
 				if (isAxiosError(err)) {
 					toast.error(
-						err.response?.data.error || 'An error occurred'
+						err.response?.data.error || '오류가 발생했습니다'
 					);
 				}
 			} finally {
@@ -174,7 +183,7 @@ function CareerContent() {
 			setLoad(false);
 		} catch (err) {
 			if (isAxiosError(err)) {
-				toast.error(err.response?.data.error || 'An error occurred');
+				toast.error(err.response?.data.error || '오류가 발생했습니다');
 			}
 		}
 	}, [selectPage, take, orderBy, order]);

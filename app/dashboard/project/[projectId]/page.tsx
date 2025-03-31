@@ -108,7 +108,7 @@ export default function ProjectUpdate({ params }: ProjectUpdateParams) {
 			setLoad(false);
 		} catch (err) {
 			if (isAxiosError(err)) {
-				toast.error(err.response?.data.error || 'An error occurred');
+				toast.error(err.response?.data.error || '오류가 발생했습니다');
 			}
 		}
 	}, [detailForm, form, projectId]);
@@ -136,7 +136,7 @@ export default function ProjectUpdate({ params }: ProjectUpdateParams) {
 			}
 		} catch (err) {
 			if (isAxiosError(err)) {
-				toast.error(err.response?.data.error || 'An error occurred');
+				toast.error(err.response?.data.error || '오류가 발생했습니다');
 			}
 		}
 	}
@@ -169,7 +169,7 @@ export default function ProjectUpdate({ params }: ProjectUpdateParams) {
 			}
 		} catch (err) {
 			if (isAxiosError(err)) {
-				toast.error(err.response?.data.error || 'An error occurred');
+				toast.error(err.response?.data.error || '오류가 발생했습니다');
 			}
 		}
 	}
@@ -193,7 +193,7 @@ export default function ProjectUpdate({ params }: ProjectUpdateParams) {
 			} catch (err) {
 				if (isAxiosError(err)) {
 					toast.error(
-						err.response?.data.error || 'An error occurred'
+						err.response?.data.error || '오류가 발생했습니다'
 					);
 				}
 			} finally {
@@ -216,7 +216,7 @@ export default function ProjectUpdate({ params }: ProjectUpdateParams) {
 			}
 		} catch (err) {
 			if (isAxiosError(err)) {
-				toast.error(err.response?.data.error || 'An error occurred');
+				toast.error(err.response?.data.error || '오류가 발생했습니다');
 			}
 		} finally {
 			setLoad(true);
@@ -238,7 +238,7 @@ export default function ProjectUpdate({ params }: ProjectUpdateParams) {
 			} catch (err) {
 				if (isAxiosError(err)) {
 					toast.error(
-						err.response?.data.error || 'An error occurred'
+						err.response?.data.error || '오류가 발생했습니다'
 					);
 				}
 			} finally {
