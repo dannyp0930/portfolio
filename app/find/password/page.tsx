@@ -13,23 +13,11 @@ export default function FindEmail() {
 		e.preventDefault();
 		try {
 			const {
-				data: { password },
+				data: { message },
 				status,
 			} = await instance.post('/find/password', { email });
 			if (status === 200) {
-				const body = {
-					to: email,
-					subject: '임시 비밀번호 발급 안내',
-					html: `
-							<p>안녕하세요,</p>
-							<p>요청하신 임시 비밀번호가 발급되었습니다:</p>
-							<p><strong>${password}</strong></p>
-							<p>로그인 후 반드시 비밀번호를 변경해주세요.</p>
-							<p>감사합니다.</p>
-					`,
-				};
-				const res = await instance.post('/mail', body);
-				console.log(res);
+				toast.success(message);
 			}
 		} catch (err) {
 			if (isAxiosError(err)) {
