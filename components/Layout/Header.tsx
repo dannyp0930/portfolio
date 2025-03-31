@@ -16,7 +16,7 @@ export default async function Header() {
 					SH
 					<span className="hidden md:inline">&nbsp;Portfolio</span>
 				</a>
-				<ul className="flex items-center gap-5 text-base">
+				<ul className="flex items-center gap-3 md:gap-5 text-base">
 					<li>
 						<a className="hover:underline" href="#info">
 							<span className="hidden md:inline">Info</span>
