@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { FormEvent, useState } from 'react';
 import { instance } from '@/app/api/instance';
 import useAuthCheck from '@/hooks/useAuthCheck';
 import Link from 'next/link';
@@ -13,7 +13,7 @@ export default function Login() {
 
 	useAuthCheck();
 
-	async function handleLogin(e: React.FormEvent) {
+	async function handleLogin(e: FormEvent<HTMLFormElement>) {
 		e.preventDefault();
 		try {
 			const body = { email, password };

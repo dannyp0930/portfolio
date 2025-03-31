@@ -43,14 +43,12 @@ export default function Register() {
 			} else {
 				toast.error('Registration failed');
 			}
-		} catch (error) {
-			if (isAxiosError(error)) {
-				const errorMessage =
-					(error.response.data as { error?: string }).error ??
-					'Registration failed';
-				return toast.error(errorMessage);
+		} catch (err) {
+			if (isAxiosError(err)) {
+				toast.error(err.response?.data.message);
+			} else {
+				toast.error('Registration failed');
 			}
-			return toast.error('Registration failed');
 		}
 	}
 	return (
@@ -135,9 +133,21 @@ export default function Register() {
 						Register
 					</button>
 				</form>
-				<div>
+				<div className="flex justify-between">
 					<Link className="text-sm hover:underline" href="/login">
 						로그인
+					</Link>
+					<Link
+						className="text-sm hover:underline"
+						href="/find/email"
+					>
+						이메일 찾기
+					</Link>
+					<Link
+						className="text-sm hover:underline"
+						href="/find/password"
+					>
+						비밀번호 찾기
 					</Link>
 				</div>
 			</div>
