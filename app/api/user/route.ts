@@ -63,7 +63,7 @@ export async function PUT(req: NextRequest) {
 		const existingPhone = await prisma.user.findUnique({
 			where: { phone },
 		});
-		if (existingPhone) {
+		if (existingPhone && existingPhone.id !== id) {
 			return NextResponse.json(
 				{ error: '이미 사용 중인 전화번호입니다' },
 				{ status: 400 }

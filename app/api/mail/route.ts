@@ -28,7 +28,18 @@ export async function POST(req: NextRequest) {
 		);
 	}
 	try {
-		const response = await axios.get(path, { responseType: 'arraybuffer' });
+		let attachments: { filename: string; content: Buffer }[] = [];
+		if (filename && path) {
+			const response = await axios.get(path, {
+				responseType: 'arraybuffer',
+			});
+			attachments = [
+				{
+					filename,
+					content: Buffer.from(response.data),
+				},
+			];
+		}
 		for (const recipient of recipients) {
 			const mailOptions = {
 				from: process.env.GMAIL_USER,
@@ -36,15 +47,7 @@ export async function POST(req: NextRequest) {
 				subject,
 				text,
 				html,
-				attachments:
-					filename && path
-						? [
-								{
-									filename,
-									content: Buffer.from(response.data),
-								},
-							]
-						: [],
+				attachments,
 			};
 			await transporter.sendMail(mailOptions);
 			await prisma.mailLog.create({
