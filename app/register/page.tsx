@@ -98,7 +98,7 @@ export default function Register() {
 				</form>
 				<div>
 					<Link className="text-sm hover:underline" href="/login">
-						Login
+						로그인
 					</Link>
 				</div>
 			</div>

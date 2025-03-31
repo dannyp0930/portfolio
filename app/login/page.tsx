@@ -72,9 +72,21 @@ export default function Login() {
 						Login
 					</button>
 				</form>
-				<div>
+				<div className="flex justify-between">
+					<Link
+						className="text-sm hover:underline"
+						href="/find/email"
+					>
+						이메일 찾기
+					</Link>
+					<Link
+						className="text-sm hover:underline"
+						href="/find/password"
+					>
+						비밀번호 찾기
+					</Link>
 					<Link className="text-sm hover:underline" href="/register">
-						Register
+						회원가입
 					</Link>
 				</div>
 			</div>
