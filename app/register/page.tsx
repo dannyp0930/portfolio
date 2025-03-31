@@ -1,44 +1,56 @@
 'use client';
 
-import { useState } from 'react';
+import { ChangeEvent, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { instance } from '@/app/api/instance';
 import useAuthCheck from '@/hooks/useAuthCheck';
 import Link from 'next/link';
 import { isAxiosError } from 'axios';
+import { toast } from 'sonner';
+import { formatPhoneNumber } from '@/lib/formatUtils';
 
 export default function Register() {
 	const [email, setEmail] = useState<string>('');
+	const [name, setName] = useState<string>('');
+	const [phone, setPhone] = useState<string>('');
 	const [password, setPassword] = useState<string>('');
 	const [subscribed, setSubscribed] = useState<boolean>(false);
 	const router = useRouter();
 
 	useAuthCheck();
 
+	function handlePhoneNumber(e: ChangeEvent<HTMLInputElement>) {
+		const value = (e.target as HTMLInputElement).value;
+		setPhone(formatPhoneNumber(value));
+	}
+
 	async function handleRegister(e: React.FormEvent) {
 		e.preventDefault();
 		try {
 			const body = {
 				email,
+				name,
+				phone,
 				password,
 				subscribed,
 			};
-			const res = await instance.post('/register', body);
-			if (res.data.userId) {
+			const {
+				data: { userId, message },
+			} = await instance.post('/register', body);
+			if (userId) {
+				toast.success(message);
 				router.push('/login');
 			} else {
-				alert('Registration failed');
+				toast.error('Registration failed');
 			}
-		} catch (error: unknown) {
+		} catch (error) {
 			if (isAxiosError(error)) {
-				if (error.response?.status === 409) {
-					const errorMessage =
-						(error.response.data as { error?: string }).error ??
-						'Registration failed';
-					return alert(errorMessage);
-				}
+				const errorMessage =
+					(error.response.data as { error?: string }).error ??
+					'Registration failed';
+				return toast.error(errorMessage);
 			}
-			return alert('Registration failed');
+			return toast.error('Registration failed');
 		}
 	}
 	return (
@@ -58,6 +70,33 @@ export default function Register() {
 							required
 							value={email}
 							onChange={(e) => setEmail(e.target.value)}
+						/>
+					</div>
+					<div className="flex flex-col gap-1">
+						<label className="text-xs" htmlFor="name">
+							Name
+						</label>
+						<input
+							id="name"
+							className="border border-theme-sub rounded py-2 px-3 focus:outline-theme"
+							placeholder="Name"
+							required
+							value={name}
+							onChange={(e) => setName(e.target.value)}
+						/>
+					</div>
+					<div className="flex flex-col gap-1">
+						<label className="text-xs" htmlFor="email">
+							Phone
+						</label>
+						<input
+							id="phone"
+							className="border border-theme-sub rounded py-2 px-3 focus:outline-theme"
+							type="phone"
+							placeholder="000-0000-0000"
+							required
+							value={phone}
+							onChange={handlePhoneNumber}
 						/>
 					</div>
 					<div className="flex flex-col gap-1">
