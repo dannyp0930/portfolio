@@ -22,7 +22,7 @@ export default function useAuthCheck(setUser: (user: UserContextType) => void) {
 				setUser(null);
 			}
 		};
-		const interval = setInterval(checkAuth, 5 * 60 * 1000);
+		const interval = setInterval(checkAuth, 50 * 60 * 1000);
 		checkAuth();
 		return () => clearInterval(interval);
 	}, [router, pathname, setUser]);
