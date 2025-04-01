@@ -45,7 +45,7 @@ export async function POST() {
 		}
 	}
 	try {
-		if (refreshToken && !accessToken) {
+		if (refreshToken) {
 			const decoded = jwt.verify(
 				refreshToken,
 				process.env.JWT_REFRESH_SECRET!
@@ -83,17 +83,16 @@ export async function POST() {
 					},
 					{ status: 200 }
 				);
-			} else {
-				return NextResponse.json(
-					{ error: 'Invalid refresh token' },
-					{ status: 401 }
-				);
 			}
 		}
 	} catch (err) {
 		return NextResponse.json(
-			{ error: 'Something went wrong', details: err },
-			{ status: 500 }
+			{ error: 'Invalid refresh token', details: err },
+			{ status: 401 }
 		);
 	}
+	return NextResponse.json(
+		{ error: 'Something went wrong' },
+		{ status: 500 }
+	);
 }
