@@ -5,9 +5,9 @@ import { useUser } from '@/context/UserContext';
 export default function Profile() {
 	const { user } = useUser();
 	return (
-		<div>
+		<article>
 			Profile
 			{user?.name}
-		</div>
+		</article>
 	);
 }

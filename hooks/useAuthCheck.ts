@@ -1,14 +1,18 @@
 'use client';
 
 import { useEffect } from 'react';
-import { usePathname, useRouter } from 'next/navigation';
 import { instance } from '@/app/api/instance';
+import { usePathname } from 'next/navigation';
 
 export default function useAuthCheck(setUser: (user: UserContextType) => void) {
-	const router = useRouter();
 	const pathname = usePathname();
-
 	useEffect(() => {
+		const publicPaths = [
+			'/login',
+			'/register',
+			'/find/email',
+			'/find/password',
+		];
 		const checkAuth = async () => {
 			try {
 				const {
@@ -22,8 +26,10 @@ export default function useAuthCheck(setUser: (user: UserContextType) => void) {
 				setUser(null);
 			}
 		};
-		const interval = setInterval(checkAuth, 50 * 60 * 1000);
-		checkAuth();
-		return () => clearInterval(interval);
-	}, [router, pathname, setUser]);
+		if (!publicPaths.includes(pathname)) {
+			const interval = setInterval(checkAuth, 50 * 60 * 1000);
+			checkAuth();
+			return () => clearInterval(interval);
+		}
+	}, [pathname, setUser]);
 }
