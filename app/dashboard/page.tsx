@@ -56,22 +56,14 @@ export default function Dashboard() {
 			const {
 				data: { data },
 			} = await instance.get('/intro');
-			form.setValue('title', data.title);
-			form.setValue('description', data.description);
-			form.setValue('mailSubject', data.mailSubject);
-			form.setValue('mailText', data.mailText);
-			if (data.resumeFileUrl) {
-				setResumeUrl(data.resumeFileUrl);
-			}
-			if (data.bannerImageUrl) {
-				setBannerUrl(data.bannerImageUrl);
-			}
-			if (data.bannerImageUrlTablet) {
-				setBannerUrlTablet(data.bannerImageUrlTablet);
-			}
-			if (data.bannerImageUrlMobile) {
-				setBannerUrlMobile(data.bannerImageUrlMobile);
-			}
+			form.setValue('title', data.title ?? '');
+			form.setValue('description', data.description ?? '');
+			form.setValue('mailSubject', data.mailSubject ?? '');
+			form.setValue('mailText', data.mailText ?? '');
+			setResumeUrl(data.resumeFileUrl ?? '');
+			setBannerUrl(data.bannerImageUrl ?? '');
+			setBannerUrlTablet(data.bannerImageUrlTablet ?? '');
+			setBannerUrlMobile(data.bannerImageUrlMobile ?? '');
 		} catch (err) {
 			if (isAxiosError(err)) {
 				toast.error(err.response?.data.error || '오류가 발생했습니다');
