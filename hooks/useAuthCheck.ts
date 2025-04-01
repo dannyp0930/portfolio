@@ -4,7 +4,10 @@ import { useEffect } from 'react';
 import { instance } from '@/app/api/instance';
 import { usePathname } from 'next/navigation';
 
-export default function useAuthCheck(setUser: (user: UserContextType) => void) {
+export default function useAuthCheck(
+	user: UserContextType,
+	setUser: (user: UserContextType) => void
+) {
 	const pathname = usePathname();
 	useEffect(() => {
 		const publicPaths = [
@@ -26,10 +29,10 @@ export default function useAuthCheck(setUser: (user: UserContextType) => void) {
 				setUser(null);
 			}
 		};
-		if (!publicPaths.includes(pathname)) {
+		if (!publicPaths.includes(pathname) && user) {
 			const interval = setInterval(checkAuth, 50 * 60 * 1000);
 			checkAuth();
 			return () => clearInterval(interval);
 		}
-	}, [pathname, setUser]);
+	}, [pathname, user, setUser]);
 }
