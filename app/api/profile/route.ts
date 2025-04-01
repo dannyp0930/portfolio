@@ -5,7 +5,6 @@ import bcrypt from 'bcrypt';
 export async function PUT(req: NextRequest) {
 	try {
 		const { id, name, phone, password, subscribed } = await req.json();
-		console.log(111111111111);
 		const existingPhone = await prisma.user.findUnique({
 			where: { phone },
 		});
@@ -15,7 +14,6 @@ export async function PUT(req: NextRequest) {
 				{ status: 400 }
 			);
 		}
-		console.log(222222222222);
 		await prisma.$transaction(async (prisma) => {
 			const data: {
 				name: string;

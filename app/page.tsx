@@ -4,8 +4,6 @@ import Skills from '@/components/home/Skills';
 import Project from '@/components/home/Project';
 import Career from '@/components/home/Career';
 import Nesletter from '@/components/home/Newletter';
-import Footer from '@/components/Layout/Footer';
-import Header from '@/components/Layout/Header';
 import { serverInstance } from '@/app/api/instance';
 
 async function fetchData() {
@@ -72,24 +70,20 @@ export default async function Home() {
 	} = await fetchData();
 
 	return (
-		<>
-			<Header />
-			<article>
-				<Banner intro={intro} />
-				<Info
-					contacts={contacts}
-					educations={educations}
-					experiences={experiences}
-					careerOverviews={careerOverviews}
-					languages={languages}
-					certificates={certificates}
-				/>
-				<Skills skills={skills} />
-				<Project />
-				<Career />
-				<Nesletter />
-			</article>
-			<Footer />
-		</>
+		<article>
+			<Banner intro={intro} />
+			<Info
+				contacts={contacts}
+				educations={educations}
+				experiences={experiences}
+				careerOverviews={careerOverviews}
+				languages={languages}
+				certificates={certificates}
+			/>
+			<Skills skills={skills} />
+			<Project />
+			<Career />
+			<Nesletter />
+		</article>
 	);
 }

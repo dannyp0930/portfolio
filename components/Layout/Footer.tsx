@@ -12,7 +12,7 @@ export default function Footer() {
 				<FontAwesomeIcon className="w-full h-full" icon={faGithub} />
 			</a>
 			<p className="text-sm text-center text-slate-300">
-				© 2024. Park Sang Hun. All rights reserved.
+				© 2025. Park Sang Hun. All rights reserved.
 			</p>
 		</footer>
 	);

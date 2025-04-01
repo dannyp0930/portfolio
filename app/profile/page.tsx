@@ -60,7 +60,7 @@ export default function Profile() {
 	}
 
 	return (
-		<article className="h-dvh flex justify-center items-center">
+		<article className="min-h-[calc(100dvh-theme(spacing.footer))] flex justify-center items-center">
 			<div className="w-96 h-fit bg-white p-10 rounded-xl flex flex-col gap-4">
 				<h1>Profile</h1>
 				<form onSubmit={handleSubmit} className="flex flex-col gap-3">
