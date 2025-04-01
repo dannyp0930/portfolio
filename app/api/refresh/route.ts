@@ -30,6 +30,7 @@ export async function POST() {
 			});
 			return NextResponse.json({
 				user: {
+					id: user?.id,
 					email: user?.email,
 					name: user?.name,
 					phone: user?.phone,
@@ -53,37 +54,36 @@ export async function POST() {
 			const user = await prisma.user.findUnique({
 				where: { id: decoded.userId },
 			});
-			if (user && user.refreshToken === refreshToken) {
-				const newAccessToken = jwt.sign(
-					{ userId: user.id },
-					process.env.JWT_SECRET!,
-					{ expiresIn: '1h' }
-				);
-				cookieStore.set('access-token', newAccessToken, {
-					httpOnly: true,
-					secure: true,
-					path: '/',
-					maxAge: 60 * 60,
-				});
-				cookieStore.set('is-admin', String(user.isAdmin), {
-					httpOnly: true,
-					secure: true,
-					path: '/',
-					maxAge: 60 * 60,
-				});
-				return NextResponse.json(
-					{
-						user: {
-							email: user.email,
-							name: user.name,
-							phone: user.phone,
-							subsribed: user.subscribed,
-							isAdmin: user.isAdmin,
-						},
+			const newAccessToken = jwt.sign(
+				{ userId: user?.id },
+				process.env.JWT_SECRET!,
+				{ expiresIn: '1h' }
+			);
+			cookieStore.set('access-token', newAccessToken, {
+				httpOnly: true,
+				secure: true,
+				path: '/',
+				maxAge: 60 * 60,
+			});
+			cookieStore.set('is-admin', String(user?.isAdmin), {
+				httpOnly: true,
+				secure: true,
+				path: '/',
+				maxAge: 60 * 60,
+			});
+			return NextResponse.json(
+				{
+					user: {
+						id: user?.id,
+						email: user?.email,
+						name: user?.name,
+						phone: user?.phone,
+						subsribed: user?.subscribed,
+						isAdmin: user?.isAdmin,
 					},
-					{ status: 200 }
-				);
-			}
+				},
+				{ status: 200 }
+			);
 		}
 	} catch (err) {
 		return NextResponse.json(
