@@ -3,7 +3,6 @@
 import { ChangeEvent, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { instance } from '@/app/api/instance';
-import useAuthCheck from '@/hooks/useAuthCheck';
 import Link from 'next/link';
 import { isAxiosError } from 'axios';
 import { toast } from 'sonner';
@@ -16,8 +15,6 @@ export default function Register() {
 	const [password, setPassword] = useState<string>('');
 	const [subscribed, setSubscribed] = useState<boolean>(false);
 	const router = useRouter();
-
-	useAuthCheck();
 
 	function handlePhoneNumber(e: ChangeEvent<HTMLInputElement>) {
 		const value = (e.target as HTMLInputElement).value;

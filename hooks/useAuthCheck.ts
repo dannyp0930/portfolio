@@ -1,36 +1,29 @@
+'use client';
+
 import { useEffect } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { instance } from '@/app/api/instance';
 
-export default function useAuthCheck() {
+export default function useAuthCheck(setUser: (user: UserContextType) => void) {
 	const router = useRouter();
 	const pathname = usePathname();
 
 	useEffect(() => {
-		async function checkLoginStatus() {
+		const checkAuth = async () => {
 			try {
 				const {
 					data: { user },
 				} = await instance.post('/refresh');
 				if (user) {
-					const { data } = await instance.post('/verify');
-					if (data.user) {
-						if (!data.user.isAdmin) {
-							router.push('/');
-						} else {
-							if (!pathname.startsWith('/dashboard')) {
-								router.push('/dashboard');
-							}
-						}
-					}
+					setUser(user);
 				}
 			} catch (err) {
-				console.error('Token verification failed:', err);
-				if (pathname !== '/register') {
-					router.push('/login');
-				}
+				console.error('Auth check failed:', err);
+				setUser(null);
 			}
-		}
-		checkLoginStatus();
-	}, [router, pathname]);
+		};
+		const interval = setInterval(checkAuth, 5 * 60 * 1000);
+		checkAuth();
+		return () => clearInterval(interval);
+	}, [router, pathname, setUser]);
 }

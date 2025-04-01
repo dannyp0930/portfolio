@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import { Toaster } from '@/components/ui/sonner';
+import AuthProvider from '@/components/common/AuthProvider';
 
 export const metadata: Metadata = {
 	title: 'SH Portfolio',
@@ -16,8 +17,10 @@ export default function RootLayout({
 	return (
 		<html lang="en">
 			<body className="bg-peach-fuzz">
-				<main>{children}</main>
-				<Toaster richColors />
+				<AuthProvider>
+					<main>{children}</main>
+					<Toaster richColors />
+				</AuthProvider>
 			</body>
 		</html>
 	);

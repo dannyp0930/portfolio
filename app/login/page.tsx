@@ -2,16 +2,17 @@
 
 import { FormEvent, useState } from 'react';
 import { instance } from '@/app/api/instance';
-import useAuthCheck from '@/hooks/useAuthCheck';
 import Link from 'next/link';
 import { isAxiosError } from 'axios';
 import { toast } from 'sonner';
+import { useRouter } from 'next/navigation';
+import { useUser } from '@/context/UserContext';
 
 export default function Login() {
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
-
-	useAuthCheck();
+	const { setUser } = useUser();
+	const router = useRouter();
 
 	async function handleLogin(e: FormEvent<HTMLFormElement>) {
 		e.preventDefault();
@@ -20,10 +21,11 @@ export default function Login() {
 			const {
 				data: { user },
 			} = await instance.post('/login', body);
+			setUser(user);
 			if (user.isAdmin) {
-				window.location.href = '/dashboard';
+				router.push('/dashboard');
 			} else {
-				window.location.href = '/';
+				router.push('/');
 			}
 		} catch (err) {
 			if (isAxiosError(err)) {
