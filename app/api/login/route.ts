@@ -59,7 +59,15 @@ export async function POST(req: NextRequest) {
 			maxAge: 60 * 60 * 24 * 7,
 		});
 		return NextResponse.json(
-			{ user: { email: user.email, isAdmin: user.isAdmin } },
+			{
+				user: {
+					email: user.email,
+					name: user.name,
+					phone: user.phone,
+					subsribed: user.subscribed,
+					isAdmin: user.isAdmin,
+				},
+			},
 			{ status: 200 }
 		);
 	} catch (err) {

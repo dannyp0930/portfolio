@@ -39,6 +39,9 @@ export async function POST() {
 				{
 					user: {
 						email: user.email,
+						name: user.name,
+						phone: user.phone,
+						subsribed: user.subscribed,
 						isAdmin: user.isAdmin,
 					},
 				},
