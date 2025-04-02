@@ -1,11 +1,20 @@
-import { cookies } from 'next/headers';
+'use client';
+
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { LogoutButton } from './LogoutButton';
+import { useUser } from '@/context/UserContext';
 
-export default async function Header() {
-	const cookie = await cookies();
-	const session = cookie.get('access-token')?.value;
-	const isAdmin = cookie.get('is-admin')?.value;
+export default function Header() {
+	const { user } = useUser();
+	const [session, setSession] = useState<boolean>();
+	const [isAdmin, setIsAdmin] = useState<boolean>();
+
+	useEffect(() => {
+		setSession(user ? true : false);
+		setIsAdmin(user?.isAdmin ?? false);
+	}, [user]);
+
 	return (
 		<header className="fixed top-0 left-0 z-50 font-bold text-white w-dvw h-header underline-offset-4">
 			<nav className="flex items-center justify-between w-full h-full px-5 md:px-12">
@@ -98,7 +107,7 @@ export default async function Header() {
 						</Link>
 					</li>
 					{session ? (
-						isAdmin === 'true' ? (
+						isAdmin ? (
 							<li>
 								<Link
 									className="hover:underline"
