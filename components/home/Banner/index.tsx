@@ -1,4 +1,34 @@
+import { getImageProps } from 'next/image';
+
 export default function Banner({ intro }: BannerProps) {
+	const common = { alt: 'banner' };
+	const {
+		props: { srcSet: desktop },
+	} = getImageProps({
+		...common,
+		width: 1280,
+		height: 720,
+		quality: 80,
+		src: intro.bannerImageUrl as string,
+	});
+	const {
+		props: { srcSet: tablet },
+	} = getImageProps({
+		...common,
+		width: 768,
+		height: 1024,
+		quality: 70,
+		src: intro.bannerImageUrlTablet as string,
+	});
+	const {
+		props: { srcSet: mobile },
+	} = getImageProps({
+		...common,
+		width: 360,
+		height: 640,
+		quality: 70,
+		src: intro.bannerImageUrlMobile as string,
+	});
 	return (
 		<section
 			id="banner"
@@ -6,18 +36,12 @@ export default function Banner({ intro }: BannerProps) {
 		>
 			{intro.bannerImageUrl && (
 				<picture className="absolute top-0 left-0 z-10 w-full h-full opacity-40">
-					<source
-						media="(max-width: 768px)"
-						srcSet={intro.bannerImageUrlMobile as string}
-					/>
-					<source
-						media="(max-width: 1279px)"
-						srcSet={intro.bannerImageUrlTablet as string}
-					/>
+					<source media="(max-width: 768px)" srcSet={mobile} />
+					<source media="(max-width: 1279px)" srcSet={tablet} />
 					<img
-						className="object-cover w-full h-full"
-						src={intro.bannerImageUrl as string}
-						alt="banner"
+						className="w-full h-full object-cover"
+						srcSet={desktop}
+						alt={common.alt}
 					/>
 				</picture>
 			)}
