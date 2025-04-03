@@ -6,17 +6,17 @@ export default function Banner({ intro }: BannerProps) {
 		props: { srcSet: desktop },
 	} = getImageProps({
 		...common,
-		width: 1280,
-		height: 720,
-		quality: 80,
+		width: 1920,
+		height: 1080,
+		quality: 70,
 		src: intro.bannerImageUrl as string,
 	});
 	const {
 		props: { srcSet: tablet },
 	} = getImageProps({
 		...common,
-		width: 768,
-		height: 1024,
+		width: 800,
+		height: 1280,
 		quality: 70,
 		src: intro.bannerImageUrlTablet as string,
 	});
@@ -24,8 +24,8 @@ export default function Banner({ intro }: BannerProps) {
 		props: { srcSet: mobile },
 	} = getImageProps({
 		...common,
-		width: 360,
-		height: 640,
+		width: 720,
+		height: 1280,
 		quality: 70,
 		src: intro.bannerImageUrlMobile as string,
 	});
