@@ -25,9 +25,12 @@ export default async function uploadToS3(
 			svg: 'image/svg+xml',
 			pdf: 'application/pdf',
 		};
+		const sanitizeFileName = fileName
+			.replace(/\s+/g, '_')
+			.replace(/[^a-zA-Z0-9-_.]/g, '');
 		const params = {
 			Bucket: process.env.S3_BUCKET_NAME,
-			Key: `${mode}/${dir}/${fileName}`,
+			Key: `${mode}/${dir}/${sanitizeFileName}`,
 			Body: file,
 			ContentType: extension
 				? contentTypeMap[extension]
