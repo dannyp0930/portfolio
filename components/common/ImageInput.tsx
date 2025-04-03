@@ -45,7 +45,7 @@ export default function ImageInput({
 				onChange={handleChange}
 			/>
 			<Button asChild size="icon">
-				<label htmlFor={id}>
+				<label className="shrink-0" htmlFor={id}>
 					<ImagePlus />
 				</label>
 			</Button>

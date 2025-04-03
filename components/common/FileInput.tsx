@@ -41,7 +41,7 @@ export default function FileInput({
 				ref={inputRef}
 				onChange={handleChange}
 			/>
-			<label className="flex-shrink-0 pr-2" htmlFor={id}>
+			<label className="shrink-0 pr-2" htmlFor={id}>
 				파일 선택
 			</label>
 			{newFileUrl ? (
