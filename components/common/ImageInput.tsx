@@ -55,6 +55,7 @@ export default function ImageInput({
 					alt={newImageUrl}
 					width={width}
 					height={height}
+					className="object-cover"
 					style={{ width: width, height: height }}
 				/>
 			)}
