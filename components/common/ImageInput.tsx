@@ -12,7 +12,6 @@ export default function ImageInput({
 	ref,
 	onChange,
 }: ImageInputProps) {
-	// const inputRef = useRef<HTMLInputElement>(null);
 	const [newImageUrl, setNewImageUrl] = useState<string>('');
 
 	useEffect(() => {
