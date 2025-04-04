@@ -29,7 +29,6 @@ const formSchema = z.object({
 			message: '올바른 번호 형식이 아닙니다.',
 		}),
 		z.literal(''),
-		z.null(),
 	]),
 	password: z.string({ message: '비밀번호를 입력하세요' }),
 	subscribed: z.boolean(),
