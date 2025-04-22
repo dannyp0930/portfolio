@@ -44,9 +44,6 @@ yarn-error.log*
 .history/
 .ionide
 
-# Package management
-package-lock.json
-
 # Next.js
 next-env.d.ts
 
