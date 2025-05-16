@@ -86,7 +86,7 @@ export default function ProjectList({ projects }: ProjectListPros) {
 					<div className="p-2">
 						<h4>{selectProjectTitle}</h4>
 						<div className="w-[280px] flex flex-col gap-10 mt-4 sm:w-[30rem] md:w-[35rem] lg:w-[50rem] lg:flex-row">
-							<p className="text-xs break-all whitespace-pre-line w-full sm:text-sm md:text-base lg:w-[45%]">
+							<p className="text-xs break-all whitespace-pre w-full sm:text-sm md:text-base lg:w-[45%]">
 								{projectDetail?.description}
 							</p>
 							{projectImages?.length !== 0 && (
