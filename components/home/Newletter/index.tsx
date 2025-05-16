@@ -21,7 +21,9 @@ import { z } from 'zod';
 
 const formSchema = z.object({
 	email: z.string().email({ message: '올바른 이메일 형식을 입력하세요.' }),
-	agree: z.boolean(),
+	agree: z.boolean().refine((value) => value === true, {
+		message: '뉴스레터 구독에 동의해 주세요.',
+	}),
 });
 
 export default function Nesletter() {
@@ -41,7 +43,6 @@ export default function Nesletter() {
 			const {
 				data: { resumeFileUrl },
 			} = await instance.post('/subscription', { email });
-			console.log(resumeFileUrl);
 			const body = {
 				to: email,
 				subject:
@@ -83,7 +84,7 @@ export default function Nesletter() {
 						name="email"
 						render={({ field }) => (
 							<FormItem>
-								<div className="flex gap-4 items-center">
+								<div className="flex flex-col">
 									<FormControl>
 										<Input
 											className="w-full bg-white"
@@ -101,18 +102,20 @@ export default function Nesletter() {
 						name="agree"
 						render={({ field }) => (
 							<FormItem>
-								<div className="flex gap-2 items-center">
-									<FormControl>
-										<Checkbox
-											className="bg-white"
-											checked={field.value}
-											onCheckedChange={field.onChange}
-										/>
-									</FormControl>
-									<FormLabel className="flex-shrink-0">
-										뉴스레터를 구독하시면, 저의 개발자
-										이력서를 보내드립니다.
-									</FormLabel>
+								<div className="flex flex-col gap-2">
+									<div className="flex gap-2">
+										<FormControl>
+											<Checkbox
+												className="bg-white"
+												checked={field.value}
+												onCheckedChange={field.onChange}
+											/>
+										</FormControl>
+										<FormLabel className="flex-shrink-0">
+											뉴스레터를 구독하시면, 저의 개발자
+											이력서를 보내드립니다.
+										</FormLabel>
+									</div>
 									<FormMessage />
 								</div>
 							</FormItem>
