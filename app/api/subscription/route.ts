@@ -24,6 +24,13 @@ export async function POST(req: NextRequest) {
 		const existingSubscription = await prisma.subscription.findUnique({
 			where: { email },
 		});
+		const intro = await prisma.intro.findFirst();
+		if (!intro?.resumeFileUrl) {
+			return NextResponse.json(
+				{ error: 'Resume not found.' },
+				{ status: 400 }
+			);
+		}
 		if (existingSubscription) {
 			if (!existingSubscription.isActive) {
 				const token = uuidv4();
@@ -36,10 +43,11 @@ export async function POST(req: NextRequest) {
 						},
 					});
 				});
-				return NextResponse.json(
-					{ message: 'Resubscribed.' },
-					{ status: 200 }
-				);
+				return NextResponse.json({
+					message: 'Resubscribed',
+					resumeFileUrl: intro.resumeFileUrl,
+					status: 200,
+				});
 			}
 			return NextResponse.json(
 				{ error: 'Subscription already exists' },
@@ -55,7 +63,11 @@ export async function POST(req: NextRequest) {
 				},
 			});
 		});
-		return NextResponse.json({ message: 'Subscribed' });
+		return NextResponse.json({
+			message: 'Subscribed',
+			resumeFileUrl: intro.resumeFileUrl,
+			status: 200,
+		});
 	} catch (err) {
 		return NextResponse.json(
 			{ error: 'Something went wrong', details: err },
