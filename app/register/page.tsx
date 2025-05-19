@@ -13,6 +13,7 @@ export default function Register() {
 	const [name, setName] = useState<string>('');
 	const [phone, setPhone] = useState<string>('');
 	const [password, setPassword] = useState<string>('');
+	const [agree, setAgree] = useState<boolean>(false);
 	const [subscribed, setSubscribed] = useState<boolean>(false);
 	const router = useRouter();
 
@@ -23,29 +24,33 @@ export default function Register() {
 
 	async function handleRegister(e: React.FormEvent) {
 		e.preventDefault();
-		try {
-			const body = {
-				email,
-				name,
-				phone,
-				password,
-				subscribed,
-			};
-			const {
-				data: { userId, message },
-			} = await instance.post('/register', body);
-			if (userId) {
-				toast.success(message);
-				router.push('/login');
-			} else {
-				toast.error('Registration failed');
+		if (agree) {
+			try {
+				const body = {
+					email,
+					name,
+					phone,
+					password,
+					subscribed,
+				};
+				const {
+					data: { userId, message },
+				} = await instance.post('/register', body);
+				if (userId) {
+					toast.success(message);
+					router.push('/login');
+				} else {
+					toast.error('Registration failed');
+				}
+			} catch (err) {
+				if (isAxiosError(err)) {
+					toast.error(err.response?.data.message);
+				} else {
+					toast.error('Registration failed');
+				}
 			}
-		} catch (err) {
-			if (isAxiosError(err)) {
-				toast.error(err.response?.data.message);
-			} else {
-				toast.error('Registration failed');
-			}
+		} else {
+			toast.error('Please agree to the privacy policy');
 		}
 	}
 	return (
@@ -108,19 +113,57 @@ export default function Register() {
 							onChange={(e) => setPassword(e.target.value)}
 						/>
 					</div>
-					<div className="flex gap-x-2 gap-y-1 flex-wrap">
-						<label className="text-xs" htmlFor="subscribed">
-							Newsletter
-						</label>
-						<input
-							id="subscribed"
-							className="border border-theme-sub accent-theme-sub"
-							type="checkbox"
-							onChange={(e) => setSubscribed(e.target.checked)}
-						/>
+					<div className="space-y-1">
+						<div className="flex justify-between">
+							<div className="flex items-center gap-2">
+								<label className="text-xs" htmlFor="agree">
+									Privacy Policy
+								</label>
+								<input
+									id="agree"
+									className="border border-theme-sub accent-theme-sub"
+									type="checkbox"
+									onChange={(e) => setAgree(e.target.checked)}
+								/>
+							</div>
+							<Link
+								className="text-xs hover:underline"
+								href="/privacy-policy/registration"
+								target="_blank"
+							>
+								Detail
+							</Link>
+						</div>
 						<p className="w-full text-xs opacity-50">
-							By subscribing to the newsletter, you&apos;ll
-							receive regular portfolio updates.
+							개인정보 처리방침에 동의합니다.
+						</p>
+					</div>
+					<div className="space-y-1">
+						<div className="flex justify-between">
+							<div className="flex items-center gap-2">
+								<label className="text-xs" htmlFor="subscribed">
+									Newsletter
+								</label>
+								<input
+									id="subscribed"
+									className="border border-theme-sub accent-theme-sub"
+									type="checkbox"
+									onChange={(e) =>
+										setSubscribed(e.target.checked)
+									}
+								/>
+							</div>
+							<Link
+								className="text-xs hover:underline"
+								href="/privacy-policy/newsletter"
+								target="_blank"
+							>
+								Detail
+							</Link>
+						</div>
+						<p className="w-full text-xs opacity-50">
+							뉴스레터를 구독하시면 정기적인 포트폴리오 업데이트를
+							받으실 수 있습니다
 						</p>
 					</div>
 					<button

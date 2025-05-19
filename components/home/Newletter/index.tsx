@@ -5,6 +5,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import {
 	Form,
 	FormControl,
+	FormDescription,
 	FormField,
 	FormItem,
 	FormLabel,
@@ -14,6 +15,7 @@ import { Input } from '@/components/ui/input';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { isAxiosError } from 'axios';
 import dayjs from 'dayjs';
+import Link from 'next/link';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
@@ -84,7 +86,7 @@ export default function Nesletter() {
 						name="email"
 						render={({ field }) => (
 							<FormItem>
-								<div className="flex flex-col">
+								<div className="flex flex-col gap-2">
 									<FormControl>
 										<Input
 											className="w-full bg-white"
@@ -103,19 +105,33 @@ export default function Nesletter() {
 						render={({ field }) => (
 							<FormItem>
 								<div className="flex flex-col gap-2">
-									<div className="flex gap-2">
-										<FormControl>
-											<Checkbox
-												className="bg-white"
-												checked={field.value}
-												onCheckedChange={field.onChange}
-											/>
-										</FormControl>
-										<FormLabel className="flex-shrink-0">
-											뉴스레터를 구독하시면, 저의 개발자
-											이력서를 보내드립니다.
-										</FormLabel>
+									<div className="flex justify-between">
+										<div className="flex items-center gap-2">
+											<FormLabel className="flex-shrink-0">
+												뉴스레터
+											</FormLabel>
+											<FormControl>
+												<Checkbox
+													className="bg-white"
+													checked={field.value}
+													onCheckedChange={
+														field.onChange
+													}
+												/>
+											</FormControl>
+										</div>
+										<Link
+											className="text-sm hover:underline"
+											href="/privacy-policy/newsletter"
+											target="_blank"
+										>
+											개인정보처리방침
+										</Link>
 									</div>
+									<FormDescription>
+										뉴스레터를 구독하시면 정기적인
+										포트폴리오 업데이트를 받으실 수 있습니다
+									</FormDescription>
 									<FormMessage />
 								</div>
 							</FormItem>
