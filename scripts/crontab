@@ -1,0 +1,1 @@
+0 0 1 * * python /app/delete_old_mail_logs.py >> /var/log/cron.log 2>&1

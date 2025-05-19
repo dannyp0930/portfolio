@@ -29,6 +29,14 @@ services:
     depends_on:
       - db
 
+  cron:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: portfolio_cron
+    depends_on:
+      - db
+
 volumes:
   db_data:
   shadow_db_data:

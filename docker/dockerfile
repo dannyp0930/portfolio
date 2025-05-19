@@ -1,0 +1,13 @@
+FROM python:3.9-slim
+
+WORKDIR /app
+
+RUN apt-get update && apt-get install -y cron
+
+COPY ../scripts/delete_old_mail_logs.py /app/delete_old_mail_logs.py
+COPY ../scripts/crontab /etc/cron.d/delete_old_mail_logs
+
+RUN chmod 0644 /etc/cron.d/delete_old_mail_logs
+RUN crontab /etc/cron.d/delete_old_mail_logs
+
+CMD ["cron", "-f"]
