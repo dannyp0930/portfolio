@@ -9,7 +9,9 @@ export default function Newsletter() {
 				{newsletterPolicy.sections.map((policy, i) => (
 					<div key={`policy-${i}`}>
 						<h2 className="text-lg">{policy.title}</h2>
-						{policy.content && <p>{policy.content}</p>}
+						{policy.content && (
+							<p className="mt-2">{policy.content}</p>
+						)}
 						<ol className="list-decimal ml-5 mt-2">
 							{policy.items?.map((item, j) => (
 								<Fragment key={`item-${j}`}>
