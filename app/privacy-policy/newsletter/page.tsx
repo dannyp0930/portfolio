@@ -5,12 +5,12 @@ export default function Newsletter() {
 	return (
 		<article className="min-h-[calc(100dvh-theme(spacing.footer))] py-header px-20">
 			<h1>{newsletterPolicy.title}</h1>
-			<div className="flex flex-col gap-2 mt-5">
+			<div className="flex flex-col gap-4 mt-5">
 				{newsletterPolicy.sections.map((policy, i) => (
 					<div key={`policy-${i}`}>
 						<h2 className="text-lg">{policy.title}</h2>
 						{policy.content && <p>{policy.content}</p>}
-						<ol className="list-decimal ml-5 mt-3">
+						<ol className="list-decimal ml-5 mt-2">
 							{policy.items?.map((item, j) => (
 								<Fragment key={`item-${j}`}>
 									{typeof item === 'string' && (
