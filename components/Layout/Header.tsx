@@ -111,7 +111,7 @@ export default function Header() {
 							<li>
 								<Link
 									className="hover:underline"
-									href="dashboard"
+									href="/dashboard"
 								>
 									<span className="hidden md:inline">
 										Dashboard
@@ -139,7 +139,7 @@ export default function Header() {
 								<li>
 									<Link
 										className="hover:underline"
-										href="profile"
+										href="/profile"
 									>
 										<span className="hidden md:inline">
 											Profile
@@ -164,7 +164,7 @@ export default function Header() {
 						)
 					) : (
 						<li>
-							<Link className="hover:underline" href="login">
+							<Link className="hover:underline" href="/login">
 								<span className="hidden md:inline">Login</span>
 								<svg
 									className="w-6 h-6 stroke-2 md:hidden stroke-white fill-transparent"
