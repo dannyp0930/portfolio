@@ -31,9 +31,12 @@ services:
 
   cron:
     build:
-      context: .
-      dockerfile: Dockerfile
+      context: ../
+      dockerfile: docker/Dockerfile
     container_name: portfolio_cron
+    environment:
+      - TZ=Asia/Seoul
+      - DATABASE_URL=mysql://${MYSQL_USER}:${MYSQL_PASSWORD}@db:3306/${MYSQL_DATABASE}
     depends_on:
       - db
 

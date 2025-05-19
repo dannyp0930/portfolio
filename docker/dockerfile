@@ -4,8 +4,20 @@ WORKDIR /app
 
 RUN apt-get update && apt-get install -y cron
 
-COPY ../scripts/delete_old_mail_logs.py /app/delete_old_mail_logs.py
-COPY ../scripts/crontab /etc/cron.d/delete_old_mail_logs
+RUN ln -s /usr/local/bin/python3 /usr/bin/python
+
+RUN pip install --no-cache-dir prisma
+
+COPY prisma/schema.prisma /app/prisma/schema.prisma
+
+WORKDIR /app/prisma
+
+RUN python -m prisma generate
+
+WORKDIR /app
+
+COPY scripts/delete_old_mail_logs.py /app/delete_old_mail_logs.py
+COPY scripts/crontab /etc/cron.d/delete_old_mail_logs
 
 RUN chmod 0644 /etc/cron.d/delete_old_mail_logs
 RUN crontab /etc/cron.d/delete_old_mail_logs
