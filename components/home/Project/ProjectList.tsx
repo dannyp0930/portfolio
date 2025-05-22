@@ -64,7 +64,7 @@ export default function ProjectList({ projects }: ProjectListPros) {
 	return (
 		<section
 			id="project"
-			className="flex flex-col justify-center items-center py-12 md:py-16 lg:py-28 gap-5 bg-pale-beige"
+			className="flex flex-col justify-center items-center py-12 md:py-16 lg:py-28 gap-5"
 		>
 			<h1>Project</h1>
 			<Carousel className="w-2/3 md:w-4/5 lg:w-[1280px] lg:max-w-[90%] m-auto">
