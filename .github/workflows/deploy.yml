@@ -1,79 +1,80 @@
 name: Deploy on Main Merge
 
 on:
-    push:
-        branches:
-            - main
-        paths-ignore:
-            - 'README.md'
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - 'README.md'
 
 jobs:
-    build-and-deploy:
-        runs-on: ubuntu-latest
+  build-and-deploy:
+    runs-on: ubuntu-latest
 
-        steps:
-            - name: Checkout repository
-              uses: actions/checkout@v4
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-            - name: Execute remote ssh and Deploy
-              uses: appleboy/ssh-action@master
-              with:
-                  host: ${{ secrets.SSH_HOST }}
-                  username: ${{ secrets.SSH_USERNAME }}
-                  key: ${{ secrets.SSH_PRIVATE_KEY }}
-                  script: |
-                      set -e
-                      echo "Starting deployment process..."
+      - name: Execute remote ssh and Deploy
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            set -e
+            echo "Starting deployment process..."
 
-                      echo "Updating repository..."
-                      cd /srv/portfolio
-                      sudo git pull origin main || { echo "Git pull failed"; exit 1; }
+            echo "Updating repository..."
+            cd /srv/portfolio
+            sudo git pull origin main || { echo "Git pull failed"; exit 1; }
 
-                      echo "Setting up Node.js environment..."
-                      export NVM_DIR="$HOME/.nvm"
-                      [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-                      nvm use 22 || { echo "nvm use failed"; exit 1; }
+            echo "Setting up Node.js environment..."
+            export NVM_DIR="$HOME/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+            nvm use 22 || { echo "nvm use failed"; exit 1; }
 
-                      if ! docker ps --format '{{.Names}}' | grep -q 'portfolio_db'; then
-                          echo "Docker container is not running. Starting Docker..."
-                          yarn docker:up || { echo "Docker container start failed"; exit 1; }
-                      else
-                          echo "Docker container is already running."
-                      fi
+            if ! docker ps --format '{{.Names}}' | grep -q 'portfolio_db'; then
+                echo "Docker container is not running. Starting Docker..."
+                yarn docker:up || { echo "Docker container start failed"; exit 1; }
+            else
+                echo "Docker container is already running."
+            fi
 
-                      if ! docker images --format '{{.Repository}}' | grep -q 'mysql'; then
-                          echo "Docker image not found. Building Docker image..."
-                          yarn docker:build || { echo "Docker image build failed"; exit 1; }
-                      else
-                          echo "Docker image already exists."
-                      fi
+            if ! docker images --format '{{.Repository}}' | grep -q 'mysql'; then
+                echo "Docker image not found. Building Docker image..."
+                yarn docker:build || { echo "Docker image build failed"; exit 1; }
+            else
+                echo "Docker image already exists."
+            fi
 
-                      echo "Installing dependencies..."
-                      sudo yarn install --frozen-lockfile || { echo "yarn install failed"; exit 1; }
+            echo "Installing dependencies..."
+            sudo yarn install --frozen-lockfile || { echo "yarn install failed"; exit 1; }
 
-                      echo "Running migrations..."
-                      sudo yarn migrate:prod || { echo "yarn migrate:prod failed"; exit 1; }
+            echo "Running migrations..."
+            sudo yarn migrate:prod || { echo "yarn migrate:prod failed"; exit 1; }
 
-                      echo "Building application..."
-                      sudo yarn build || { echo "yarn build failed"; exit 1; }
+            echo "Building application..."
+            sudo yarn build || { echo "yarn build failed"; exit 1; }
 
-                      echo "Restarting application..."
-                      if pm2 describe portfolio > /dev/null 2>&1; then
-                        pm2 restart portfolio --update-env || { echo "pm2 restart failed"; exit 1; }
-                      else
-                        pm2 start "yarn start" --name portfolio --update-env || { echo "pm2 start failed"; exit 1; }
-                      fi
+            echo "Restarting application..."
+            if pm2 describe portfolio > /dev/null 2>&1; then
+              pm2 restart portfolio --update-env || { echo "pm2 restart failed"; exit 1; }
+            else
+              pm2 start "yarn start" --name portfolio --update-env || { echo "pm2 start failed"; exit 1; }
+            fi
 
-            - name: Notify Telegram on Success
-                if: ${{ success() }}
-                run: |
-                curl -s -X POST https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage \
-                    -d chat_id=${{ secrets.TELEGRAM_CHAT_ID }} \
-                    -d text="✅ React 프로젝트가 성공적으로 배포되었습니다!"
+      - name: Notify Telegram on Success
+        if: success()
+        run: |
+          curl -s -X POST https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage \
+            -d chat_id=${{ secrets.TELEGRAM_CHAT_ID }} \
+            -d text="✅ React 프로젝트가 성공적으로 배포되었습니다!"
 
-            - name: Notify Telegram on Failure
-                if: ${{ failure() }}
-                run: |
-                curl -s -X POST https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage \
-                    -d chat_id=${{ secrets.TELEGRAM_CHAT_ID }} \
-                    -d text="❌ React 프로젝트 배포에 실패했습니다."
+      - name: Notify Telegram on Failure
+        if: failure()
+        run: |
+          curl -s -X POST https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage \
+            -d chat_id=${{ secrets.TELEGRAM_CHAT_ID }} \
+            -d text="❌ React 프로젝트 배포에 실패했습니다."
+
