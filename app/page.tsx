@@ -80,8 +80,8 @@ export default async function Home() {
 				languages={languages}
 				certificates={certificates}
 			/>
-			<Skills skills={skills} />
 			<Career />
+			<Skills skills={skills} />
 			<Project />
 			<Nesletter />
 		</article>

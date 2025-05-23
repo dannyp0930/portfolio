@@ -2,7 +2,7 @@ import dayjs from 'dayjs';
 
 export default function CareerList({ careers }: CareerListProps) {
 	return (
-		<ul className="flex flex-col gap-12 p-5">
+		<ul className="flex flex-col gap-12 mt-8">
 			{careers.map((career) => (
 				<li key={career.id}>
 					<h2>
