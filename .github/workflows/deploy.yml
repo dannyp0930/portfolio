@@ -69,12 +69,12 @@ jobs:
         run: |
           curl -s -X POST https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage \
             -d chat_id=${{ secrets.TELEGRAM_CHAT_ID }} \
-            -d text="✅ 프로젝트가 성공적으로 배포되었습니다!"
+            -d text="✅ SH Portfolio가 성공적으로 배포되었습니다!"
 
       - name: Notify Telegram on Failure
         if: failure()
         run: |
           curl -s -X POST https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage \
             -d chat_id=${{ secrets.TELEGRAM_CHAT_ID }} \
-            -d text="❌ 프로젝트 배포에 실패했습니다."
+            -d text="❌ SH Portfolio 배포에 실패했습니다."
 
