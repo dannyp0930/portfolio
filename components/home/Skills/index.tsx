@@ -13,7 +13,7 @@ export default function Skills({ skills }: SkillsProps) {
 				{Object.entries(skills).map(([category, skills]) => (
 					<div className="flex flex-col gap-4" key={category}>
 						<h2>{category}</h2>
-						<div className="grid items-center grid-cols-3 gap-4 lg:grid-cols-12 md:grid-cols-6 md:gap-12">
+						<div className="grid items-center grid-cols-3 gap-4 lg:grid-cols-6 md:grid-cols-5 md:gap-12">
 							{skills.map((skill) => (
 								<div
 									className="relative transition-transform cursor-pointer hover:-translate-y-5 group bg-white p-4 rounded"
