@@ -2,6 +2,7 @@ import { Dispatch, ReactNode, RefObject, SetStateAction } from 'react';
 
 declare global {
 	interface ModalContainerProps {
+		className?: string;
 		closeModal: function;
 		children: ReactNode;
 	}

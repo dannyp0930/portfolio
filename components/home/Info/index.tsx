@@ -40,7 +40,7 @@ export default function Info({
 					</ul>
 				</div>
 				<div className="box-border flex flex-col p-5 bg-theme-sub/30 rounded-xl">
-					<h3 className="text-center">EDUCATION</h3>
+					<h3>EDUCATION</h3>
 					<ul className="mt-3">
 						{safeEducations.map((education) => (
 							<li key={education.id}>
@@ -60,7 +60,7 @@ export default function Info({
 					</ul>
 				</div>
 				<div className="box-border flex flex-col p-5 bg-theme-sub/30 rounded-xl">
-					<h3 className="text-center">EXPERIENCE</h3>
+					<h3>EXPERIENCE</h3>
 					<ul className="mt-3">
 						{safeExperiences.map((experience) => (
 							<li key={experience.id}>
@@ -81,7 +81,7 @@ export default function Info({
 					</ul>
 				</div>
 				<div className="box-border flex flex-col p-5 bg-theme-sub/30 rounded-xl">
-					<h3 className="text-center">CAREER</h3>
+					<h3>CAREER</h3>
 					<ul className="mt-3">
 						{safeCareerOverviews.map((career) => (
 							<li key={career.id}>
@@ -102,7 +102,7 @@ export default function Info({
 					</ul>
 				</div>
 				<div className="box-border flex flex-col p-5 bg-theme-sub/30 rounded-xl">
-					<h3 className="text-center">LANGUAGE</h3>
+					<h3>LANGUAGE</h3>
 					<ul className="mt-3">
 						{safeLanguages.map((language) => (
 							<li key={language.id}>
@@ -121,7 +121,7 @@ export default function Info({
 					</ul>
 				</div>
 				<div className="box-border flex flex-col p-5 bg-theme-sub/30 rounded-xl">
-					<h3 className="text-center">CERTIFICATE</h3>
+					<h3>CERTIFICATE</h3>
 					<ul className="mt-3">
 						{safeCertificates.map((certificate) => (
 							<li key={certificate.id}>

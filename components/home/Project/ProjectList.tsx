@@ -67,7 +67,7 @@ export default function ProjectList({ projects }: ProjectListPros) {
 			className="m-auto my-10 p-5 rounded-xl bg-theme-sub/30 w-[90%]"
 		>
 			<h1>Project</h1>
-			<Carousel className="w-4/5 md:w-[90%] m-auto my-10">
+			<Carousel className="w-[70%] md:w-[90%] m-auto my-10">
 				<CarouselContent>
 					{projects.map((project) => (
 						<CarouselItem
@@ -85,11 +85,11 @@ export default function ProjectList({ projects }: ProjectListPros) {
 				<CarouselNext />
 			</Carousel>
 			{modalId !== 0 && (
-				<ModalContainer closeModal={closeModal}>
+				<ModalContainer className="w-[90%]" closeModal={closeModal}>
 					<div className="p-2">
 						<h4>{selectProjectTitle}</h4>
 						<div className="w-[280px] flex flex-col gap-10 mt-4 sm:w-[30rem] md:w-[35rem] lg:w-[50rem] lg:flex-row">
-							<p className="text-xs break-all whitespace-pre w-full sm:text-sm md:text-base lg:w-[45%]">
+							<p className="text-xs break-all whitespace-pre-line w-full sm:text-sm md:text-base lg:w-[45%]">
 								{projectDetail?.description}
 							</p>
 							{projectImages?.length !== 0 && (

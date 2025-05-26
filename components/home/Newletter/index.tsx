@@ -79,7 +79,7 @@ export default function Nesletter() {
 			<Form {...form}>
 				<form
 					onSubmit={form.handleSubmit(handleSubmit)}
-					className="flex flex-col gap-10 mt-8 p-3"
+					className="flex flex-col gap-10 mt-8 p-3 w-full max-w-[360px] m-auto"
 				>
 					<FormField
 						control={form.control}

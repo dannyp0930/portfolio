@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 export default function Footer() {
 	return (
-		<footer className="flex flex-col items-center justify-center gap-8 p-5 text-white bg-black h-footer">
+		<footer className="flex flex-col items-center justify-center gap-8 p-5 text-white bg-theme-sub h-footer">
 			<a
 				className="w-12 h-12"
 				href="https://github.com/dannyp0930"
