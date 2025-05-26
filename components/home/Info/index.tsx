@@ -20,9 +20,9 @@ export default function Info({
 	return (
 		<section
 			id="info"
-			className="flex flex-col items-center justify-center gap-5 py-12 md:py-16 lg:py-28"
+			className="flex flex-col items-center justify-center gap-5 my-10"
 		>
-			<div className="grid grid-cols-1 grid-rows-6 gap-5 w-[90%] md:grid-cols-2 md:gap-10">
+			<div className="grid grid-cols-1 gap-5 w-[90%] md:grid-cols-2 md:gap-10">
 				<div
 					className="box-border flex flex-col p-5 bg-theme-sub/50 rounded-xl 
 					rtcontent-wrap"
@@ -39,7 +39,7 @@ export default function Info({
 						))}
 					</ul>
 				</div>
-				<div className="box-border flex flex-col p-5 bg-white rounded-lg shadow-lg cursor-pointer rouded-lg content-wrap lg:transition-transform lg:hover:-translate-y-5">
+				<div className="box-border flex flex-col p-5 bg-theme-sub/50 rounded-xl">
 					<h3 className="text-center">EDUCATION</h3>
 					<ul className="mt-3">
 						{safeEducations.map((education) => (
@@ -59,7 +59,7 @@ export default function Info({
 						))}
 					</ul>
 				</div>
-				<div className="box-border flex flex-col p-5 bg-white rounded-lg shadow-lg cursor-pointer content-wrap lg:transition-transform lg:hover:-translate-y-5">
+				<div className="box-border flex flex-col p-5 bg-theme-sub/50 rounded-xl">
 					<h3 className="text-center">EXPERIENCE</h3>
 					<ul className="mt-3">
 						{safeExperiences.map((experience) => (
@@ -80,7 +80,7 @@ export default function Info({
 						))}
 					</ul>
 				</div>
-				<div className="box-border flex flex-col p-5 bg-white rounded-lg shadow-lg cursor-pointer content-wrap lg:transition-transform lg:hover:-translate-y-5">
+				<div className="box-border flex flex-col p-5 bg-theme-sub/50 rounded-xl">
 					<h3 className="text-center">CAREER</h3>
 					<ul className="mt-3">
 						{safeCareerOverviews.map((career) => (
@@ -101,7 +101,7 @@ export default function Info({
 						))}
 					</ul>
 				</div>
-				<div className="box-border flex flex-col p-5 bg-white rounded-lg shadow-lg cursor-pointer content-wrap lg:transition-transform lg:hover:-translate-y-5">
+				<div className="box-border flex flex-col p-5 bg-theme-sub/50 rounded-xl">
 					<h3 className="text-center">LANGUAGE</h3>
 					<ul className="mt-3">
 						{safeLanguages.map((language) => (
@@ -120,7 +120,7 @@ export default function Info({
 						))}
 					</ul>
 				</div>
-				<div className="box-border flex flex-col p-5 bg-white rounded-lg shadow-lg cursor-pointer content-wrap lg:transition-transform lg:hover:-translate-y-5">
+				<div className="box-border flex flex-col p-5 bg-theme-sub/50 rounded-xl">
 					<h3 className="text-center">CERTIFICATE</h3>
 					<ul className="mt-3">
 						{safeCertificates.map((certificate) => (

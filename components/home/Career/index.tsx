@@ -8,7 +8,7 @@ export default async function Career() {
 	return (
 		<section
 			id="career"
-			className="w-[90%] m-auto p-5 bg-theme-sub/50 rounded-xl"
+			className="w-[90%] m-auto my-10 p-5 bg-theme-sub/50 rounded-xl"
 		>
 			<h1>Career</h1>
 			<CareerList careers={careers} />

@@ -279,21 +279,21 @@ function CertificateContent() {
 						<td>
 							<input
 								className="w-full focus:outline-none"
-								type="date"
-								value={issueDate}
-								required
-								onChange={(e) => setIssueDate(e.target.value)}
-							/>
-						</td>
-						<td>
-							<input
-								className="w-full focus:outline-none"
 								type="text"
 								value={issuingOrganization}
 								required
 								onChange={(e) =>
 									setIssuingOrganization(e.target.value)
 								}
+							/>
+						</td>
+						<td>
+							<input
+								className="w-full focus:outline-none"
+								type="date"
+								value={issueDate}
+								required
+								onChange={(e) => setIssueDate(e.target.value)}
 							/>
 						</td>
 						<td>
