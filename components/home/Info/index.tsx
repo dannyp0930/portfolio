@@ -22,7 +22,7 @@ export default function Info({
 			id="info"
 			className="flex flex-col items-center justify-center gap-5 my-10"
 		>
-			<div className="grid grid-cols-1 gap-5 w-[90%] md:grid-cols-2 md:gap-10">
+			<div className="grid grid-cols-1 gap-5 w-[90%] md:grid-cols-2 md:gap-10 lg:grid-cols-3">
 				<div
 					className="box-border flex flex-col p-5 bg-theme-sub/30 rounded-xl 
 					rtcontent-wrap"

@@ -64,7 +64,7 @@ export default function ProjectList({ projects }: ProjectListPros) {
 	return (
 		<section
 			id="project"
-			className="m-auto my-10 p-5 rounded-xl bg-theme-sub/30 w-[90%]"
+			className="m-auto my-20 p-5 rounded-xl bg-theme-sub/30 w-[90%]"
 		>
 			<h1>Project</h1>
 			<Carousel className="w-[70%] md:w-[90%] m-auto my-10">
