@@ -6,7 +6,7 @@ export default function Skills({ skills }: SkillsProps) {
 	return (
 		<section
 			id="skills"
-			className="w-[90%] mx-auto mt-10 rounded-xl box-border flex flex-col gap-5 p-5 bg-theme-sub/50"
+			className="w-[90%] mx-auto mt-10 rounded-xl box-border flex flex-col gap-5 p-5 bg-theme-sub/30"
 		>
 			<h1>SKILLS</h1>
 			<div className="flex flex-col gap-5 box-border md:gap-12">

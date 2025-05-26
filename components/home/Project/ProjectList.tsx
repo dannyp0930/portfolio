@@ -64,13 +64,16 @@ export default function ProjectList({ projects }: ProjectListPros) {
 	return (
 		<section
 			id="project"
-			className="flex flex-col justify-center items-center py-12 md:py-16 lg:py-28 gap-5"
+			className="m-auto my-10 p-5 rounded-xl bg-theme-sub/30 w-[90%]"
 		>
 			<h1>Project</h1>
-			<Carousel className="w-2/3 md:w-4/5 lg:w-[1280px] lg:max-w-[90%] m-auto">
+			<Carousel className="w-4/5 md:w-[90%] m-auto my-10">
 				<CarouselContent>
 					{projects.map((project) => (
-						<CarouselItem key={project.id} className="md:basis-1/2">
+						<CarouselItem
+							key={project.id}
+							className="md:basis-1/2 lg:basis-1/3"
+						>
 							<ProjectCard
 								project={project}
 								setModalId={setModalId}

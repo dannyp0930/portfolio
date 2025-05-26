@@ -73,7 +73,7 @@ export default function Nesletter() {
 	return (
 		<section
 			id="newsletter"
-			className="flex flex-col items-center justify-center gap-5 py-12 md:py-16 lg:py-28"
+			className="m-auto my-10 bg-theme-sub/30 w-[90%] p-5 rounded-xl"
 		>
 			<h1>Newsletter</h1>
 			<Form {...form}>

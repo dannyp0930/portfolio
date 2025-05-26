@@ -17,7 +17,7 @@ export default function Header() {
 
 	return (
 		<header className="fixed top-0 left-0 z-50 font-bold text-white w-dvw h-header underline-offset-4 flex flex-col">
-			<nav className="flex items-center justify-between w-[90%] h-3/4 m-auto px-5 md:px-12 bg-theme-sub/50 rounded-full">
+			<nav className="flex items-center justify-between w-[90%] h-3/4 m-auto px-5 md:px-12 bg-theme-sub/30 rounded-full">
 				<Link
 					className="text-3xl font-parisienne md:text-4xl lg:text-5xl"
 					href="/#banner"
