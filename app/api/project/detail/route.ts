@@ -60,6 +60,9 @@ export async function GET(req: NextRequest) {
 		if (projectDetail) {
 			projectImages = await prisma.projectImage.findMany({
 				where: { projectDetailId: projectDetail?.id },
+				orderBy: {
+					createdAt: 'asc',
+				},
 			});
 		}
 		return NextResponse.json(
