@@ -9,16 +9,16 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(cuid())
-  name      String   @default("")
-  phone     String?   @unique
-  email     String   @unique
-  password  String
-  subscribed Boolean @default(false)
-  refreshToken String @default("")
-  isAdmin   Boolean  @default(false)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id           String   @id @default(cuid())
+  name         String   @default("")
+  phone        String?  @unique
+  email        String   @unique
+  password     String
+  subscribed   Boolean  @default(false)
+  refreshToken String   @default("")
+  isAdmin      Boolean  @default(false)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 }
 
 model Subscription {
@@ -31,144 +31,145 @@ model Subscription {
 }
 
 model Intro {
-  id                Int   @id @default(autoincrement())
-  title             String
-  description  String @db.Text
-  resumeFileUrl String?
-  bannerImageUrl String
+  id                   Int       @id @default(autoincrement())
+  title                String
+  description          String    @db.Text
+  resumeFileUrl        String?
+  bannerImageUrl       String
   bannerImageUrlTablet String?
   bannerImageUrlMobile String?
-  mailSubject String?
-  mailText String? @db.Text
-  mailHtml String? @db.Text
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime? @updatedAt
+  mailSubject          String?
+  mailText             String?   @db.Text
+  mailHtml             String?   @db.Text
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime? @updatedAt
 }
 
 model Contact {
-  id     Int    @id @default(autoincrement())
-  type   String
-  value  String
-  label  String
-  createdAt DateTime @default(now())
+  id        Int       @id @default(autoincrement())
+  type      String
+  value     String
+  label     String
+  createdAt DateTime  @default(now())
   updatedAt DateTime? @updatedAt
 }
 
 model Education {
-  id               Int      @id @default(autoincrement())
+  id               Int       @id @default(autoincrement())
   institutionName  String
   degreeStatus     String
   startDate        DateTime
   endDate          DateTime
-  createdAt DateTime @default(now())
-  updatedAt DateTime? @updatedAt
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime? @updatedAt
 }
 
 model Experience {
-  id            Int      @id @default(autoincrement())
+  id            Int       @id @default(autoincrement())
   organization  String
   startDate     DateTime
   endDate       DateTime
   description   String
-  createdAt DateTime @default(now())
-  updatedAt DateTime? @updatedAt
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime? @updatedAt
 }
 
 model CareerOverview {
-  id            Int      @id @default(autoincrement())
+  id            Int       @id @default(autoincrement())
   organization  String
   position      String
   startDate     DateTime
   endDate       DateTime?
   description   String
-  createdAt DateTime @default(now())
-  updatedAt DateTime? @updatedAt
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime? @updatedAt
 }
 
 model Language {
-  id            Int      @id @default(autoincrement())
+  id            Int       @id @default(autoincrement())
   languageName  String
   proficiency   String
   examDate      DateTime
   institution   String
-  createdAt DateTime @default(now())
-  updatedAt DateTime? @updatedAt
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime? @updatedAt
 }
 
 model Certificate {
-  id                  Int      @id @default(autoincrement())
+  id                  Int       @id @default(autoincrement())
   certificateName     String
   issueDate           DateTime
   issuingOrganization String
-  createdAt DateTime @default(now())
-  updatedAt DateTime? @updatedAt
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime? @updatedAt
 }
 
 model Project {
-  id          Int   @id @default(autoincrement())
-  title       String
-  intro       String
-  organization String?
-  startDate   DateTime
-  endDate     DateTime?
-  github      String?
-  homepage    String?
-  notion      String?
+  id            Int            @id @default(autoincrement())
+  title         String
+  intro         String
+  organization  String?
+  startDate     DateTime
+  endDate       DateTime?
+  github        String?
+  homepage      String?
+  notion        String?
   projectDetail ProjectDetail?
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime? @updatedAt
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime?      @updatedAt
 }
 
 model ProjectDetail {
-  id          Int           @id @default(autoincrement())
-  projectId   Int           @unique
-  description String        @db.Text
+  id          Int            @id @default(autoincrement())
+  projectId   Int            @unique
+  description String         @db.Text
   images      ProjectImage[]
-  project     Project       @relation(fields: [projectId], references: [id])
-  createdAt DateTime @default(now())
-  updatedAt DateTime? @updatedAt
+  project     Project        @relation(fields: [projectId], references: [id])
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime?      @updatedAt
 }
 
 model ProjectImage {
-  id          Int           @id @default(autoincrement())
-  url         String
+  id              Int           @id @default(autoincrement())
+  url             String
   projectDetailId Int
-  projectDetail ProjectDetail @relation(fields: [projectDetailId], references: [id])
-  createdAt DateTime @default(now())
-  updatedAt DateTime? @updatedAt
+  projectDetail   ProjectDetail @relation(fields: [projectDetailId], references: [id])
+  order           Int?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime?     @updatedAt
 }
 
 model Career {
-  id          Int   @id @default(autoincrement())
-  companyName String
+  id            Int            @id @default(autoincrement())
+  companyName   String
   startDate     DateTime
   endDate       DateTime?
-  description String @db.Text
-  position    String
-  duty        String
+  description   String         @db.Text
+  position      String
+  duty          String
   careerDetails CareerDetail[]
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime? @updatedAt
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime?      @updatedAt
 }
 
 model CareerDetail {
-  id        Int     @id @default(autoincrement())
+  id        Int       @id @default(autoincrement())
   careerId  Int
   title     String
-  content   String  @db.Text
-  career    Career  @relation(fields: [careerId], references: [id])
-  createdAt DateTime @default(now())
+  content   String    @db.Text
+  career    Career    @relation(fields: [careerId], references: [id])
+  createdAt DateTime  @default(now())
   updatedAt DateTime? @updatedAt
 }
 
 model Skill {
-  id            Int   @id @default(autoincrement())
+  id            Int       @id @default(autoincrement())
   title         String
-  description   String @db.Text
+  description   String    @db.Text
   level         Int
   imageUrl      String
   category      String?
-  createdAt     DateTime @default(now())
+  createdAt     DateTime  @default(now())
   updatedAt     DateTime? @updatedAt
 }
 

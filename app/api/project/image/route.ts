@@ -11,6 +11,7 @@ export async function POST(req: NextRequest) {
 	const formData = await req.formData();
 	const image = formData.get('image') as File;
 	const id = formData.get('id') as string;
+	const order = formData.get('order') as string;
 	let imageUrl: string | null = null;
 	try {
 		const imageBuffer = Buffer.from(await image.arrayBuffer());
@@ -24,6 +25,7 @@ export async function POST(req: NextRequest) {
 				data: {
 					projectDetailId: Number(id),
 					url: imageUrl as string,
+					order: Number(order),
 				},
 			});
 		});

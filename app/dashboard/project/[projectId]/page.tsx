@@ -178,8 +178,10 @@ export default function ProjectUpdate({ params }: ProjectUpdateParams) {
 		if (image) {
 			try {
 				const formData = new FormData();
+				const newOrder = projectImages ? projectImages.length + 1 : 1;
 				formData.append('image', image);
 				formData.append('id', String(projectDetailId));
+				formData.append('order', String(newOrder));
 				const {
 					data: { message },
 					status,
