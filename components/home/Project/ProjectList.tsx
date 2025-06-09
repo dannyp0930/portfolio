@@ -14,14 +14,17 @@ import {
 	CarouselNext,
 	CarouselPrevious,
 } from '@/components/ui/carousel';
+import { Skeleton } from '@/components/ui/skeleton';
 
 export default function ProjectList({ projects }: ProjectListPros) {
 	const [modalId, setModalId] = useState<number>(0);
 	const [projectDetail, setProjectDetail] = useState<ProjectDetail | null>();
 	const [projectImages, setProjectImages] = useState<ProjectImage[]>();
 	const [selectProjectTitle, setSelectProjectTitle] = useState<string>();
+	const [modalLoad, setModalLoad] = useState<boolean>(false);
 
 	const getProjectDetail = useCallback(async () => {
+		setModalLoad(true);
 		try {
 			const params = {
 				id: modalId,
@@ -45,6 +48,10 @@ export default function ProjectList({ projects }: ProjectListPros) {
 				setProjectImages([]);
 				setSelectProjectTitle('');
 			}
+		} finally {
+			setTimeout(() => {
+				setModalLoad(false);
+			}, 1000);
 		}
 	}, [modalId, projects]);
 
@@ -87,36 +94,65 @@ export default function ProjectList({ projects }: ProjectListPros) {
 			{modalId !== 0 && (
 				<ModalContainer className="w-[90%]" closeModal={closeModal}>
 					<div className="p-2">
-						<h4>{selectProjectTitle}</h4>
-						<div className="w-full flex flex-col gap-10 mt-4 lg:flex-row">
-							<p className="text-xs break-all whitespace-pre-line w-full sm:text-sm md:text-base lg:w-[45%]">
-								{projectDetail?.description}
-							</p>
-							{projectImages?.length !== 0 && (
-								<Carousel className="w-2/3 lg:w-[40%] m-auto">
-									<CarouselContent>
-										{projectImages?.map((projectImage) => (
-											<CarouselItem
-												key={projectImage.id}
-												className="relative w-full aspect-[4/3]"
-											>
-												<Image
-													className="object-cover"
-													fill
-													sizes="100%"
-													src={projectImage.url}
-													alt={String(
-														projectImage.id
-													)}
-												/>
-											</CarouselItem>
-										))}
-									</CarouselContent>
-									<CarouselPrevious />
-									<CarouselNext />
-								</Carousel>
-							)}
-						</div>
+						{modalLoad ? (
+							<>
+								<Skeleton className="h-7 w-full" />
+								<div className="w-full flex flex-col gap-10 mt-4 lg:flex-row">
+									<div className="w-full lg:w-[45%] flex flex-col gap-1 sm:gap-1.5 md:gap-2">
+										<Skeleton className="h-4 sm:h-5 md:h-6" />
+										<Skeleton className="h-4 sm:h-5 md:h-6" />
+										<Skeleton className="h-4 sm:h-5 md:h-6" />
+										<Skeleton className="h-4 sm:h-5 md:h-6" />
+										<Skeleton className="h-4 sm:h-5 md:h-6" />
+										<Skeleton className="h-4 sm:h-5 md:h-6" />
+									</div>
+									<Skeleton className="w-2/3 lg:w-[41.5%] m-auto aspect-[4/3]" />
+								</div>
+							</>
+						) : (
+							<>
+								<h4>{selectProjectTitle}</h4>
+								<div className="w-full flex flex-col gap-10 mt-4 lg:flex-row">
+									<p className="text-xs break-all whitespace-pre-line w-full sm:text-sm md:text-base lg:w-[45%]">
+										{projectDetail?.description}
+									</p>
+									{projectImages?.length !== 0 ? (
+										<Carousel className="w-2/3 lg:w-[40%] m-auto">
+											<CarouselContent>
+												{projectImages?.map(
+													(projectImage) => (
+														<CarouselItem
+															key={
+																projectImage.id
+															}
+															className="relative w-full aspect-[4/3]"
+														>
+															<Image
+																className="object-cover"
+																fill
+																sizes="100%"
+																src={
+																	projectImage.url
+																}
+																alt={String(
+																	projectImage.id
+																)}
+															/>
+														</CarouselItem>
+													)
+												)}
+											</CarouselContent>
+											<CarouselPrevious />
+											<CarouselNext />
+										</Carousel>
+									) : (
+										<div className="w-2/3 lg:w-[41.5%] m-auto aspect-[4/3] flex justify-center items-center border rounded-md">
+											No Image
+										</div>
+									)}
+								</div>
+							</>
+						)}
 					</div>
 				</ModalContainer>
 			)}
