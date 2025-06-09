@@ -45,7 +45,7 @@ export default function ContactRow({
 			}
 		>
 			{changeOrder ? (
-				<td {...listeners} {...attributes} style={{ cursor: 'grab' }}>
+				<td {...listeners} {...attributes} className="cursor-grab">
 					⠿
 				</td>
 			) : (

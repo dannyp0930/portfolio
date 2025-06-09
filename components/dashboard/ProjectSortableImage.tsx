@@ -28,10 +28,17 @@ export default function ProjectSortableImage({
 		<div
 			ref={setNodeRef}
 			style={style}
-			{...listeners}
-			{...attributes}
-			className="flex gap-4 items-center"
+			className="flex gap-4 items-center border p-4 w-fit rounded-lg"
 		>
+			<Button
+				variant="outline"
+				size="sm"
+				{...listeners}
+				{...attributes}
+				className="cursor-grab"
+			>
+				⠿
+			</Button>
 			<ImageInput
 				id={`image-${image.id}`}
 				className="items-center"
