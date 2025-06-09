@@ -96,7 +96,6 @@ export async function PATCH(req: NextRequest) {
 	try {
 		await prisma.$transaction(async (prisma) => {
 			for (const image of data) {
-				console.log(image.id, image.order);
 				await prisma.projectImage.update({
 					where: { id: Number(image.id) },
 					data: { order: Number(image.order) },

@@ -8,7 +8,6 @@ import { isAxiosError } from 'axios';
 import { useSearchParams } from 'next/navigation';
 import {
 	ChangeEvent,
-	Fragment,
 	MouseEvent,
 	Suspense,
 	useCallback,
@@ -17,6 +16,14 @@ import {
 } from 'react';
 import { toast } from 'sonner';
 import { validateAndShowRequiredFields } from '@/lib/utils/validation';
+import {
+	SortableContext,
+	arrayMove,
+	verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
+import { closestCenter, DndContext, DragEndEvent } from '@dnd-kit/core';
+import { cn } from '@/lib/utils';
+import ContactRow from '@/components/dashboard/info/ContactRow';
 
 export default function Contact() {
 	return (
@@ -38,8 +45,9 @@ function ContactContent() {
 	const [updateContactId, setUpdateContactId] = useState<number | null>();
 	const [updateContact, setUpdateContact] = useState<Contact | null>();
 	const take = 20;
-	const [orderBy, setOrderBy] = useState<string>('id');
-	const [order, setOrder] = useState<Order>('desc');
+	const [orderBy, setOrderBy] = useState<string>('order');
+	const [order, setOrder] = useState<Order>('asc');
+	const [changeOrder, setChangeOrder] = useState<boolean>(false);
 
 	async function handleCreateContact(e: MouseEvent<HTMLButtonElement>) {
 		e.preventDefault();
@@ -142,6 +150,7 @@ function ContactContent() {
 	}
 
 	const handleSort = (column: string) => {
+		if (changeOrder) return;
 		if (orderBy === column) {
 			setOrder(order === 'asc' ? 'desc' : 'asc');
 		} else {
@@ -172,6 +181,43 @@ function ContactContent() {
 		}
 	}, [selectPage, take, orderBy, order]);
 
+	async function handleDragEnd(event: DragEndEvent) {
+		const { active, over } = event;
+		const originalContacts = [...contacts];
+		if (active.id !== over?.id && contacts) {
+			try {
+				const oldIndex = contacts.findIndex(
+					(contact) => contact.id === active.id
+				);
+				const newIndex = contacts.findIndex(
+					(contact) => contact.id === over?.id
+				);
+				const newOrder = arrayMove(contacts, oldIndex, newIndex);
+				setContacts(newOrder);
+				const body = newOrder.map((item, index) => ({
+					id: item.id,
+					order: index + 1,
+				}));
+				const {
+					data: { message },
+					status,
+				} = await instance.patch('/info/contact', { data: body });
+				if (status === 200) {
+					toast.success(message);
+				}
+			} catch (err) {
+				if (isAxiosError(err)) {
+					toast.error(
+						err.response?.data.error || '오류가 발생했습니다'
+					);
+				}
+				setContacts(originalContacts);
+			} finally {
+				setChangeOrder(false);
+			}
+		}
+	}
+
 	useEffect(() => {
 		if (load) {
 			getContact();
@@ -191,195 +237,147 @@ function ContactContent() {
 
 	return (
 		<div className="py-10 rounded-lg bg-white">
-			<table className="w-full border-collapse table-fixed [&_th]:border [&_th]:px-2 [&_th]:py-1 [&_th:first-of-type]:border-l-0 [&_th:last-of-type]:border-r-0 [&_td]:border [&_td]:px-2 [&_td]:py-1 [&_td]:overflow-auto [&_td:first-of-type]:border-l-0 [&_td:last-of-type]:border-r-0">
-				<thead>
-					<tr>
-						<th
-							className="cursor-pointer relative"
-							onClick={() => handleSort('id')}
-						>
-							ID
-							<span className="absolute right-2 bottom-1/2 translate-y-1/2">
-								<SortIcon
-									orderBy={orderBy}
-									currentColumn="id"
-									order={order}
-								/>
-							</span>
-						</th>
-						<th
-							className="cursor-pointer relative"
-							onClick={() => handleSort('type')}
-						>
-							타입
-							<span className="absolute right-2 bottom-1/2 translate-y-1/2">
-								<SortIcon
-									orderBy={orderBy}
-									currentColumn="type"
-									order={order}
-								/>
-							</span>
-						</th>
-						<th
-							className="cursor-pointer relative"
-							onClick={() => handleSort('value')}
-						>
-							값
-							<span className="absolute right-2 bottom-1/2 translate-y-1/2">
-								<SortIcon
-									orderBy={orderBy}
-									currentColumn="value"
-									order={order}
-								/>
-							</span>
-						</th>
-						<th
-							className="cursor-pointer relative"
-							onClick={() => handleSort('label')}
-						>
-							라벨
-							<span className="absolute right-2 bottom-1/2 translate-y-1/2">
-								<SortIcon
-									orderBy={orderBy}
-									currentColumn="label"
-									order={order}
-								/>
-							</span>
-						</th>
-						<th></th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr>
-						<td></td>
-						<td>
-							<input
-								className="w-full focus:outline-none"
-								type="text"
-								value={type}
-								required
-								onChange={(e) => setType(e.target.value)}
-							/>
-						</td>
-						<td>
-							<input
-								className="w-full focus:outline-none"
-								type="text"
-								value={value}
-								required
-								onChange={(e) => setValue(e.target.value)}
-							/>
-						</td>
-						<td>
-							<input
-								className="w-full focus:outline-none"
-								type="text"
-								value={label}
-								required
-								onChange={(e) => setLabel(e.target.value)}
-							/>
-						</td>
-						<td>
-							<div className="flex justify-center">
-								<Button size="sm" onClick={handleCreateContact}>
-									추가
+			<DndContext
+				collisionDetection={closestCenter}
+				onDragEnd={handleDragEnd}
+			>
+				<table className="w-full border-collapse table-fixed [&_th]:border [&_th]:px-2 [&_th]:py-1 [&_th:first-of-type]:border-l-0 [&_th:last-of-type]:border-r-0 [&_td]:border [&_td]:px-2 [&_td]:py-1 [&_td]:overflow-auto [&_td:first-of-type]:border-l-0 [&_td:last-of-type]:border-r-0">
+					<thead>
+						<tr>
+							<th>
+								정렬
+								<Button
+									className="ml-4"
+									size="sm"
+									onClick={() => {
+										setChangeOrder(!changeOrder);
+										setOrderBy('order');
+										setOrder('asc');
+										setLoad(true);
+									}}
+								>
+									{changeOrder ? '취소' : '변경'}
 								</Button>
-							</div>
-						</td>
-					</tr>
-					{contacts.map((contact) => (
-						<tr
-							key={contact.id}
-							className={
-								contact.id === updateContactId
-									? 'ring-inset ring-2 ring-theme-sub'
-									: ''
-							}
-						>
-							{contact.id === updateContactId ? (
-								<Fragment>
-									<td>{contact.id}</td>
-									<td>
-										<input
-											className="w-full focus:outline-none"
-											onChange={changeSelectUpdateContact(
-												'type'
-											)}
-											type="text"
-											value={updateContact?.type}
+							</th>
+							<th
+								className={cn(
+									!changeOrder && 'cursor-pointer',
+									'relative'
+								)}
+								onClick={() => handleSort('type')}
+							>
+								타입
+								{!changeOrder && (
+									<span className="absolute right-2 bottom-1/2 translate-y-1/2">
+										<SortIcon
+											orderBy={orderBy}
+											currentColumn="type"
+											order={order}
 										/>
-									</td>
-									<td>
-										<input
-											className="w-full focus:outline-none"
-											onChange={changeSelectUpdateContact(
-												'value'
-											)}
-											type="text"
-											value={updateContact?.value}
+									</span>
+								)}
+							</th>
+							<th
+								className={cn(
+									!changeOrder && 'cursor-pointer',
+									'relative'
+								)}
+								onClick={() => handleSort('value')}
+							>
+								값
+								{!changeOrder && (
+									<span className="absolute right-2 bottom-1/2 translate-y-1/2">
+										<SortIcon
+											orderBy={orderBy}
+											currentColumn="value"
+											order={order}
 										/>
-									</td>
-									<td>
-										<input
-											className="w-full focus:outline-none"
-											onChange={changeSelectUpdateContact(
-												'label'
-											)}
-											type="text"
-											value={updateContact?.label}
+									</span>
+								)}
+							</th>
+							<th
+								className={cn(
+									!changeOrder && 'cursor-pointer',
+									'relative'
+								)}
+								onClick={() => handleSort('label')}
+							>
+								라벨
+								{!changeOrder && (
+									<span className="absolute right-2 bottom-1/2 translate-y-1/2">
+										<SortIcon
+											orderBy={orderBy}
+											currentColumn="label"
+											order={order}
 										/>
-									</td>
-									<td>
-										<div className="flex gap-2 justify-center">
-											<Button
-												size="sm"
-												onClick={handleUpdateContact}
-											>
-												저장
-											</Button>
-											<Button
-												variant="secondary"
-												size="sm"
-												onClick={selectUpdateContact()}
-											>
-												취소
-											</Button>
-										</div>
-									</td>
-								</Fragment>
-							) : (
-								<Fragment>
-									<td>{contact.id}</td>
-									<td>{contact.type}</td>
-									<td>{contact.value}</td>
-									<td>{contact.label}</td>
-									<td>
-										<div className="flex gap-2 justify-center">
-											<Button
-												size="sm"
-												onClick={selectUpdateContact(
-													contact
-												)}
-											>
-												수정
-											</Button>
-											<Button
-												variant="destructive"
-												size="sm"
-												onClick={handleDeleteContact(
-													contact.id
-												)}
-											>
-												삭제
-											</Button>
-										</div>
-									</td>
-								</Fragment>
-							)}
+									</span>
+								)}
+							</th>
+							<th></th>
 						</tr>
-					))}
-				</tbody>
-			</table>
+					</thead>
+					<tbody>
+						<tr>
+							<td></td>
+							<td>
+								<input
+									className="w-full focus:outline-none"
+									type="text"
+									value={type}
+									required
+									onChange={(e) => setType(e.target.value)}
+								/>
+							</td>
+							<td>
+								<input
+									className="w-full focus:outline-none"
+									type="text"
+									value={value}
+									required
+									onChange={(e) => setValue(e.target.value)}
+								/>
+							</td>
+							<td>
+								<input
+									className="w-full focus:outline-none"
+									type="text"
+									value={label}
+									required
+									onChange={(e) => setLabel(e.target.value)}
+								/>
+							</td>
+							<td>
+								<div className="flex justify-center">
+									<Button
+										size="sm"
+										onClick={handleCreateContact}
+									>
+										추가
+									</Button>
+								</div>
+							</td>
+						</tr>
+						<SortableContext
+							items={contacts}
+							strategy={verticalListSortingStrategy}
+						>
+							{contacts.map((contact) => (
+								<ContactRow
+									key={contact.id}
+									contact={contact}
+									changeOrder={changeOrder}
+									updateContactId={updateContactId}
+									updateContact={updateContact}
+									onChange={changeSelectUpdateContact}
+									onUpdate={handleUpdateContact}
+									onSelect={selectUpdateContact}
+									onDelete={handleDeleteContact}
+								/>
+							))}
+						</SortableContext>
+					</tbody>
+				</table>
+			</DndContext>
 			<AdminPagination
 				className="mt-10"
 				page={selectPage}

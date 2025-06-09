@@ -38,6 +38,29 @@ export async function PUT(req: NextRequest) {
 	}
 }
 
+export async function PATCH(req: NextRequest) {
+	if (!isAdmin(req)) {
+		return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+	}
+	const { data } = await req.json();
+	try {
+		await prisma.$transaction(async (prisma) => {
+			for (const contact of data) {
+				await prisma.contact.update({
+					where: { id: Number(contact.id) },
+					data: { order: Number(contact.order) },
+				});
+			}
+		});
+		return NextResponse.json({ message: 'OK' }, { status: 200 });
+	} catch (err) {
+		return NextResponse.json(
+			{ error: 'Something went wrong', details: err },
+			{ status: 500 }
+		);
+	}
+}
+
 export async function GET(req: NextRequest) {
 	const { searchParams } = new URL(req.url);
 	const id = searchParams.get('id');
@@ -53,7 +76,9 @@ export async function GET(req: NextRequest) {
 			return NextResponse.json({ data: contact }, { status: 200 });
 		}
 		if (take === -1) {
-			const contacts = await prisma.contact.findMany();
+			const contacts = await prisma.contact.findMany({
+				orderBy: { order: 'asc' },
+			});
 			return NextResponse.json({ data: contacts }, { status: 200 });
 		}
 		const contacts = await prisma.contact.findMany({

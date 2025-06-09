@@ -47,6 +47,7 @@ model Intro {
 
 model Contact {
   id        Int       @id @default(autoincrement())
+  order     Int?
   type      String
   value     String
   label     String
