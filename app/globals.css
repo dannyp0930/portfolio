@@ -94,6 +94,9 @@
   * {
     @apply border-border outline-ring/50;
 	}
+	html {
+		@apply scroll-smooth;
+	}
 	body {
 		@apply bg-background text-theme-sub scroll-smooth font-kbo min-w-[360px];
 	}
