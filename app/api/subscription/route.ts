@@ -34,8 +34,8 @@ export async function POST(req: NextRequest) {
 		if (existingSubscription) {
 			if (!existingSubscription.isActive) {
 				const token = uuidv4();
-				await prisma.$transaction(async (prisma) => {
-					await prisma.subscription.update({
+				await prisma.$transaction(async (tx) => {
+					await tx.subscription.update({
 						where: { email },
 						data: {
 							isActive: true,
@@ -55,8 +55,8 @@ export async function POST(req: NextRequest) {
 			);
 		}
 		const token = uuidv4();
-		await prisma.$transaction(async (prisma) => {
-			await prisma.subscription.create({
+		await prisma.$transaction(async (tx) => {
+			await tx.subscription.create({
 				data: {
 					email,
 					token,

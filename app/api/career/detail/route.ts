@@ -8,8 +8,8 @@ export async function POST(req: NextRequest) {
 	}
 	try {
 		const { careerId, title, content } = await req.json();
-		await prisma.$transaction(async (prisma) => {
-			await prisma.careerDetail.create({
+		await prisma.$transaction(async (tx) => {
+			await tx.careerDetail.create({
 				data: {
 					careerId: Number(careerId),
 					title: String(title),
@@ -32,8 +32,8 @@ export async function PUT(req: NextRequest) {
 	}
 	try {
 		const { id, title, content } = await req.json();
-		await prisma.$transaction(async (prisma) => {
-			await prisma.careerDetail.update({
+		await prisma.$transaction(async (tx) => {
+			await tx.careerDetail.update({
 				where: { id: Number(id) },
 				data: {
 					title: String(title),
@@ -56,8 +56,8 @@ export async function DELETE(req: NextRequest) {
 	}
 	const { id } = await req.json();
 	try {
-		await prisma.$transaction(async (prisma) => {
-			await prisma.careerDetail.delete({
+		await prisma.$transaction(async (tx) => {
+			await tx.careerDetail.delete({
 				where: { id: Number(id) },
 			});
 		});

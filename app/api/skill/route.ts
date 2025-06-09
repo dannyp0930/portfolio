@@ -20,8 +20,8 @@ export async function POST(req: NextRequest) {
 			'skill',
 			`${Date.now()}-${image.name}`
 		);
-		await prisma.$transaction(async (prisma) => {
-			await prisma.skill.create({
+		await prisma.$transaction(async (tx) => {
+			await tx.skill.create({
 				data: {
 					title: data.title as string,
 					description: data.description as string,
@@ -71,8 +71,8 @@ export async function PUT(req: NextRequest) {
 				`${Date.now()}-${image.name}`
 			);
 		}
-		await prisma.$transaction(async (prisma) => {
-			await prisma.skill.update({
+		await prisma.$transaction(async (tx) => {
+			await tx.skill.update({
 				where: { id: Number(data.id) },
 				data: {
 					title: data.title as string,
@@ -98,14 +98,40 @@ export async function PUT(req: NextRequest) {
 	}
 }
 
+export async function PATCH(req: NextRequest) {
+	if (!isAdmin(req)) {
+		return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+	}
+	const { data } = await req.json();
+	try {
+		await prisma.$transaction(async (tx) => {
+			const updates = data.filter(
+				(item: PatchOrderRequset) => item.order !== item.prevOrder
+			);
+			for (const skill of updates) {
+				await tx.skill.update({
+					where: { id: Number(skill.id) },
+					data: { order: Number(skill.order) },
+				});
+			}
+		});
+		return NextResponse.json({ message: 'OK' }, { status: 200 });
+	} catch (err) {
+		return NextResponse.json(
+			{ error: 'Something went wrong', details: err },
+			{ status: 500 }
+		);
+	}
+}
+
 export async function GET(req: NextRequest) {
 	const { searchParams } = new URL(req.url);
 	const id = searchParams.get('id');
 	const page = parseInt(searchParams.get('page') as string);
 	const category = searchParams.get('category');
 	const take = parseInt(searchParams.get('take') as string);
-	const orderBy = searchParams.get('orderBy') || 'id';
-	const order = searchParams.get('order') || 'desc';
+	const orderBy = searchParams.get('orderBy') || 'order';
+	const order = searchParams.get('order') || 'asc';
 	try {
 		if (id) {
 			const skill = await prisma.skill.findUnique({
@@ -197,8 +223,8 @@ export async function DELETE(req: NextRequest) {
 		if (imageUrl) {
 			await deleteFromS3(imageUrl);
 		}
-		await prisma.$transaction(async (prisma) => {
-			await prisma.skill.delete({
+		await prisma.$transaction(async (tx) => {
+			await tx.skill.delete({
 				where: { id: Number(id) },
 			});
 		});

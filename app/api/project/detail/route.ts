@@ -8,8 +8,8 @@ export async function POST(req: NextRequest) {
 	}
 	try {
 		const { projectId, description } = await req.json();
-		const { id } = await prisma.$transaction(async (prisma) => {
-			const { id } = await prisma.projectDetail.create({
+		const { id } = await prisma.$transaction(async (tx) => {
+			const { id } = await tx.projectDetail.create({
 				data: {
 					projectId: Number(projectId),
 					description: String(description),
@@ -32,8 +32,8 @@ export async function PUT(req: NextRequest) {
 	}
 	try {
 		const { projectId, description } = await req.json();
-		await prisma.$transaction(async (prisma) => {
-			await prisma.projectDetail.update({
+		await prisma.$transaction(async (tx) => {
+			await tx.projectDetail.update({
 				where: { projectId: Number(projectId) },
 				data: {
 					description: String(description),

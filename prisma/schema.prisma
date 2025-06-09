@@ -163,6 +163,7 @@ model Career {
 model CareerDetail {
   id        Int       @id @default(autoincrement())
   careerId  Int
+  order     Int?
   title     String
   content   String    @db.Text
   career    Career    @relation(fields: [careerId], references: [id])

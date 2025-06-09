@@ -14,7 +14,7 @@ export async function PUT(req: NextRequest) {
 				{ status: 400 }
 			);
 		}
-		await prisma.$transaction(async (prisma) => {
+		await prisma.$transaction(async (tx) => {
 			const data: {
 				name: string;
 				phone: string;
@@ -28,7 +28,7 @@ export async function PUT(req: NextRequest) {
 			if (password) {
 				data.password = await bcrypt.hash(password, 10);
 			}
-			await prisma.user.update({ where: { id }, data });
+			await tx.user.update({ where: { id }, data });
 		});
 		return NextResponse.json({ message: 'OK' }, { status: 200 });
 	} catch (err) {

@@ -9,8 +9,8 @@ export async function POST(req: NextRequest) {
 	}
 	try {
 		const data = await req.json();
-		await prisma.$transaction(async (prisma) => {
-			await prisma.project.create({ data });
+		await prisma.$transaction(async (tx) => {
+			await tx.project.create({ data });
 		});
 		return NextResponse.json({ message: 'OK' }, { status: 200 });
 	} catch (err) {
@@ -27,8 +27,34 @@ export async function PUT(req: NextRequest) {
 	}
 	try {
 		const { id, ...data } = await req.json();
-		await prisma.$transaction(async (prisma) => {
-			await prisma.project.update({ where: { id: Number(id) }, data });
+		await prisma.$transaction(async (tx) => {
+			await tx.project.update({ where: { id: Number(id) }, data });
+		});
+		return NextResponse.json({ message: 'OK' }, { status: 200 });
+	} catch (err) {
+		return NextResponse.json(
+			{ error: 'Something went wrong', details: err },
+			{ status: 500 }
+		);
+	}
+}
+
+export async function PATCH(req: NextRequest) {
+	if (!isAdmin(req)) {
+		return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+	}
+	const { data } = await req.json();
+	try {
+		await prisma.$transaction(async (tx) => {
+			const updates = data.filter(
+				(item: PatchOrderRequset) => item.order !== item.prevOrder
+			);
+			for (const project of updates) {
+				await tx.project.update({
+					where: { id: Number(project.id) },
+					data: { order: Number(project.order) },
+				});
+			}
 		});
 		return NextResponse.json({ message: 'OK' }, { status: 200 });
 	} catch (err) {
@@ -44,8 +70,8 @@ export async function GET(req: NextRequest) {
 	const id = searchParams.get('id');
 	const page = parseInt(searchParams.get('page') as string);
 	const take = parseInt(searchParams.get('take') as string);
-	const orderBy = searchParams.get('orderBy') || 'id';
-	const order = searchParams.get('order') || 'desc';
+	const orderBy = searchParams.get('orderBy') || 'order';
+	const order = searchParams.get('order') || 'asc';
 	try {
 		if (id) {
 			const project = await prisma.project.findUnique({
@@ -145,20 +171,20 @@ export async function DELETE(req: NextRequest) {
 				if (s3DeleteFailed) {
 					throw new Error('Failed to delete some images from S3');
 				}
-				await prisma.$transaction(async (prisma) => {
-					await prisma.projectImage.deleteMany({
+				await prisma.$transaction(async (tx) => {
+					await tx.projectImage.deleteMany({
 						where: { projectDetailId: Number(projectDetail.id) },
 					});
 				});
 			}
-			await prisma.$transaction(async (prisma) => {
-				await prisma.projectDetail.delete({
+			await prisma.$transaction(async (tx) => {
+				await tx.projectDetail.delete({
 					where: { id: Number(projectDetail.id) },
 				});
 			});
 		}
-		await prisma.$transaction(async (prisma) => {
-			await prisma.project.delete({
+		await prisma.$transaction(async (tx) => {
+			await tx.project.delete({
 				where: { id: Number(id) },
 			});
 		});

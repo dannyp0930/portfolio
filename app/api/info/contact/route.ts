@@ -44,12 +44,12 @@ export async function PATCH(req: NextRequest) {
 	}
 	const { data } = await req.json();
 	try {
-		await prisma.$transaction(async (prisma) => {
+		await prisma.$transaction(async (tx) => {
 			const updates = data.filter(
 				(item: PatchOrderRequset) => item.order !== item.prevOrder
 			);
 			for (const contact of updates) {
-				await prisma.contact.update({
+				await tx.contact.update({
 					where: { id: Number(contact.id) },
 					data: { order: Number(contact.order) },
 				});
@@ -69,8 +69,8 @@ export async function GET(req: NextRequest) {
 	const id = searchParams.get('id');
 	const page = parseInt(searchParams.get('page') as string);
 	const take = parseInt(searchParams.get('take') as string);
-	const orderBy = searchParams.get('orderBy') || 'id';
-	const order = searchParams.get('order') || 'desc';
+	const orderBy = searchParams.get('orderBy') || 'order';
+	const order = searchParams.get('order') || 'asc';
 	try {
 		if (id) {
 			const contact = await prisma.contact.findUnique({

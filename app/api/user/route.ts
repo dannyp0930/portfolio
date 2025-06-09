@@ -29,11 +29,11 @@ export async function POST(req: NextRequest) {
 			);
 		}
 		const hashedPassword = await bcrypt.hash(password, 10);
-		await prisma.$transaction(async (prisma) => {
-			await prisma.subscription.deleteMany({
+		await prisma.$transaction(async (tx) => {
+			await tx.subscription.deleteMany({
 				where: { email },
 			});
-			await prisma.user.create({
+			await tx.user.create({
 				data: {
 					email,
 					name,
@@ -69,8 +69,8 @@ export async function PUT(req: NextRequest) {
 				{ status: 400 }
 			);
 		}
-		await prisma.$transaction(async (prisma) => {
-			const user = await prisma.user.findUnique({ where: { id } });
+		await prisma.$transaction(async (tx) => {
+			const user = await tx.user.findUnique({ where: { id } });
 			if (user?.email !== email) {
 				await prisma.subscription.deleteMany({
 					where: { email },
@@ -93,7 +93,7 @@ export async function PUT(req: NextRequest) {
 			if (password) {
 				data.password = await bcrypt.hash(password, 10);
 			}
-			await prisma.user.update({ where: { id }, data });
+			await tx.user.update({ where: { id }, data });
 		});
 		return NextResponse.json({ message: 'OK' }, { status: 200 });
 	} catch (err) {
@@ -166,8 +166,8 @@ export async function DELETE(req: NextRequest) {
 	}
 	const { id } = await req.json();
 	try {
-		await prisma.$transaction(async (prisma) => {
-			await prisma.user.delete({
+		await prisma.$transaction(async (tx) => {
+			await tx.user.delete({
 				where: { id },
 			});
 		});

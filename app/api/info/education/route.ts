@@ -38,13 +38,39 @@ export async function PUT(req: NextRequest) {
 	}
 }
 
+export async function PATCH(req: NextRequest) {
+	if (!isAdmin(req)) {
+		return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+	}
+	const { data } = await req.json();
+	try {
+		await prisma.$transaction(async (tx) => {
+			const updates = data.filter(
+				(item: PatchOrderRequset) => item.order !== item.prevOrder
+			);
+			for (const education of updates) {
+				await tx.education.update({
+					where: { id: Number(education.id) },
+					data: { order: Number(education.order) },
+				});
+			}
+		});
+		return NextResponse.json({ message: 'OK' }, { status: 200 });
+	} catch (err) {
+		return NextResponse.json(
+			{ error: 'Something went wrong', details: err },
+			{ status: 500 }
+		);
+	}
+}
+
 export async function GET(req: NextRequest) {
 	const { searchParams } = new URL(req.url);
 	const id = searchParams.get('id');
 	const page = parseInt(searchParams.get('page') as string);
 	const take = parseInt(searchParams.get('take') as string);
-	const orderBy = searchParams.get('orderBy') || 'id';
-	const order = searchParams.get('order') || 'desc';
+	const orderBy = searchParams.get('orderBy') || 'order';
+	const order = searchParams.get('order') || 'asc';
 	try {
 		if (id) {
 			const education = await prisma.education.findUnique({

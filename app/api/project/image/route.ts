@@ -20,8 +20,8 @@ export async function POST(req: NextRequest) {
 			'project',
 			`${Date.now()}-${image.name}`
 		)) as string;
-		await prisma.$transaction(async (prisma) => {
-			await prisma.projectImage.create({
+		await prisma.$transaction(async (tx) => {
+			await tx.projectImage.create({
 				data: {
 					projectDetailId: Number(id),
 					url: imageUrl as string,
@@ -67,8 +67,8 @@ export async function PUT(req: NextRequest) {
 			'project',
 			`${Date.now()}-${image.name}`
 		)) as string;
-		await prisma.$transaction(async (prisma) => {
-			await prisma.projectImage.update({
+		await prisma.$transaction(async (tx) => {
+			await tx.projectImage.update({
 				where: { id },
 				data: { url: newImageUrl as string },
 			});
@@ -94,12 +94,12 @@ export async function PATCH(req: NextRequest) {
 	}
 	const { data } = await req.json();
 	try {
-		await prisma.$transaction(async (prisma) => {
+		await prisma.$transaction(async (tx) => {
 			const updates = data.filter(
 				(item: PatchOrderRequset) => item.order !== item.prevOrder
 			);
 			for (const image of updates) {
-				await prisma.projectImage.update({
+				await tx.projectImage.update({
 					where: { id: Number(image.id) },
 					data: { order: Number(image.order) },
 				});
@@ -134,8 +134,8 @@ export async function DELETE(req: NextRequest) {
 		if (imageUrl) {
 			await deleteFromS3(imageUrl);
 		}
-		await prisma.$transaction(async (prisma) => {
-			await prisma.projectImage.delete({ where: { id: Number(id) } });
+		await prisma.$transaction(async (tx) => {
+			await tx.projectImage.delete({ where: { id: Number(id) } });
 		});
 		return NextResponse.json({ message: 'OK' }, { status: 200 });
 	} catch (err) {

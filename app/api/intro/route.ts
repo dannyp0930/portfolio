@@ -70,8 +70,8 @@ export async function PUT(req: NextRequest) {
 				`${Date.now()}-${bannerMobile.name}`
 			)) as string;
 		}
-		await prisma.$transaction(async (prisma) => {
-			await prisma.intro.update({
+		await prisma.$transaction(async (tx) => {
+			await tx.intro.update({
 				where: { id: Number(existingIntro.id) },
 				data: {
 					title: data.title as string,
