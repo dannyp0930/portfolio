@@ -437,9 +437,9 @@ export default function ProjectUpdate({ params }: ProjectUpdateParams) {
 					</form>
 				</Form>
 				{projectDetailId && (
-					<div className="pt-5 flex flex-col gap-4">
-						<h5>이미지 추가</h5>
-						<div>
+					<div className="pt-5 flex flex-col gap-10">
+						<div className="flex items-center gap-4">
+							<h5>이미지 추가</h5>
 							<ImageInput
 								id="image-create"
 								ref={imageRef}
@@ -448,30 +448,32 @@ export default function ProjectUpdate({ params }: ProjectUpdateParams) {
 								onChange={handleCreateImage}
 							/>
 						</div>
-						{projectImages?.map((image) => (
-							<div
-								key={image.id}
-								className="flex gap-4 items-center"
-							>
-								<ImageInput
-									id={`image-${image.id}`}
-									className="items-center"
-									imageUrl={image.url}
-									width={160}
-									height={90}
-									onChange={(file: File) =>
-										handleUpdateImage(file, image.id)
-									}
-								/>
-								<Button
-									variant="destructive"
-									size="icon"
-									onClick={handleDeleteImage(image.id)}
+						<div className="flex flex-col gap-5">
+							{projectImages?.map((image) => (
+								<div
+									key={image.id}
+									className="flex gap-4 items-center"
 								>
-									<ImageMinus />
-								</Button>
-							</div>
-						))}
+									<ImageInput
+										id={`image-${image.id}`}
+										className="items-center"
+										imageUrl={image.url}
+										width={400}
+										height={225}
+										onChange={(file: File) =>
+											handleUpdateImage(file, image.id)
+										}
+									/>
+									<Button
+										variant="destructive"
+										size="icon"
+										onClick={handleDeleteImage(image.id)}
+									>
+										<ImageMinus />
+									</Button>
+								</div>
+							))}
+						</div>
 					</div>
 				)}
 			</div>

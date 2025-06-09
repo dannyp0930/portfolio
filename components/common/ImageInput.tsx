@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
-import { ImagePlus } from 'lucide-react';
+import { ImagePlus, RotateCw } from 'lucide-react';
 
 export default function ImageInput({
 	id,
@@ -45,7 +45,7 @@ export default function ImageInput({
 			/>
 			<Button asChild size="icon">
 				<label className="shrink-0" htmlFor={id}>
-					<ImagePlus />
+					{newImageUrl ? <RotateCw /> : <ImagePlus />}
 				</label>
 			</Button>
 			{newImageUrl && (
