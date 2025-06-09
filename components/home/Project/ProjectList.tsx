@@ -104,9 +104,8 @@ export default function ProjectList({ projects }: ProjectListPros) {
 										<Skeleton className="h-4 sm:h-5 md:h-6" />
 										<Skeleton className="h-4 sm:h-5 md:h-6" />
 										<Skeleton className="h-4 sm:h-5 md:h-6" />
-										<Skeleton className="h-4 sm:h-5 md:h-6" />
 									</div>
-									<Skeleton className="w-2/3 lg:w-[41.5%] m-auto aspect-[4/3]" />
+									<Skeleton className="w-2/3 lg:w-[40%] m-auto aspect-[4/3]" />
 								</div>
 							</>
 						) : (
@@ -125,19 +124,20 @@ export default function ProjectList({ projects }: ProjectListPros) {
 															key={
 																projectImage.id
 															}
-															className="relative w-full aspect-[4/3]"
 														>
-															<Image
-																className="object-cover"
-																fill
-																sizes="100%"
-																src={
-																	projectImage.url
-																}
-																alt={String(
-																	projectImage.id
-																)}
-															/>
+															<div className="relative w-full aspect-[4/3]">
+																<Image
+																	className="object-contain"
+																	fill
+																	sizes="100%"
+																	src={
+																		projectImage.url
+																	}
+																	alt={String(
+																		projectImage.id
+																	)}
+																/>
+															</div>
 														</CarouselItem>
 													)
 												)}
