@@ -16,7 +16,6 @@ import { Textarea } from '@/components/ui/textarea';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { isAxiosError } from 'axios';
 import dayjs from 'dayjs';
-import { ImageMinus } from 'lucide-react';
 import {
 	MouseEvent,
 	use,
@@ -32,10 +31,9 @@ import { DndContext, closestCenter, DragEndEvent } from '@dnd-kit/core';
 import {
 	arrayMove,
 	SortableContext,
-	useSortable,
 	verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
-import { CSS } from '@dnd-kit/utilities';
+import ProjectSortableImage from '@/components/dashboard/ProjectSortableImage';
 
 const formSchema = z.object({
 	title: z.string().min(1, { message: '프로젝트 제목을 입력하세요.' }),
@@ -502,7 +500,7 @@ export default function ProjectUpdate({ params }: ProjectUpdateParams) {
 								strategy={verticalListSortingStrategy}
 							>
 								{projectImages?.map((image) => (
-									<SortableImage
+									<ProjectSortableImage
 										key={image.id}
 										image={image}
 										onUpdate={handleUpdateImage}
@@ -514,52 +512,6 @@ export default function ProjectUpdate({ params }: ProjectUpdateParams) {
 					</div>
 				)}
 			</div>
-		</div>
-	);
-}
-
-function SortableImage({
-	image,
-	onUpdate,
-	onDelete,
-}: {
-	image: ProjectImage;
-	onUpdate: (image: File, imageId: number) => Promise<void>;
-	onDelete: (
-		imageId: number
-	) => (e: MouseEvent<HTMLButtonElement>) => Promise<void>;
-}) {
-	const { attributes, listeners, setNodeRef, transform, transition } =
-		useSortable({ id: image.id });
-
-	const style = {
-		transform: CSS.Transform.toString(transform),
-		transition,
-	};
-
-	return (
-		<div
-			ref={setNodeRef}
-			style={style}
-			{...listeners}
-			{...attributes}
-			className="flex gap-4 items-center"
-		>
-			<ImageInput
-				id={`image-${image.id}`}
-				className="items-center"
-				imageUrl={image.url}
-				width={400}
-				height={225}
-				onChange={(file: File) => onUpdate(file, image.id)}
-			/>
-			<Button
-				variant="destructive"
-				size="icon"
-				onClick={onDelete(image.id)}
-			>
-				<ImageMinus />
-			</Button>
 		</div>
 	);
 }
