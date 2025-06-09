@@ -57,6 +57,7 @@ model Contact {
 
 model Education {
   id               Int       @id @default(autoincrement())
+  order            Int?
   institutionName  String
   degreeStatus     String
   startDate        DateTime
@@ -67,6 +68,7 @@ model Education {
 
 model Experience {
   id            Int       @id @default(autoincrement())
+  order         Int?
   organization  String
   startDate     DateTime
   endDate       DateTime
@@ -77,6 +79,7 @@ model Experience {
 
 model CareerOverview {
   id            Int       @id @default(autoincrement())
+  order         Int?
   organization  String
   position      String
   startDate     DateTime
@@ -88,6 +91,7 @@ model CareerOverview {
 
 model Language {
   id            Int       @id @default(autoincrement())
+  order         Int?
   languageName  String
   proficiency   String
   examDate      DateTime
@@ -98,6 +102,7 @@ model Language {
 
 model Certificate {
   id                  Int       @id @default(autoincrement())
+  order               Int?
   certificateName     String
   issueDate           DateTime
   issuingOrganization String
@@ -107,6 +112,7 @@ model Certificate {
 
 model Project {
   id            Int            @id @default(autoincrement())
+  order         Int?
   title         String
   intro         String
   organization  String?
@@ -132,16 +138,17 @@ model ProjectDetail {
 
 model ProjectImage {
   id              Int           @id @default(autoincrement())
+  order           Int?
   url             String
   projectDetailId Int
   projectDetail   ProjectDetail @relation(fields: [projectDetailId], references: [id])
-  order           Int?
   createdAt       DateTime      @default(now())
   updatedAt       DateTime?     @updatedAt
 }
 
 model Career {
   id            Int            @id @default(autoincrement())
+  order         Int?
   companyName   String
   startDate     DateTime
   endDate       DateTime?
@@ -165,6 +172,7 @@ model CareerDetail {
 
 model Skill {
   id            Int       @id @default(autoincrement())
+  order         Int?
   title         String
   description   String    @db.Text
   level         Int

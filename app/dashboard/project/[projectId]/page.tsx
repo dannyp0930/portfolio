@@ -270,6 +270,7 @@ export default function ProjectUpdate({ params }: ProjectUpdateParams) {
 				setProjectImages(newOrder);
 				const body = newOrder.map((item, index) => ({
 					id: item.id,
+					prevOrder: item.order,
 					order: index + 1,
 				}));
 				const {

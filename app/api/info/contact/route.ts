@@ -45,7 +45,10 @@ export async function PATCH(req: NextRequest) {
 	const { data } = await req.json();
 	try {
 		await prisma.$transaction(async (prisma) => {
-			for (const contact of data) {
+			const updates = data.filter(
+				(item: PatchOrderRequset) => item.order !== item.prevOrder
+			);
+			for (const contact of updates) {
 				await prisma.contact.update({
 					where: { id: Number(contact.id) },
 					data: { order: Number(contact.order) },

@@ -41,6 +41,12 @@ declare global {
 		field: string;
 		message: string;
 	}
+
+	interface PatchOrderRequset {
+		id: number;
+		prevOrder: number;
+		order: number;
+	}
 }
 
 export {};

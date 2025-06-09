@@ -95,7 +95,10 @@ export async function PATCH(req: NextRequest) {
 	const { data } = await req.json();
 	try {
 		await prisma.$transaction(async (prisma) => {
-			for (const image of data) {
+			const updates = data.filter(
+				(item: PatchOrderRequset) => item.order !== item.prevOrder
+			);
+			for (const image of updates) {
 				await prisma.projectImage.update({
 					where: { id: Number(image.id) },
 					data: { order: Number(image.order) },

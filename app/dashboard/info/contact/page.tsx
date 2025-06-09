@@ -196,7 +196,8 @@ function ContactContent() {
 				setContacts(newOrder);
 				const body = newOrder.map((item, index) => ({
 					id: item.id,
-					order: index + 1,
+					prevOrder: item.order,
+					order: (selectPage - 1) * take + index + 1,
 				}));
 				const {
 					data: { message },
