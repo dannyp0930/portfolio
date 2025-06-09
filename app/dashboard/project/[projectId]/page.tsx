@@ -28,6 +28,14 @@ import {
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
+import { DndContext, closestCenter, DragEndEvent } from '@dnd-kit/core';
+import {
+	arrayMove,
+	SortableContext,
+	useSortable,
+	verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 
 const formSchema = z.object({
 	title: z.string().min(1, { message: '프로젝트 제목을 입력하세요.' }),
@@ -51,7 +59,7 @@ type formSchemaType = typeof formSchema.shape;
 export default function ProjectUpdate({ params }: ProjectUpdateParams) {
 	const { projectId } = use(params);
 	const [load, setLoad] = useState<boolean>(true);
-	const [projectImages, setProjectImages] = useState<ProjectImage[]>();
+	const [projectImages, setProjectImages] = useState<ProjectImage[]>([]);
 	const [projectDetailId, setProjectDetailId] = useState<number>();
 	const imageRef = useRef<HTMLInputElement>(null);
 
@@ -247,6 +255,41 @@ export default function ProjectUpdate({ params }: ProjectUpdateParams) {
 				setLoad(true);
 			}
 		};
+	}
+
+	async function handleDragEnd(event: DragEndEvent) {
+		const { active, over } = event;
+		const originalImages = [...projectImages];
+		if (active.id !== over?.id && projectImages) {
+			try {
+				const oldIndex = projectImages.findIndex(
+					(img) => img.id === active.id
+				);
+				const newIndex = projectImages.findIndex(
+					(img) => img.id === over?.id
+				);
+				const newOrder = arrayMove(projectImages, oldIndex, newIndex);
+				setProjectImages(newOrder);
+				const body = newOrder.map((item, index) => ({
+					id: item.id,
+					order: index + 1,
+				}));
+				const {
+					data: { message },
+					status,
+				} = await instance.patch('/project/image', { data: body });
+				if (status === 200) {
+					toast.success(message);
+				}
+			} catch (err) {
+				if (isAxiosError(err)) {
+					toast.error(
+						err.response?.data.error || '오류가 발생했습니다'
+					);
+				}
+				setProjectImages(originalImages);
+			}
+		}
 	}
 	return (
 		<div className="m-5 p-10 rounded-lg bg-white">
@@ -450,35 +493,73 @@ export default function ProjectUpdate({ params }: ProjectUpdateParams) {
 								onChange={handleCreateImage}
 							/>
 						</div>
-						<div className="flex flex-col gap-5">
-							{projectImages?.map((image) => (
-								<div
-									key={image.id}
-									className="flex gap-4 items-center"
-								>
-									<ImageInput
-										id={`image-${image.id}`}
-										className="items-center"
-										imageUrl={image.url}
-										width={400}
-										height={225}
-										onChange={(file: File) =>
-											handleUpdateImage(file, image.id)
-										}
+						<DndContext
+							collisionDetection={closestCenter}
+							onDragEnd={handleDragEnd}
+						>
+							<SortableContext
+								items={projectImages?.map((img) => img.id)}
+								strategy={verticalListSortingStrategy}
+							>
+								{projectImages?.map((image) => (
+									<SortableImage
+										key={image.id}
+										image={image}
+										onUpdate={handleUpdateImage}
+										onDelete={handleDeleteImage}
 									/>
-									<Button
-										variant="destructive"
-										size="icon"
-										onClick={handleDeleteImage(image.id)}
-									>
-										<ImageMinus />
-									</Button>
-								</div>
-							))}
-						</div>
+								))}
+							</SortableContext>
+						</DndContext>
 					</div>
 				)}
 			</div>
+		</div>
+	);
+}
+
+function SortableImage({
+	image,
+	onUpdate,
+	onDelete,
+}: {
+	image: ProjectImage;
+	onUpdate: (image: File, imageId: number) => Promise<void>;
+	onDelete: (
+		imageId: number
+	) => (e: MouseEvent<HTMLButtonElement>) => Promise<void>;
+}) {
+	const { attributes, listeners, setNodeRef, transform, transition } =
+		useSortable({ id: image.id });
+
+	const style = {
+		transform: CSS.Transform.toString(transform),
+		transition,
+	};
+
+	return (
+		<div
+			ref={setNodeRef}
+			style={style}
+			{...listeners}
+			{...attributes}
+			className="flex gap-4 items-center"
+		>
+			<ImageInput
+				id={`image-${image.id}`}
+				className="items-center"
+				imageUrl={image.url}
+				width={400}
+				height={225}
+				onChange={(file: File) => onUpdate(file, image.id)}
+			/>
+			<Button
+				variant="destructive"
+				size="icon"
+				onClick={onDelete(image.id)}
+			>
+				<ImageMinus />
+			</Button>
 		</div>
 	);
 }

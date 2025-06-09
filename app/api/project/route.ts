@@ -57,6 +57,9 @@ export async function GET(req: NextRequest) {
 			const projectImages = projectDetail
 				? await prisma.projectImage.findMany({
 						where: { projectDetailId: Number(projectDetail?.id) },
+						orderBy: {
+							order: 'asc',
+						},
 					})
 				: null;
 			return NextResponse.json(
