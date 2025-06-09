@@ -83,7 +83,7 @@ export async function GET(req: NextRequest) {
 		}
 		if (take === -1) {
 			const careers = await prisma.careerOverview.findMany({
-				orderBy: { startDate: 'desc' },
+				orderBy: { order: 'asc' },
 			});
 			return NextResponse.json({ data: careers }, { status: 200 });
 		}

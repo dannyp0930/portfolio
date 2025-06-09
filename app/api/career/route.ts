@@ -91,7 +91,7 @@ export async function GET(req: NextRequest) {
 		}
 		if (take === -1) {
 			const careers = await prisma.career.findMany({
-				orderBy: { startDate: 'desc' },
+				orderBy: { order: 'asc' },
 			});
 			const careersWithDetails = await Promise.all(
 				careers.map(async (career) => {

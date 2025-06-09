@@ -82,7 +82,7 @@ export async function GET(req: NextRequest) {
 		}
 		if (take === -1) {
 			const experiences = await prisma.experience.findMany({
-				orderBy: { startDate: 'desc' },
+				orderBy: { order: 'asc' },
 			});
 			return NextResponse.json({ data: experiences }, { status: 200 });
 		}

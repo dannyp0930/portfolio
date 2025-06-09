@@ -141,7 +141,7 @@ export async function GET(req: NextRequest) {
 		}
 		if (take === -1) {
 			const skills = await prisma.skill.findMany({
-				orderBy: { id: 'asc' },
+				orderBy: { order: 'asc' },
 			});
 			const groupedSkills = skills.reduce(
 				(acc, skill) => {

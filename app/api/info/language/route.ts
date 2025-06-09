@@ -83,7 +83,7 @@ export async function GET(req: NextRequest) {
 		}
 		if (take === -1) {
 			const languages = await prisma.language.findMany({
-				orderBy: { examDate: 'desc' },
+				orderBy: { order: 'asc' },
 			});
 			return NextResponse.json({ data: languages }, { status: 200 });
 		}

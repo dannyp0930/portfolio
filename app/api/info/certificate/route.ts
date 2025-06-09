@@ -83,7 +83,7 @@ export async function GET(req: NextRequest) {
 		}
 		if (take === -1) {
 			const certificates = await prisma.certificate.findMany({
-				orderBy: { issueDate: 'desc' },
+				orderBy: { order: 'asc' },
 			});
 			return NextResponse.json({ data: certificates }, { status: 200 });
 		}
