@@ -397,13 +397,18 @@ function ExperienceContent() {
 							items={experiences}
 							strategy={verticalListSortingStrategy}
 						>
-							{experiences.map((experience) => (
+							{experiences.map((experience, idx) => (
 								<ExperienceRow
 									key={experience.id}
+									idx={idx}
+									take={take}
+									total={totalCnt}
+									page={selectPage}
 									experience={experience}
 									updateExperienceId={updateExperienceId}
 									updateExperience={updateExperience}
 									changeOrder={changeOrder}
+									setLoad={setLoad}
 									onChange={changeSelectUpdateExperience}
 									onUpdate={handleUpdateExperience}
 									onSelect={selectUpdateExperience}

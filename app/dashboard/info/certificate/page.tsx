@@ -387,13 +387,18 @@ function CertificateContent() {
 							items={certificates}
 							strategy={verticalListSortingStrategy}
 						>
-							{certificates.map((certificate) => (
+							{certificates.map((certificate, idx) => (
 								<CertificateRow
 									key={certificate.id}
+									idx={idx}
+									take={take}
+									total={totalCnt}
+									page={selectPage}
 									certificate={certificate}
 									updateCertificateId={updateCertificateId}
 									updateCertificate={updateCertificate}
 									changeOrder={changeOrder}
+									setLoad={setLoad}
 									onChange={changeSelectUpdateCertificate}
 									onUpdate={handleUpdateCertificate}
 									onSelect={selectUpdateCertificate}

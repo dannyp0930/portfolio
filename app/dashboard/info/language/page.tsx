@@ -397,13 +397,18 @@ function LanguageContent() {
 							items={languages}
 							strategy={verticalListSortingStrategy}
 						>
-							{languages.map((language) => (
+							{languages.map((language, idx) => (
 								<LanguageRow
 									key={language.id}
+									idx={idx}
+									take={take}
+									total={totalCnt}
+									page={selectPage}
 									language={language}
 									updateLanguageId={updateLanguageId}
 									updateLanguage={updateLanguage}
 									changeOrder={changeOrder}
+									setLoad={setLoad}
 									onChange={changeSelectUpdateLanguage}
 									onUpdate={handleUpdateLanguage}
 									onSelect={selectUpdateLanguage}

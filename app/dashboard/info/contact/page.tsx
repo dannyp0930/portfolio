@@ -366,13 +366,18 @@ function ContactContent() {
 							items={contacts}
 							strategy={verticalListSortingStrategy}
 						>
-							{contacts.map((contact) => (
+							{contacts.map((contact, idx) => (
 								<ContactRow
 									key={contact.id}
+									idx={idx}
+									take={take}
+									total={totalCnt}
+									page={selectPage}
 									contact={contact}
 									changeOrder={changeOrder}
 									updateContactId={updateContactId}
 									updateContact={updateContact}
+									setLoad={setLoad}
 									onChange={changeSelectUpdateContact}
 									onUpdate={handleUpdateContact}
 									onSelect={selectUpdateContact}

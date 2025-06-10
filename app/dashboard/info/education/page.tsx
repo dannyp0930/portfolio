@@ -398,13 +398,18 @@ function EducationContent() {
 							items={educations}
 							strategy={verticalListSortingStrategy}
 						>
-							{educations.map((education) => (
+							{educations.map((education, idx) => (
 								<EducationRow
 									key={education.id}
+									idx={idx}
+									take={take}
+									total={totalCnt}
+									page={selectPage}
 									education={education}
 									updateEducationId={updateEducationId}
 									updateEducation={updateEducation}
 									changeOrder={changeOrder}
+									setLoad={setLoad}
 									onChange={changeSelectUpdateEducation}
 									onUpdate={handleUpdateEducation}
 									onSelect={selectUpdateEducation}

@@ -412,13 +412,18 @@ function CareerContent() {
 							items={careers}
 							strategy={verticalListSortingStrategy}
 						>
-							{careers.map((career) => (
+							{careers.map((career, idx) => (
 								<CareerRow
 									key={career.id}
+									idx={idx}
+									take={take}
+									total={totalCnt}
+									page={selectPage}
 									career={career}
 									updateCareerId={updateCareerId}
 									updateCareer={updateCareer}
 									changeOrder={changeOrder}
+									setLoad={setLoad}
 									onChange={changeSelectUpdateCareer}
 									onUpdate={handleUpdateCareer}
 									onSelect={selectUpdateCareer}
