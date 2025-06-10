@@ -217,5 +217,4 @@ github repository에 환경 변수 등록 필수
   - Oauth
 - 블로그
   - 주기별 or 게시글 별 뉴스레터 전송
-- Schema 순서 추가
 - grafana 등 로깅
