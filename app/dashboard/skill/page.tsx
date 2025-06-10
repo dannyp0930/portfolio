@@ -3,6 +3,7 @@
 import { formInstance, instance } from '@/app/api/instance';
 import ImageInput from '@/components/common/ImageInput';
 import AdminPagination from '@/components/dashboard/AdminPagination';
+import SkillRow from '@/components/dashboard/SkillRow';
 import SortIcon from '@/components/dashboard/SortIcon';
 import { Button } from '@/components/ui/button';
 import {
@@ -13,12 +14,17 @@ import {
 	SelectValue,
 } from '@/components/ui/select';
 import { SKILL_CATEGORY } from '@/lib/constants';
+import { cn } from '@/lib/utils';
+import { closestCenter, DndContext, DragEndEvent } from '@dnd-kit/core';
+import {
+	arrayMove,
+	SortableContext,
+	verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
 import { isAxiosError } from 'axios';
-import Image from 'next/image';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import {
 	ChangeEvent,
-	Fragment,
 	MouseEvent,
 	Suspense,
 	useCallback,
@@ -55,6 +61,7 @@ function SkillComponent() {
 	const [updateSkill, setUpdateSkill] = useState<Skill | null>();
 	const [newImage, setNewImage] = useState<File | null>();
 	const [selectCategory, setSelectCategory] = useState<string>();
+	const [changeOrder, setChangeOrder] = useState<boolean>(false);
 	const imageRef = useRef<HTMLInputElement>(null);
 	const take = 20;
 
@@ -176,6 +183,7 @@ function SkillComponent() {
 	}
 
 	const handleSort = (column: string) => {
+		if (changeOrder) return;
 		if (orderBy === column) {
 			setOrder(order === 'asc' ? 'desc' : 'asc');
 		} else {
@@ -210,10 +218,49 @@ function SkillComponent() {
 	}, [selectPage, selectCategory, take, orderBy, order]);
 
 	function handleCategoryChange(value: string) {
+		setSelectCategory(value !== 'All' ? value : '');
 		if (value !== 'All') {
 			router.push(`${pathname}?c=${value}`);
 		} else {
 			router.push(pathname);
+		}
+	}
+
+	async function handleDragEnd(event: DragEndEvent) {
+		const { active, over } = event;
+		const originalSkills = [...skills];
+		if (active.id !== over?.id && skills) {
+			try {
+				const oldIndex = skills.findIndex(
+					(skill) => skill.id === active.id
+				);
+				const newIndex = skills.findIndex(
+					(skill) => skill.id === over?.id
+				);
+				const newOrder = arrayMove(skills, oldIndex, newIndex);
+				setSkills(newOrder);
+				const body = newOrder.map((item, index) => ({
+					id: item.id,
+					prevOrder: item.order,
+					order: (selectPage - 1) * take + index + 1,
+				}));
+				const {
+					data: { message },
+					status,
+				} = await instance.patch('/skill', { data: body });
+				if (status === 200) {
+					toast.success(message);
+				}
+			} catch (err) {
+				if (isAxiosError(err)) {
+					toast.error(
+						err.response?.data.error || '오류가 발생했습니다'
+					);
+				}
+				setSkills(originalSkills);
+			} finally {
+				setChangeOrder(false);
+			}
 		}
 	}
 
@@ -237,7 +284,10 @@ function SkillComponent() {
 	return (
 		<div className="m-5 py-10 rounded-lg bg-white">
 			<div className="p-4 pt-0">
-				<Select onValueChange={handleCategoryChange}>
+				<Select
+					onValueChange={handleCategoryChange}
+					value={selectCategory}
+				>
 					<SelectTrigger className="w-[180px]">
 						<SelectValue placeholder="카테고리" />
 					</SelectTrigger>
@@ -252,254 +302,184 @@ function SkillComponent() {
 					</SelectContent>
 				</Select>
 			</div>
-			<table className="w-full border-collapse table-fixed [&_th]:border [&_th]:px-2 [&_th]:py-1 [&_th:first-of-type]:border-l-0 [&_th:last-of-type]:border-r-0 [&_td]:border [&_td]:px-2 [&_td]:py-1 [&_td]:overflow-auto [&_td:first-of-type]:border-l-0 [&_td:last-of-type]:border-r-0">
-				<thead>
-					<tr>
-						<th
-							className="cursor-pointer relative"
-							onClick={() => handleSort('id')}
-						>
-							ID
-							<span className="absolute right-2 bottom-1/2 translate-y-1/2">
-								<SortIcon
-									orderBy={orderBy}
-									currentColumn="id"
-									order={order}
-								/>
-							</span>
-						</th>
-						<th
-							className="cursor-pointer relative"
-							onClick={() => handleSort('title')}
-						>
-							이름
-							<span className="absolute right-2 bottom-1/2 translate-y-1/2">
-								<SortIcon
-									orderBy={orderBy}
-									currentColumn="title"
-									order={order}
-								/>
-							</span>
-						</th>
-						<th className="cursor-pointer">설명</th>
-						<th
-							className="cursor-pointer relative"
-							onClick={() => handleSort('level')}
-						>
-							수준
-							<span className="absolute right-2 bottom-1/2 translate-y-1/2">
-								<SortIcon
-									orderBy={orderBy}
-									currentColumn="level"
-									order={order}
-								/>
-							</span>
-						</th>
-						<th>이미지</th>
-						<th
-							className="cursor-pointer relative"
-							onClick={() => handleSort('category')}
-						>
-							카테고리
-							<span className="absolute right-2 bottom-1/2 translate-y-1/2">
-								<SortIcon
-									orderBy={orderBy}
-									currentColumn="category"
-									order={order}
-								/>
-							</span>
-						</th>
-						<th></th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr>
-						<td></td>
-						<td>
-							<input
-								className="w-full focus:outline-none"
-								type="text"
-								value={title}
-								required
-								onChange={(e) => setTitle(e.target.value)}
-							/>
-						</td>
-						<td>
-							<input
-								className="w-full focus:outline-none"
-								type="text"
-								value={description}
-								required
-								onChange={(e) => setDescription(e.target.value)}
-							/>
-						</td>
-						<td>
-							<input
-								className="w-full focus:outline-none"
-								type="number"
-								value={level}
-								required
-								min={1}
-								max={5}
-								onChange={(e) =>
-									setLevel(Number(e.target.value))
-								}
-							/>
-						</td>
-						<td>
-							<ImageInput
-								id="image"
-								ref={imageRef}
-								onChange={setImage}
-								width={36}
-								height={36}
-								className="items-center justify-center"
-							/>
-						</td>
-						<td>
-							<input
-								className="w-full focus:outline-none"
-								type="text"
-								value={category}
-								required
-								onChange={(e) => setCategory(e.target.value)}
-							/>
-						</td>
-						<td>
-							<div className="flex justify-center">
-								<Button size="sm" onClick={handleCreateSkill}>
-									추가
+			<DndContext
+				collisionDetection={closestCenter}
+				onDragEnd={handleDragEnd}
+			>
+				<table className="w-full border-collapse table-fixed [&_th]:border [&_th]:px-2 [&_th]:py-1 [&_th:first-of-type]:border-l-0 [&_th:last-of-type]:border-r-0 [&_td]:border [&_td]:px-2 [&_td]:py-1 [&_td]:overflow-auto [&_td:first-of-type]:border-l-0 [&_td:last-of-type]:border-r-0">
+					<thead>
+						<tr>
+							<th>
+								정렬
+								<Button
+									className="ml-4"
+									size="sm"
+									onClick={() => {
+										setChangeOrder(!changeOrder);
+										setOrderBy('order');
+										setOrder('asc');
+										handleCategoryChange('All');
+										setLoad(true);
+									}}
+								>
+									{changeOrder ? '취소' : '변경'}
 								</Button>
-							</div>
-						</td>
-					</tr>
-					{skills.map((skill) => (
-						<tr
-							key={skill.id}
-							className={
-								skill.id === updateSkillId
-									? 'ring-inset ring-2 ring-theme-sub'
-									: ''
-							}
-						>
-							{skill.id === updateSkillId ? (
-								<Fragment>
-									<td>{skill.id}</td>
-									<td>
-										<input
-											className="w-full focus:outline-none"
-											onChange={changeSelectUpdateSkill(
-												'title'
-											)}
-											type="text"
-											value={updateSkill?.title}
+							</th>
+							<th
+								className={cn(
+									!changeOrder && 'cursor-pointer',
+									'relative'
+								)}
+								onClick={() => handleSort('title')}
+							>
+								이름
+								{!changeOrder && (
+									<span className="absolute right-2 bottom-1/2 translate-y-1/2">
+										<SortIcon
+											orderBy={orderBy}
+											currentColumn="type"
+											order={order}
 										/>
-									</td>
-									<td>
-										<input
-											className="w-full focus:outline-none"
-											onChange={changeSelectUpdateSkill(
-												'description'
-											)}
-											type="text"
-											value={updateSkill?.description}
+									</span>
+								)}
+							</th>
+							<th className="cursor-pointer">설명</th>
+							<th
+								className={cn(
+									!changeOrder && 'cursor-pointer',
+									'relative'
+								)}
+								onClick={() => handleSort('level')}
+							>
+								수준
+								{!changeOrder && (
+									<span className="absolute right-2 bottom-1/2 translate-y-1/2">
+										<SortIcon
+											orderBy={orderBy}
+											currentColumn="value"
+											order={order}
 										/>
-									</td>
-									<td>
-										<input
-											className="w-full focus:outline-none"
-											onChange={changeSelectUpdateSkill(
-												'level'
-											)}
-											type="number"
-											value={updateSkill?.level}
-											required
-											min={1}
-											max={5}
+									</span>
+								)}
+							</th>
+							<th>이미지</th>
+							<th
+								className={cn(
+									!changeOrder && 'cursor-pointer',
+									'relative'
+								)}
+								onClick={() => handleSort('category')}
+							>
+								카테고리
+								{!changeOrder && (
+									<span className="absolute right-2 bottom-1/2 translate-y-1/2">
+										<SortIcon
+											orderBy={orderBy}
+											currentColumn="label"
+											order={order}
 										/>
-									</td>
-									<td>
-										<ImageInput
-											id={`image-${skill.id}`}
-											className="items-center justify-center"
-											imageUrl={updateSkill?.imageUrl}
-											onChange={setNewImage}
-											width={36}
-											height={36}
-										/>
-									</td>
-									<td>
-										<input
-											className="w-full focus:outline-none"
-											onChange={changeSelectUpdateSkill(
-												'category'
-											)}
-											type="text"
-											value={updateSkill?.category ?? ''}
-											required
-										/>
-									</td>
-									<td>
-										<div className="flex gap-2 justify-center">
-											<Button
-												size="sm"
-												onClick={handleUpdateSkill}
-											>
-												저장
-											</Button>
-											<Button
-												variant="secondary"
-												size="sm"
-												onClick={selectUpdateSkill()}
-											>
-												취소
-											</Button>
-										</div>
-									</td>
-								</Fragment>
-							) : (
-								<Fragment>
-									<td>{skill.id}</td>
-									<td>{skill.title}</td>
-									<td>{skill.description}</td>
-									<td>{skill.level}</td>
-									<td>
-										<Image
-											className="m-auto"
-											src={skill.imageUrl}
-											alt={skill.imageUrl}
-											width={36}
-											height={36}
-										/>
-									</td>
-									<td>{skill.category}</td>
-									<td>
-										<div className="flex gap-2 justify-center">
-											<Button
-												size="sm"
-												onClick={selectUpdateSkill(
-													skill
-												)}
-											>
-												수정
-											</Button>
-											<Button
-												variant="destructive"
-												size="sm"
-												onClick={handleDeleteSkill(
-													skill.id
-												)}
-											>
-												삭제
-											</Button>
-										</div>
-									</td>
-								</Fragment>
-							)}
+									</span>
+								)}
+							</th>
+							<th></th>
 						</tr>
-					))}
-				</tbody>
-			</table>
+					</thead>
+					<tbody>
+						<tr>
+							<td></td>
+							<td>
+								<input
+									className="w-full focus:outline-none"
+									type="text"
+									value={title}
+									required
+									onChange={(e) => setTitle(e.target.value)}
+									disabled={changeOrder}
+								/>
+							</td>
+							<td>
+								<input
+									className="w-full focus:outline-none"
+									type="text"
+									value={description}
+									required
+									onChange={(e) =>
+										setDescription(e.target.value)
+									}
+									disabled={changeOrder}
+								/>
+							</td>
+							<td>
+								<input
+									className="w-full focus:outline-none"
+									type="number"
+									value={level}
+									required
+									min={1}
+									max={5}
+									onChange={(e) =>
+										setLevel(Number(e.target.value))
+									}
+									disabled={changeOrder}
+								/>
+							</td>
+							<td>
+								<ImageInput
+									id="image"
+									ref={imageRef}
+									onChange={setImage}
+									width={36}
+									height={36}
+									className="items-center justify-center"
+									disabled={changeOrder}
+								/>
+							</td>
+							<td>
+								<input
+									className="w-full focus:outline-none"
+									type="text"
+									value={category}
+									required
+									onChange={(e) =>
+										setCategory(e.target.value)
+									}
+									disabled={changeOrder}
+								/>
+							</td>
+							<td>
+								<div className="flex justify-center">
+									<Button
+										size="sm"
+										onClick={handleCreateSkill}
+										disabled={changeOrder}
+									>
+										추가
+									</Button>
+								</div>
+							</td>
+						</tr>
+						<SortableContext
+							items={skills}
+							strategy={verticalListSortingStrategy}
+						>
+							{skills.map((skill) => (
+								<SkillRow
+									key={skill.id}
+									skill={skill}
+									changeOrder={changeOrder}
+									updateSkillId={updateSkillId}
+									updateSkill={updateSkill}
+									setNewImage={setNewImage}
+									onChange={changeSelectUpdateSkill}
+									onUpdate={handleUpdateSkill}
+									onSelect={selectUpdateSkill}
+									onDelete={handleDeleteSkill}
+								/>
+							))}
+						</SortableContext>
+					</tbody>
+				</table>
+			</DndContext>
 			<AdminPagination
 				className="mt-10"
 				page={selectPage}

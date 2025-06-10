@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
 import { ImagePlus, RotateCw } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 export default function ImageInput({
 	id,
@@ -9,6 +10,7 @@ export default function ImageInput({
 	imageUrl,
 	width = 100,
 	height = 100,
+	disabled,
 	ref,
 	onChange,
 }: ImageInputProps) {
@@ -42,8 +44,14 @@ export default function ImageInput({
 				accept="image/*"
 				ref={ref}
 				onChange={handleChange}
+				disabled={disabled}
 			/>
-			<Button asChild size="icon">
+			<Button
+				asChild
+				size="icon"
+				disabled={disabled}
+				className={cn(disabled && 'opacity-50 hover:bg-primary')}
+			>
 				<label className="shrink-0" htmlFor={id}>
 					{newImageUrl ? <RotateCw /> : <ImagePlus />}
 				</label>

@@ -14,6 +14,7 @@ declare global {
 		width?: number;
 		height?: number;
 		ref?: RefObject<HTMLInputElement | null>;
+		disabled?: boolean;
 		onChange: Dispatch<SetStateAction<File>> | ((file: File) => void);
 	}
 
