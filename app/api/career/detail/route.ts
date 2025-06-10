@@ -50,6 +50,32 @@ export async function PUT(req: NextRequest) {
 	}
 }
 
+export async function PATCH(req: NextRequest) {
+	if (!isAdmin(req)) {
+		return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+	}
+	const { data } = await req.json();
+	try {
+		await prisma.$transaction(async (tx) => {
+			const updates = data.filter(
+				(item: PatchOrderRequset) => item.order !== item.prevOrder
+			);
+			for (const image of updates) {
+				await tx.careerDetail.update({
+					where: { id: Number(image.id) },
+					data: { order: Number(image.order) },
+				});
+			}
+		});
+		return NextResponse.json({ message: 'OK' }, { status: 200 });
+	} catch (err) {
+		return NextResponse.json(
+			{ error: 'Something went wrong', details: err },
+			{ status: 500 }
+		);
+	}
+}
+
 export async function DELETE(req: NextRequest) {
 	if (!isAdmin(req)) {
 		return NextResponse.json({ error: 'Forbidden' }, { status: 403 });

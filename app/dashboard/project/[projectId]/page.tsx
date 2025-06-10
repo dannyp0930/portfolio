@@ -33,7 +33,7 @@ import {
 	SortableContext,
 	verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
-import ProjectSortableImage from '@/components/dashboard/ProjectSortableImage';
+import ProjectSortableImage from '@/components/dashboard/project/ProjectSortableImage';
 
 const formSchema = z.object({
 	title: z.string().min(1, { message: '프로젝트 제목을 입력하세요.' }),
@@ -290,6 +290,7 @@ export default function ProjectUpdate({ params }: ProjectUpdateParams) {
 			}
 		}
 	}
+
 	return (
 		<div className="m-5 p-10 rounded-lg bg-white">
 			<Form {...form}>

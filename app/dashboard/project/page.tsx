@@ -9,7 +9,7 @@ import { useSearchParams } from 'next/navigation';
 import { MouseEvent, Suspense, useCallback, useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import SortIcon from '@/components/dashboard/SortIcon';
-import ProjectRow from '@/components/dashboard/ProjectRow';
+import ProjectRow from '@/components/dashboard/project/ProjectRow';
 import { closestCenter, DndContext, DragEndEvent } from '@dnd-kit/core';
 import {
 	arrayMove,

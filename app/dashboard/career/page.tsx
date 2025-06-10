@@ -2,7 +2,7 @@
 
 import { instance } from '@/app/api/instance';
 import AdminPagination from '@/components/dashboard/AdminPagination';
-import CareerRow from '@/components/dashboard/CareerRow';
+import CareerRow from '@/components/dashboard/career/CareerRow';
 import SortIcon from '@/components/dashboard/SortIcon';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
