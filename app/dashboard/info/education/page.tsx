@@ -3,12 +3,12 @@
 import { instance } from '@/app/api/instance';
 import AdminPagination from '@/components/dashboard/AdminPagination';
 import { Button } from '@/components/ui/button';
+import SortIcon from '@/components/dashboard/SortIcon';
 import { isAxiosError } from 'axios';
 import dayjs from 'dayjs';
 import { useSearchParams } from 'next/navigation';
 import {
 	ChangeEvent,
-	Fragment,
 	MouseEvent,
 	Suspense,
 	useCallback,
@@ -16,8 +16,15 @@ import {
 	useState,
 } from 'react';
 import { toast } from 'sonner';
-import SortIcon from '@/components/dashboard/SortIcon';
 import { validateAndShowRequiredFields } from '@/lib/utils/validation';
+import { closestCenter, DndContext, DragEndEvent } from '@dnd-kit/core';
+import {
+	arrayMove,
+	SortableContext,
+	verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
+import EducationRow from '@/components/dashboard/info/EducationRow';
+import { cn } from '@/lib/utils';
 
 export default function Education() {
 	return (
@@ -42,6 +49,7 @@ function EducationContent() {
 	const take = 20;
 	const [orderBy, setOrderBy] = useState<string>('id');
 	const [order, setOrder] = useState<Order>('desc');
+	const [changeOrder, setChangeOrder] = useState<boolean>(false);
 
 	async function handleCreateEducation(e: MouseEvent<HTMLButtonElement>) {
 		e.preventDefault();
@@ -157,6 +165,7 @@ function EducationContent() {
 	}
 
 	const handleSort = (column: string) => {
+		if (changeOrder) return;
 		if (orderBy === column) {
 			setOrder(order === 'asc' ? 'desc' : 'asc');
 		} else {
@@ -187,6 +196,44 @@ function EducationContent() {
 		}
 	}, [selectPage, take, orderBy, order]);
 
+	async function handleDragEnd(event: DragEndEvent) {
+		const { active, over } = event;
+		const originalEducations = [...educations];
+		if (active.id !== over?.id && educations) {
+			try {
+				const oldIndex = educations.findIndex(
+					(education) => education.id === active.id
+				);
+				const newIndex = educations.findIndex(
+					(education) => education.id === over?.id
+				);
+				const newOrder = arrayMove(educations, oldIndex, newIndex);
+				setEducations(newOrder);
+				const body = newOrder.map((item, index) => ({
+					id: item.id,
+					prevOrder: item.order,
+					order: (selectPage - 1) * take + index + 1,
+				}));
+				const {
+					data: { message },
+					status,
+				} = await instance.patch('/info/education', { data: body });
+				if (status === 200) {
+					toast.success(message);
+				}
+			} catch (err) {
+				if (isAxiosError(err)) {
+					toast.error(
+						err.response?.data.error || '오류가 발생했습니다'
+					);
+				}
+				setEducations(originalEducations);
+			} finally {
+				setChangeOrder(false);
+			}
+		}
+	}
+
 	useEffect(() => {
 		if (load) {
 			getEducation();
@@ -206,239 +253,168 @@ function EducationContent() {
 
 	return (
 		<div className="py-10 rounded-lg bg-white">
-			<table className="w-full border-collapse table-fixed [&_th]:border [&_th]:px-2 [&_th]:py-1 [&_th:first-of-type]:border-l-0 [&_th:last-of-type]:border-r-0 [&_td]:border [&_td]:px-2 [&_td]:py-1 [&_td]:overflow-auto [&_td:first-of-type]:border-l-0 [&_td:last-of-type]:border-r-0">
-				<thead>
-					<tr>
-						<th
-							className="cursor-pointer relative"
-							onClick={() => handleSort('id')}
-						>
-							ID
-							<span className="absolute right-2 bottom-1/2 translate-y-1/2">
-								<SortIcon
-									orderBy={orderBy}
-									currentColumn="id"
-									order={order}
-								/>
-							</span>
-						</th>
-						<th
-							className="cursor-pointer relative"
-							onClick={() => handleSort('institutionName')}
-						>
-							학교명
-							<span className="absolute right-2 bottom-1/2 translate-y-1/2">
-								<SortIcon
-									orderBy={orderBy}
-									currentColumn="institutionName"
-									order={order}
-								/>
-							</span>
-						</th>
-						<th>학적</th>
-						<th
-							className="cursor-pointer relative"
-							onClick={() => handleSort('startDate')}
-						>
-							입학
-							<span className="absolute right-2 bottom-1/2 translate-y-1/2">
-								<SortIcon
-									orderBy={orderBy}
-									currentColumn="startDate"
-									order={order}
-								/>
-							</span>
-						</th>
-						<th
-							className="cursor-pointer relative"
-							onClick={() => handleSort('endDate')}
-						>
-							졸업
-							<span className="absolute right-2 bottom-1/2 translate-y-1/2">
-								<SortIcon
-									orderBy={orderBy}
-									currentColumn="endDate"
-									order={order}
-								/>
-							</span>
-						</th>
-						<th></th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr>
-						<td></td>
-						<td>
-							<input
-								className="w-full focus:outline-none"
-								type="text"
-								value={institutionName}
-								required
-								onChange={(e) =>
-									setInstitutionName(e.target.value)
-								}
-							/>
-						</td>
-						<td>
-							<input
-								className="w-full focus:outline-none"
-								type="text"
-								value={degreeStatus}
-								required
-								onChange={(e) =>
-									setDegreeStatus(e.target.value)
-								}
-							/>
-						</td>
-						<td>
-							<input
-								className="w-full focus:outline-none"
-								type="date"
-								value={startDate}
-								required
-								onChange={(e) => setStartDate(e.target.value)}
-							/>
-						</td>
-						<td>
-							<input
-								className="w-full focus:outline-none"
-								type="date"
-								value={endDate}
-								required
-								onChange={(e) => setEndDate(e.target.value)}
-							/>
-						</td>
-						<td>
-							<div className="flex justify-center">
+			<DndContext
+				collisionDetection={closestCenter}
+				onDragEnd={handleDragEnd}
+			>
+				<table className="w-full border-collapse table-fixed [&_th]:border [&_th]:px-2 [&_th]:py-1 [&_th:first-of-type]:border-l-0 [&_th:last-of-type]:border-r-0 [&_td]:border [&_td]:px-2 [&_td]:py-1 [&_td]:overflow-auto [&_td:first-of-type]:border-l-0 [&_td:last-of-type]:border-r-0">
+					<thead>
+						<tr>
+							<th>
+								정렬
 								<Button
+									className="ml-4"
 									size="sm"
-									onClick={handleCreateEducation}
+									onClick={() => {
+										setChangeOrder(!changeOrder);
+										setOrderBy('order');
+										setOrder('asc');
+										setLoad(true);
+									}}
 								>
-									추가
+									{changeOrder ? '취소' : '변경'}
 								</Button>
-							</div>
-						</td>
-					</tr>
-					{educations.map((education) => (
-						<tr
-							key={education.id}
-							className={
-								education.id === updateEducationId
-									? 'ring-inset ring-2 ring-theme-sub'
-									: ''
-							}
-						>
-							{education.id === updateEducationId ? (
-								<Fragment>
-									<td>{education.id}</td>
-									<td>
-										<input
-											className="w-full focus:outline-none"
-											onChange={changeSelectUpdateEducation(
-												'institutionName'
-											)}
-											type="text"
-											value={
-												updateEducation?.institutionName
-											}
+							</th>
+							<th
+								className={cn(
+									!changeOrder && 'cursor-pointer',
+									'relative'
+								)}
+								onClick={() => handleSort('institutionName')}
+							>
+								학교명
+								{!changeOrder && (
+									<span className="absolute right-2 bottom-1/2 translate-y-1/2">
+										<SortIcon
+											orderBy={orderBy}
+											currentColumn="type"
+											order={order}
 										/>
-									</td>
-									<td>
-										<input
-											className="w-full focus:outline-none"
-											onChange={changeSelectUpdateEducation(
-												'degreeStatus'
-											)}
-											type="text"
-											value={
-												updateEducation?.degreeStatus
-											}
+									</span>
+								)}
+							</th>
+							<th>학적</th>
+							<th
+								className={cn(
+									!changeOrder && 'cursor-pointer',
+									'relative'
+								)}
+								onClick={() => handleSort('startDate')}
+							>
+								입학
+								{!changeOrder && (
+									<span className="absolute right-2 bottom-1/2 translate-y-1/2">
+										<SortIcon
+											orderBy={orderBy}
+											currentColumn="type"
+											order={order}
 										/>
-									</td>
-									<td>
-										<input
-											className="w-full focus:outline-none"
-											onChange={changeSelectUpdateEducation(
-												'startDate'
-											)}
-											type="date"
-											value={dayjs(
-												updateEducation?.startDate
-											).format('YYYY-MM-DD')}
+									</span>
+								)}
+							</th>
+							<th
+								className={cn(
+									!changeOrder && 'cursor-pointer',
+									'relative'
+								)}
+								onClick={() => handleSort('endDate')}
+							>
+								졸업
+								{!changeOrder && (
+									<span className="absolute right-2 bottom-1/2 translate-y-1/2">
+										<SortIcon
+											orderBy={orderBy}
+											currentColumn="type"
+											order={order}
 										/>
-									</td>
-									<td>
-										<input
-											className="w-full focus:outline-none"
-											onChange={changeSelectUpdateEducation(
-												'endDate'
-											)}
-											type="date"
-											value={dayjs(
-												updateEducation?.endDate
-											).format('YYYY-MM-DD')}
-										/>
-									</td>
-									<td>
-										<div className="flex gap-2 justify-center">
-											<Button
-												size="sm"
-												onClick={handleUpdateEducation}
-											>
-												저장
-											</Button>
-											<Button
-												variant="secondary"
-												size="sm"
-												onClick={selectUpdateEducation()}
-											>
-												취소
-											</Button>
-										</div>
-									</td>
-								</Fragment>
-							) : (
-								<Fragment>
-									<td>{education.id}</td>
-									<td>{education.institutionName}</td>
-									<td>{education.degreeStatus}</td>
-									<td>
-										{dayjs(education.startDate).format(
-											'YYYY.MM.DD'
-										)}
-									</td>
-									<td>
-										{dayjs(education.endDate).format(
-											'YYYY.MM.DD'
-										)}
-									</td>
-									<td>
-										<div className="flex gap-2 justify-center">
-											<Button
-												size="sm"
-												onClick={selectUpdateEducation(
-													education
-												)}
-											>
-												수정
-											</Button>
-											<Button
-												variant="destructive"
-												size="sm"
-												onClick={handleDeleteEducation(
-													education.id
-												)}
-											>
-												삭제
-											</Button>
-										</div>
-									</td>
-								</Fragment>
-							)}
+									</span>
+								)}
+							</th>
+							<th></th>
 						</tr>
-					))}
-				</tbody>
-			</table>
+					</thead>
+					<tbody>
+						<tr>
+							<td></td>
+							<td>
+								<input
+									className="w-full focus:outline-none"
+									type="text"
+									value={institutionName}
+									required
+									onChange={(e) =>
+										setInstitutionName(e.target.value)
+									}
+									disabled={changeOrder}
+								/>
+							</td>
+							<td>
+								<input
+									className="w-full focus:outline-none"
+									type="text"
+									value={degreeStatus}
+									required
+									onChange={(e) =>
+										setDegreeStatus(e.target.value)
+									}
+									disabled={changeOrder}
+								/>
+							</td>
+							<td>
+								<input
+									className="w-full focus:outline-none"
+									type="date"
+									value={startDate}
+									required
+									onChange={(e) =>
+										setStartDate(e.target.value)
+									}
+									disabled={changeOrder}
+								/>
+							</td>
+							<td>
+								<input
+									className="w-full focus:outline-none"
+									type="date"
+									value={endDate}
+									required
+									onChange={(e) => setEndDate(e.target.value)}
+									disabled={changeOrder}
+								/>
+							</td>
+							<td>
+								<div className="flex justify-center">
+									<Button
+										size="sm"
+										onClick={handleCreateEducation}
+										disabled={changeOrder}
+									>
+										추가
+									</Button>
+								</div>
+							</td>
+						</tr>
+						<SortableContext
+							items={educations}
+							strategy={verticalListSortingStrategy}
+						>
+							{educations.map((education) => (
+								<EducationRow
+									key={education.id}
+									education={education}
+									updateEducationId={updateEducationId}
+									updateEducation={updateEducation}
+									changeOrder={changeOrder}
+									onChange={changeSelectUpdateEducation}
+									onUpdate={handleUpdateEducation}
+									onSelect={selectUpdateEducation}
+									onDelete={handleDeleteEducation}
+								/>
+							))}
+						</SortableContext>
+					</tbody>
+				</table>
+			</DndContext>
 			<AdminPagination
 				className="mt-10"
 				page={selectPage}

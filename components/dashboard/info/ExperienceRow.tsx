@@ -1,33 +1,36 @@
 import { Button } from '@/components/ui/button';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
+import dayjs from 'dayjs';
 import { ChangeEvent, MouseEvent } from 'react';
 
-export default function ContactRow({
-	contact,
+export default function ExperienceRow({
+	experience,
 	changeOrder,
-	updateContactId,
-	updateContact,
+	updateExperienceId,
+	updateExperience,
 	onChange,
 	onUpdate,
 	onSelect,
 	onDelete,
 }: {
-	contact: Contact;
+	experience: Experience;
 	changeOrder: boolean;
-	updateContactId: number | null | undefined;
-	updateContact: Contact | null | undefined;
+	updateExperienceId: number | null | undefined;
+	updateExperience: Experience | null | undefined;
 	onChange: (
-		key: keyof Contact
+		key: keyof Experience
 	) => (e: ChangeEvent<HTMLInputElement>) => void;
 	onUpdate: (e: MouseEvent<HTMLButtonElement>) => Promise<void>;
-	onSelect: (contact?: Contact) => (e: MouseEvent<HTMLButtonElement>) => void;
+	onSelect: (
+		experience?: Experience
+	) => (e: MouseEvent<HTMLButtonElement>) => void;
 	onDelete: (
-		contactId: number
+		experienceId: number
 	) => (e: MouseEvent<HTMLButtonElement>) => Promise<void>;
 }) {
 	const { attributes, listeners, setNodeRef, transform, transition } =
-		useSortable({ id: contact.id });
+		useSortable({ id: experience.id });
 
 	const style = {
 		transform: CSS.Transform.toString(transform),
@@ -39,7 +42,7 @@ export default function ContactRow({
 			ref={setNodeRef}
 			style={style}
 			className={
-				contact.id === updateContactId
+				experience.id === updateExperienceId
 					? 'ring-inset ring-2 ring-theme-sub'
 					: ''
 			}
@@ -51,30 +54,42 @@ export default function ContactRow({
 			) : (
 				<td></td>
 			)}
-			{contact.id === updateContactId ? (
+			{experience.id === updateExperienceId ? (
 				<>
 					<td>
 						<input
 							className="w-full focus:outline-none"
-							onChange={onChange('type')}
+							onChange={onChange('organization')}
 							type="text"
-							value={updateContact?.type}
+							value={updateExperience?.organization}
 						/>
 					</td>
 					<td>
 						<input
 							className="w-full focus:outline-none"
-							onChange={onChange('value')}
+							onChange={onChange('description')}
 							type="text"
-							value={updateContact?.value}
+							value={updateExperience?.description}
 						/>
 					</td>
 					<td>
 						<input
 							className="w-full focus:outline-none"
-							onChange={onChange('label')}
-							type="text"
-							value={updateContact?.label}
+							onChange={onChange('startDate')}
+							type="date"
+							value={dayjs(updateExperience?.startDate).format(
+								'YYYY-MM-DD'
+							)}
+						/>
+					</td>
+					<td>
+						<input
+							className="w-full focus:outline-none"
+							onChange={onChange('endDate')}
+							type="date"
+							value={dayjs(updateExperience?.endDate).format(
+								'YYYY-MM-DD'
+							)}
 						/>
 					</td>
 					<td>
@@ -94,14 +109,15 @@ export default function ContactRow({
 				</>
 			) : (
 				<>
-					<td>{contact.type}</td>
-					<td>{contact.value}</td>
-					<td>{contact.label}</td>
+					<td>{experience.organization}</td>
+					<td>{experience.description}</td>
+					<td>{dayjs(experience.startDate).format('YYYY.MM.DD')}</td>
+					<td>{dayjs(experience.endDate).format('YYYY.MM.DD')}</td>
 					<td>
 						<div className="flex gap-2 justify-center">
 							<Button
 								size="sm"
-								onClick={onSelect(contact)}
+								onClick={onSelect(experience)}
 								disabled={changeOrder}
 							>
 								수정
@@ -109,7 +125,7 @@ export default function ContactRow({
 							<Button
 								variant="destructive"
 								size="sm"
-								onClick={onDelete(contact.id)}
+								onClick={onDelete(experience.id)}
 								disabled={changeOrder}
 							>
 								삭제

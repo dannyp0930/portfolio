@@ -1,33 +1,36 @@
 import { Button } from '@/components/ui/button';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
+import dayjs from 'dayjs';
 import { ChangeEvent, MouseEvent } from 'react';
 
-export default function ContactRow({
-	contact,
+export default function LanguageRow({
+	language,
 	changeOrder,
-	updateContactId,
-	updateContact,
+	updateLanguageId,
+	updateLanguage,
 	onChange,
 	onUpdate,
 	onSelect,
 	onDelete,
 }: {
-	contact: Contact;
+	language: Language;
 	changeOrder: boolean;
-	updateContactId: number | null | undefined;
-	updateContact: Contact | null | undefined;
+	updateLanguageId: number | null | undefined;
+	updateLanguage: Language | null | undefined;
 	onChange: (
-		key: keyof Contact
+		key: keyof Language
 	) => (e: ChangeEvent<HTMLInputElement>) => void;
 	onUpdate: (e: MouseEvent<HTMLButtonElement>) => Promise<void>;
-	onSelect: (contact?: Contact) => (e: MouseEvent<HTMLButtonElement>) => void;
+	onSelect: (
+		language?: Language
+	) => (e: MouseEvent<HTMLButtonElement>) => void;
 	onDelete: (
-		contactId: number
+		languageId: number
 	) => (e: MouseEvent<HTMLButtonElement>) => Promise<void>;
 }) {
 	const { attributes, listeners, setNodeRef, transform, transition } =
-		useSortable({ id: contact.id });
+		useSortable({ id: language.id });
 
 	const style = {
 		transform: CSS.Transform.toString(transform),
@@ -39,7 +42,7 @@ export default function ContactRow({
 			ref={setNodeRef}
 			style={style}
 			className={
-				contact.id === updateContactId
+				language.id === updateLanguageId
 					? 'ring-inset ring-2 ring-theme-sub'
 					: ''
 			}
@@ -51,30 +54,40 @@ export default function ContactRow({
 			) : (
 				<td></td>
 			)}
-			{contact.id === updateContactId ? (
+			{language.id === updateLanguageId ? (
 				<>
 					<td>
 						<input
 							className="w-full focus:outline-none"
-							onChange={onChange('type')}
+							onChange={onChange('languageName')}
 							type="text"
-							value={updateContact?.type}
+							value={updateLanguage?.languageName}
 						/>
 					</td>
 					<td>
 						<input
 							className="w-full focus:outline-none"
-							onChange={onChange('value')}
+							onChange={onChange('proficiency')}
 							type="text"
-							value={updateContact?.value}
+							value={updateLanguage?.proficiency}
 						/>
 					</td>
 					<td>
 						<input
 							className="w-full focus:outline-none"
-							onChange={onChange('label')}
+							onChange={onChange('examDate')}
+							type="date"
+							value={dayjs(updateLanguage?.examDate).format(
+								'YYYY-MM-DD'
+							)}
+						/>
+					</td>
+					<td>
+						<input
+							className="w-full focus:outline-none"
+							onChange={onChange('institution')}
 							type="text"
-							value={updateContact?.label}
+							value={updateLanguage?.institution}
 						/>
 					</td>
 					<td>
@@ -94,14 +107,15 @@ export default function ContactRow({
 				</>
 			) : (
 				<>
-					<td>{contact.type}</td>
-					<td>{contact.value}</td>
-					<td>{contact.label}</td>
+					<td>{language.languageName}</td>
+					<td>{language.proficiency}</td>
+					<td>{dayjs(language.examDate).format('YYYY.MM.DD')}</td>
+					<td>{language.institution}</td>
 					<td>
 						<div className="flex gap-2 justify-center">
 							<Button
 								size="sm"
-								onClick={onSelect(contact)}
+								onClick={onSelect(language)}
 								disabled={changeOrder}
 							>
 								수정
@@ -109,7 +123,7 @@ export default function ContactRow({
 							<Button
 								variant="destructive"
 								size="sm"
-								onClick={onDelete(contact.id)}
+								onClick={onDelete(language.id)}
 								disabled={changeOrder}
 							>
 								삭제

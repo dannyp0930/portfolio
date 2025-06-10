@@ -1,33 +1,36 @@
 import { Button } from '@/components/ui/button';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
+import dayjs from 'dayjs';
 import { ChangeEvent, MouseEvent } from 'react';
 
-export default function ContactRow({
-	contact,
+export default function CareerRow({
+	career,
 	changeOrder,
-	updateContactId,
-	updateContact,
+	updateCareerId,
+	updateCareer,
 	onChange,
 	onUpdate,
 	onSelect,
 	onDelete,
 }: {
-	contact: Contact;
+	career: CareerOverview;
 	changeOrder: boolean;
-	updateContactId: number | null | undefined;
-	updateContact: Contact | null | undefined;
+	updateCareerId: number | null | undefined;
+	updateCareer: CareerOverview | null | undefined;
 	onChange: (
-		key: keyof Contact
+		key: keyof CareerOverview
 	) => (e: ChangeEvent<HTMLInputElement>) => void;
 	onUpdate: (e: MouseEvent<HTMLButtonElement>) => Promise<void>;
-	onSelect: (contact?: Contact) => (e: MouseEvent<HTMLButtonElement>) => void;
+	onSelect: (
+		career?: CareerOverview
+	) => (e: MouseEvent<HTMLButtonElement>) => void;
 	onDelete: (
-		contactId: number
+		careerId: number
 	) => (e: MouseEvent<HTMLButtonElement>) => Promise<void>;
 }) {
 	const { attributes, listeners, setNodeRef, transform, transition } =
-		useSortable({ id: contact.id });
+		useSortable({ id: career.id });
 
 	const style = {
 		transform: CSS.Transform.toString(transform),
@@ -39,7 +42,7 @@ export default function ContactRow({
 			ref={setNodeRef}
 			style={style}
 			className={
-				contact.id === updateContactId
+				career.id === updateCareerId
 					? 'ring-inset ring-2 ring-theme-sub'
 					: ''
 			}
@@ -51,30 +54,50 @@ export default function ContactRow({
 			) : (
 				<td></td>
 			)}
-			{contact.id === updateContactId ? (
+			{career.id === updateCareerId ? (
 				<>
 					<td>
 						<input
 							className="w-full focus:outline-none"
-							onChange={onChange('type')}
+							onChange={onChange('organization')}
 							type="text"
-							value={updateContact?.type}
+							value={updateCareer?.organization}
 						/>
 					</td>
 					<td>
 						<input
 							className="w-full focus:outline-none"
-							onChange={onChange('value')}
+							onChange={onChange('position')}
 							type="text"
-							value={updateContact?.value}
+							value={updateCareer?.position}
 						/>
 					</td>
 					<td>
 						<input
 							className="w-full focus:outline-none"
-							onChange={onChange('label')}
+							onChange={onChange('description')}
 							type="text"
-							value={updateContact?.label}
+							value={updateCareer?.description}
+						/>
+					</td>
+					<td>
+						<input
+							className="w-full focus:outline-none"
+							onChange={onChange('startDate')}
+							type="date"
+							value={dayjs(updateCareer?.startDate).format(
+								'YYYY-MM-DD'
+							)}
+						/>
+					</td>
+					<td>
+						<input
+							className="w-full focus:outline-none"
+							onChange={onChange('endDate')}
+							type="date"
+							value={dayjs(updateCareer?.endDate).format(
+								'YYYY-MM-DD'
+							)}
 						/>
 					</td>
 					<td>
@@ -94,14 +117,19 @@ export default function ContactRow({
 				</>
 			) : (
 				<>
-					<td>{contact.type}</td>
-					<td>{contact.value}</td>
-					<td>{contact.label}</td>
+					<td>{career.organization}</td>
+					<td>{career.position}</td>
+					<td>{career.description}</td>
+					<td>{dayjs(career.startDate).format('YYYY.MM.DD')}</td>
+					<td>
+						{career.endDate &&
+							dayjs(career.endDate).format('YYYY.MM.DD')}
+					</td>
 					<td>
 						<div className="flex gap-2 justify-center">
 							<Button
 								size="sm"
-								onClick={onSelect(contact)}
+								onClick={onSelect(career)}
 								disabled={changeOrder}
 							>
 								수정
@@ -109,7 +137,7 @@ export default function ContactRow({
 							<Button
 								variant="destructive"
 								size="sm"
-								onClick={onDelete(contact.id)}
+								onClick={onDelete(career.id)}
 								disabled={changeOrder}
 							>
 								삭제

@@ -8,7 +8,6 @@ import dayjs from 'dayjs';
 import { useSearchParams } from 'next/navigation';
 import {
 	ChangeEvent,
-	Fragment,
 	MouseEvent,
 	Suspense,
 	useCallback,
@@ -18,6 +17,14 @@ import {
 import { toast } from 'sonner';
 import SortIcon from '@/components/dashboard/SortIcon';
 import { validateAndShowRequiredFields } from '@/lib/utils/validation';
+import { cn } from '@/lib/utils';
+import CareerRow from '@/components/dashboard/info/CareerRow';
+import {
+	arrayMove,
+	SortableContext,
+	verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
+import { closestCenter, DndContext, DragEndEvent } from '@dnd-kit/core';
 
 export default function Career() {
 	return (
@@ -43,6 +50,7 @@ function CareerContent() {
 	const take = 20;
 	const [orderBy, setOrderBy] = useState<string>('id');
 	const [order, setOrder] = useState<Order>('desc');
+	const [changeOrder, setChangeOrder] = useState<boolean>(false);
 
 	async function handleCreateCareer(e: MouseEvent<HTMLButtonElement>) {
 		e.preventDefault();
@@ -158,6 +166,7 @@ function CareerContent() {
 	}
 
 	const handleSort = (column: string) => {
+		if (changeOrder) return;
 		if (orderBy === column) {
 			setOrder(order === 'asc' ? 'desc' : 'asc');
 		} else {
@@ -188,6 +197,44 @@ function CareerContent() {
 		}
 	}, [selectPage, take, orderBy, order]);
 
+	async function handleDragEnd(event: DragEndEvent) {
+		const { active, over } = event;
+		const originalCareers = [...careers];
+		if (active.id !== over?.id && careers) {
+			try {
+				const oldIndex = careers.findIndex(
+					(career) => career.id === active.id
+				);
+				const newIndex = careers.findIndex(
+					(career) => career.id === over?.id
+				);
+				const newOrder = arrayMove(careers, oldIndex, newIndex);
+				setCareers(newOrder);
+				const body = newOrder.map((item, index) => ({
+					id: item.id,
+					prevOrder: item.order,
+					order: (selectPage - 1) * take + index + 1,
+				}));
+				const {
+					data: { message },
+					status,
+				} = await instance.patch('/info/career', { data: body });
+				if (status === 200) {
+					toast.success(message);
+				}
+			} catch (err) {
+				if (isAxiosError(err)) {
+					toast.error(
+						err.response?.data.error || '오류가 발생했습니다'
+					);
+				}
+				setCareers(originalCareers);
+			} finally {
+				setChangeOrder(false);
+			}
+		}
+	}
+
 	useEffect(() => {
 		if (load) {
 			getCareer();
@@ -207,252 +254,181 @@ function CareerContent() {
 
 	return (
 		<div className="py-10 rounded-lg bg-white">
-			<table className="w-full border-collapse table-fixed [&_th]:border [&_th]:px-2 [&_th]:py-1 [&_th:first-of-type]:border-l-0 [&_th:last-of-type]:border-r-0 [&_td]:border [&_td]:px-2 [&_td]:py-1 [&_td]:overflow-auto [&_td:first-of-type]:border-l-0 [&_td:last-of-type]:border-r-0">
-				<thead>
-					<tr>
-						<th
-							className="cursor-pointer relative"
-							onClick={() => handleSort('id')}
-						>
-							ID
-							<span className="absolute right-2 bottom-1/2 translate-y-1/2">
-								<SortIcon
-									orderBy={orderBy}
-									currentColumn="id"
-									order={order}
-								/>
-							</span>
-						</th>
-						<th
-							className="cursor-pointer relative"
-							onClick={() => handleSort('organization')}
-						>
-							조직
-							<span className="absolute right-2 bottom-1/2 translate-y-1/2">
-								<SortIcon
-									orderBy={orderBy}
-									currentColumn="organization"
-									order={order}
-								/>
-							</span>
-						</th>
-						<th>직무</th>
-						<th>설명</th>
-						<th
-							className="cursor-pointer relative"
-							onClick={() => handleSort('startDate')}
-						>
-							시작
-							<span className="absolute right-2 bottom-1/2 translate-y-1/2">
-								<SortIcon
-									orderBy={orderBy}
-									currentColumn="startDate"
-									order={order}
-								/>
-							</span>
-						</th>
-						<th
-							className="cursor-pointer relative"
-							onClick={() => handleSort('endDate')}
-						>
-							종료
-							<span className="absolute right-2 bottom-1/2 translate-y-1/2">
-								<SortIcon
-									orderBy={orderBy}
-									currentColumn="endDate"
-									order={order}
-								/>
-							</span>
-						</th>
-						<th></th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr>
-						<td></td>
-						<td>
-							<input
-								className="w-full focus:outline-none"
-								type="text"
-								value={organization}
-								required
-								onChange={(e) =>
-									setOrganization(e.target.value)
-								}
-							/>
-						</td>
-						<td>
-							<input
-								className="w-full focus:outline-none"
-								type="text"
-								value={position}
-								required
-								onChange={(e) => setPosition(e.target.value)}
-							/>
-						</td>
-						<td>
-							<input
-								className="w-full focus:outline-none"
-								type="text"
-								value={description}
-								required
-								onChange={(e) => setDescription(e.target.value)}
-							/>
-						</td>
-						<td>
-							<input
-								className="w-full focus:outline-none"
-								type="date"
-								value={startDate}
-								required
-								onChange={(e) => setStartDate(e.target.value)}
-							/>
-						</td>
-						<td>
-							<input
-								className="w-full focus:outline-none"
-								type="date"
-								value={endDate}
-								required
-								onChange={(e) => setEndDate(e.target.value)}
-							/>
-						</td>
-						<td>
-							<div className="flex justify-center">
-								<Button size="sm" onClick={handleCreateCareer}>
-									추가
+			<DndContext
+				collisionDetection={closestCenter}
+				onDragEnd={handleDragEnd}
+			>
+				<table className="w-full border-collapse table-fixed [&_th]:border [&_th]:px-2 [&_th]:py-1 [&_th:first-of-type]:border-l-0 [&_th:last-of-type]:border-r-0 [&_td]:border [&_td]:px-2 [&_td]:py-1 [&_td]:overflow-auto [&_td:first-of-type]:border-l-0 [&_td:last-of-type]:border-r-0">
+					<thead>
+						<tr>
+							<th>
+								정렬
+								<Button
+									className="ml-4"
+									size="sm"
+									onClick={() => {
+										setChangeOrder(!changeOrder);
+										setOrderBy('order');
+										setOrder('asc');
+										setLoad(true);
+									}}
+								>
+									{changeOrder ? '취소' : '변경'}
 								</Button>
-							</div>
-						</td>
-					</tr>
-					{careers.map((career) => (
-						<tr
-							key={career.id}
-							className={
-								career.id === updateCareerId
-									? 'ring-inset ring-2 ring-theme-sub'
-									: ''
-							}
-						>
-							{career.id === updateCareerId ? (
-								<Fragment>
-									<td>{career.id}</td>
-									<td>
-										<input
-											className="w-full focus:outline-none"
-											onChange={changeSelectUpdateCareer(
-												'organization'
-											)}
-											type="text"
-											value={updateCareer?.organization}
+							</th>
+							<th
+								className={cn(
+									!changeOrder && 'cursor-pointer',
+									'relative'
+								)}
+								onClick={() => handleSort('organization')}
+							>
+								조직
+								{!changeOrder && (
+									<span className="absolute right-2 bottom-1/2 translate-y-1/2">
+										<SortIcon
+											orderBy={orderBy}
+											currentColumn="type"
+											order={order}
 										/>
-									</td>
-									<td>
-										<input
-											className="w-full focus:outline-none"
-											onChange={changeSelectUpdateCareer(
-												'position'
-											)}
-											type="text"
-											value={updateCareer?.position}
+									</span>
+								)}
+							</th>
+							<th>직무</th>
+							<th>설명</th>
+							<th
+								className={cn(
+									!changeOrder && 'cursor-pointer',
+									'relative'
+								)}
+								onClick={() => handleSort('startDate')}
+							>
+								시작
+								{!changeOrder && (
+									<span className="absolute right-2 bottom-1/2 translate-y-1/2">
+										<SortIcon
+											orderBy={orderBy}
+											currentColumn="type"
+											order={order}
 										/>
-									</td>
-									<td>
-										<input
-											className="w-full focus:outline-none"
-											onChange={changeSelectUpdateCareer(
-												'description'
-											)}
-											type="text"
-											value={updateCareer?.description}
+									</span>
+								)}
+							</th>
+							<th
+								className={cn(
+									!changeOrder && 'cursor-pointer',
+									'relative'
+								)}
+								onClick={() => handleSort('endDate')}
+							>
+								종료
+								{!changeOrder && (
+									<span className="absolute right-2 bottom-1/2 translate-y-1/2">
+										<SortIcon
+											orderBy={orderBy}
+											currentColumn="type"
+											order={order}
 										/>
-									</td>
-									<td>
-										<input
-											className="w-full focus:outline-none"
-											onChange={changeSelectUpdateCareer(
-												'startDate'
-											)}
-											type="date"
-											value={dayjs(
-												updateCareer?.startDate
-											).format('YYYY-MM-DD')}
-										/>
-									</td>
-									<td>
-										<input
-											className="w-full focus:outline-none"
-											onChange={changeSelectUpdateCareer(
-												'endDate'
-											)}
-											type="date"
-											value={dayjs(
-												updateCareer?.endDate
-											).format('YYYY-MM-DD')}
-										/>
-									</td>
-									<td>
-										<div className="flex gap-2 justify-center">
-											<Button
-												size="sm"
-												onClick={handleUpdateCareer}
-											>
-												저장
-											</Button>
-											<Button
-												variant="secondary"
-												size="sm"
-												onClick={selectUpdateCareer()}
-											>
-												취소
-											</Button>
-										</div>
-									</td>
-								</Fragment>
-							) : (
-								<Fragment>
-									<td>{career.id}</td>
-									<td>{career.organization}</td>
-									<td>{career.position}</td>
-									<td>{career.description}</td>
-									<td>
-										{dayjs(career.startDate).format(
-											'YYYY.MM.DD'
-										)}
-									</td>
-									<td>
-										{career.endDate &&
-											dayjs(career.endDate).format(
-												'YYYY.MM.DD'
-											)}
-									</td>
-									<td>
-										<div className="flex gap-2 justify-center">
-											<Button
-												size="sm"
-												onClick={selectUpdateCareer(
-													career
-												)}
-											>
-												수정
-											</Button>
-											<Button
-												variant="destructive"
-												size="sm"
-												onClick={handleDeleteCareer(
-													career.id
-												)}
-											>
-												삭제
-											</Button>
-										</div>
-									</td>
-								</Fragment>
-							)}
+									</span>
+								)}
+							</th>
+							<th></th>
 						</tr>
-					))}
-				</tbody>
-			</table>
+					</thead>
+					<tbody>
+						<tr>
+							<td></td>
+							<td>
+								<input
+									className="w-full focus:outline-none"
+									type="text"
+									value={organization}
+									required
+									onChange={(e) =>
+										setOrganization(e.target.value)
+									}
+									disabled={changeOrder}
+								/>
+							</td>
+							<td>
+								<input
+									className="w-full focus:outline-none"
+									type="text"
+									value={position}
+									required
+									onChange={(e) =>
+										setPosition(e.target.value)
+									}
+									disabled={changeOrder}
+								/>
+							</td>
+							<td>
+								<input
+									className="w-full focus:outline-none"
+									type="text"
+									value={description}
+									required
+									onChange={(e) =>
+										setDescription(e.target.value)
+									}
+									disabled={changeOrder}
+								/>
+							</td>
+							<td>
+								<input
+									className="w-full focus:outline-none"
+									type="date"
+									value={startDate}
+									required
+									onChange={(e) =>
+										setStartDate(e.target.value)
+									}
+									disabled={changeOrder}
+								/>
+							</td>
+							<td>
+								<input
+									className="w-full focus:outline-none"
+									type="date"
+									value={endDate}
+									required
+									onChange={(e) => setEndDate(e.target.value)}
+									disabled={changeOrder}
+								/>
+							</td>
+							<td>
+								<div className="flex justify-center">
+									<Button
+										size="sm"
+										onClick={handleCreateCareer}
+										disabled={changeOrder}
+									>
+										추가
+									</Button>
+								</div>
+							</td>
+						</tr>
+						<SortableContext
+							items={careers}
+							strategy={verticalListSortingStrategy}
+						>
+							{careers.map((career) => (
+								<CareerRow
+									key={career.id}
+									career={career}
+									updateCareerId={updateCareerId}
+									updateCareer={updateCareer}
+									changeOrder={changeOrder}
+									onChange={changeSelectUpdateCareer}
+									onUpdate={handleUpdateCareer}
+									onSelect={selectUpdateCareer}
+									onDelete={handleDeleteCareer}
+								/>
+							))}
+						</SortableContext>
+					</tbody>
+				</table>
+			</DndContext>
 			<AdminPagination
 				className="mt-10"
 				page={selectPage}

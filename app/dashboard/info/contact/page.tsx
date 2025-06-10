@@ -16,12 +16,12 @@ import {
 } from 'react';
 import { toast } from 'sonner';
 import { validateAndShowRequiredFields } from '@/lib/utils/validation';
+import { closestCenter, DndContext, DragEndEvent } from '@dnd-kit/core';
 import {
 	SortableContext,
 	arrayMove,
 	verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
-import { closestCenter, DndContext, DragEndEvent } from '@dnd-kit/core';
 import { cn } from '@/lib/utils';
 import ContactRow from '@/components/dashboard/info/ContactRow';
 
@@ -327,6 +327,7 @@ function ContactContent() {
 									value={type}
 									required
 									onChange={(e) => setType(e.target.value)}
+									disabled={changeOrder}
 								/>
 							</td>
 							<td>
@@ -336,6 +337,7 @@ function ContactContent() {
 									value={value}
 									required
 									onChange={(e) => setValue(e.target.value)}
+									disabled={changeOrder}
 								/>
 							</td>
 							<td>
@@ -345,6 +347,7 @@ function ContactContent() {
 									value={label}
 									required
 									onChange={(e) => setLabel(e.target.value)}
+									disabled={changeOrder}
 								/>
 							</td>
 							<td>
@@ -352,6 +355,7 @@ function ContactContent() {
 									<Button
 										size="sm"
 										onClick={handleCreateContact}
+										disabled={changeOrder}
 									>
 										추가
 									</Button>

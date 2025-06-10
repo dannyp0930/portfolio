@@ -1,33 +1,36 @@
 import { Button } from '@/components/ui/button';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
+import dayjs from 'dayjs';
 import { ChangeEvent, MouseEvent } from 'react';
 
-export default function ContactRow({
-	contact,
+export default function CertificateRow({
+	certificate,
 	changeOrder,
-	updateContactId,
-	updateContact,
+	updateCertificateId,
+	updateCertificate,
 	onChange,
 	onUpdate,
 	onSelect,
 	onDelete,
 }: {
-	contact: Contact;
+	certificate: Certificate;
 	changeOrder: boolean;
-	updateContactId: number | null | undefined;
-	updateContact: Contact | null | undefined;
+	updateCertificateId: number | null | undefined;
+	updateCertificate: Certificate | null | undefined;
 	onChange: (
-		key: keyof Contact
+		key: keyof Certificate
 	) => (e: ChangeEvent<HTMLInputElement>) => void;
 	onUpdate: (e: MouseEvent<HTMLButtonElement>) => Promise<void>;
-	onSelect: (contact?: Contact) => (e: MouseEvent<HTMLButtonElement>) => void;
+	onSelect: (
+		certificate?: Certificate
+	) => (e: MouseEvent<HTMLButtonElement>) => void;
 	onDelete: (
-		contactId: number
+		certificateId: number
 	) => (e: MouseEvent<HTMLButtonElement>) => Promise<void>;
 }) {
 	const { attributes, listeners, setNodeRef, transform, transition } =
-		useSortable({ id: contact.id });
+		useSortable({ id: certificate.id });
 
 	const style = {
 		transform: CSS.Transform.toString(transform),
@@ -39,7 +42,7 @@ export default function ContactRow({
 			ref={setNodeRef}
 			style={style}
 			className={
-				contact.id === updateContactId
+				certificate.id === updateCertificateId
 					? 'ring-inset ring-2 ring-theme-sub'
 					: ''
 			}
@@ -51,30 +54,32 @@ export default function ContactRow({
 			) : (
 				<td></td>
 			)}
-			{contact.id === updateContactId ? (
+			{certificate.id === updateCertificateId ? (
 				<>
 					<td>
 						<input
 							className="w-full focus:outline-none"
-							onChange={onChange('type')}
+							onChange={onChange('certificateName')}
 							type="text"
-							value={updateContact?.type}
+							value={updateCertificate?.certificateName}
 						/>
 					</td>
 					<td>
 						<input
 							className="w-full focus:outline-none"
-							onChange={onChange('value')}
-							type="text"
-							value={updateContact?.value}
+							onChange={onChange('issueDate')}
+							type="date"
+							value={dayjs(updateCertificate?.issueDate).format(
+								'YYYY-MM-DD'
+							)}
 						/>
 					</td>
 					<td>
 						<input
 							className="w-full focus:outline-none"
-							onChange={onChange('label')}
+							onChange={onChange('issuingOrganization')}
 							type="text"
-							value={updateContact?.label}
+							value={updateCertificate?.issuingOrganization}
 						/>
 					</td>
 					<td>
@@ -94,14 +99,14 @@ export default function ContactRow({
 				</>
 			) : (
 				<>
-					<td>{contact.type}</td>
-					<td>{contact.value}</td>
-					<td>{contact.label}</td>
+					<td>{certificate.certificateName}</td>
+					<td>{certificate.issuingOrganization}</td>
+					<td>{dayjs(certificate.issueDate).format('YYYY.MM.DD')}</td>
 					<td>
 						<div className="flex gap-2 justify-center">
 							<Button
 								size="sm"
-								onClick={onSelect(contact)}
+								onClick={onSelect(certificate)}
 								disabled={changeOrder}
 							>
 								수정
@@ -109,7 +114,7 @@ export default function ContactRow({
 							<Button
 								variant="destructive"
 								size="sm"
-								onClick={onDelete(contact.id)}
+								onClick={onDelete(certificate.id)}
 								disabled={changeOrder}
 							>
 								삭제
