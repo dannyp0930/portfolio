@@ -115,6 +115,9 @@ export async function GET(req: NextRequest) {
 			});
 			const careerDetail = await prisma.careerDetail.findMany({
 				where: { careerId: Number(id) },
+				orderBy: {
+					order: 'asc',
+				},
 			});
 			return NextResponse.json(
 				{

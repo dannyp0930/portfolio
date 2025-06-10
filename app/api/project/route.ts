@@ -147,6 +147,9 @@ export async function GET(req: NextRequest) {
 				},
 				orderBy: [
 					{
+						order: 'asc',
+					},
+					{
 						endDate: {
 							sort: 'desc',
 							nulls: 'first',

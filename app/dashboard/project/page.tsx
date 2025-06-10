@@ -4,12 +4,19 @@ import { instance } from '@/app/api/instance';
 import AdminPagination from '@/components/dashboard/AdminPagination';
 import { Button } from '@/components/ui/button';
 import { isAxiosError } from 'axios';
-import dayjs from 'dayjs';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { MouseEvent, Suspense, useCallback, useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import SortIcon from '@/components/dashboard/SortIcon';
+import ProjectRow from '@/components/dashboard/ProjectRow';
+import { closestCenter, DndContext, DragEndEvent } from '@dnd-kit/core';
+import {
+	arrayMove,
+	SortableContext,
+	verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
+import { cn } from '@/lib/utils';
 
 export default function Project() {
 	return (
@@ -28,6 +35,7 @@ function ProjectComponent() {
 	const take = 20;
 	const [orderBy, setOrderBy] = useState<string>('id');
 	const [order, setOrder] = useState<Order>('desc');
+	const [changeOrder, setChangeOrder] = useState<boolean>(false);
 
 	function handleDeleteProject(projectId: number) {
 		return async (e: MouseEvent<HTMLButtonElement>) => {
@@ -88,6 +96,44 @@ function ProjectComponent() {
 		}
 	}, [selectPage, take, orderBy, order]);
 
+	async function handleDragEnd(event: DragEndEvent) {
+		const { active, over } = event;
+		const originalProjects = [...projects];
+		if (active.id !== over?.id && projects) {
+			try {
+				const oldIndex = projects.findIndex(
+					(project) => project.id === active.id
+				);
+				const newIndex = projects.findIndex(
+					(project) => project.id === over?.id
+				);
+				const newOrder = arrayMove(projects, oldIndex, newIndex);
+				setProjects(newOrder);
+				const body = newOrder.map((item, index) => ({
+					id: item.id,
+					prevOrder: item.order,
+					order: (selectPage - 1) * take + index + 1,
+				}));
+				const {
+					data: { message },
+					status,
+				} = await instance.patch('/project', { data: body });
+				if (status === 200) {
+					toast.success(message);
+				}
+			} catch (err) {
+				if (isAxiosError(err)) {
+					toast.error(
+						err.response?.data.error || '오류가 발생했습니다'
+					);
+				}
+				setProjects(originalProjects);
+			} finally {
+				setChangeOrder(false);
+			}
+		}
+	}
+
 	useEffect(() => {
 		if (load) {
 			getProject();
@@ -112,102 +158,108 @@ function ProjectComponent() {
 					<Link href="/dashboard/project/create">등록</Link>
 				</Button>
 			</div>
-			<table className="w-full border-collapse table-fixed [&_th]:border [&_th]:px-2 [&_th]:py-1 [&_th:first-of-type]:border-l-0 [&_th:last-of-type]:border-r-0 [&_td]:border [&_td]:px-2 [&_td]:py-1 [&_td]:overflow-auto [&_td:first-of-type]:border-l-0 [&_td:last-of-type]:border-r-0">
-				<thead>
-					<tr>
-						<th
-							className="cursor-pointer relative"
-							onClick={() => handleSort('id')}
-						>
-							ID
-							<span className="absolute right-2 bottom-1/2 translate-y-1/2">
-								<SortIcon
-									orderBy={orderBy}
-									currentColumn="id"
-									order={order}
-								/>
-							</span>
-						</th>
-						<th
-							className="cursor-pointer relative"
-							onClick={() => handleSort('title')}
-						>
-							제목
-							<span className="absolute right-2 bottom-1/2 translate-y-1/2">
-								<SortIcon
-									orderBy={orderBy}
-									currentColumn="title"
-									order={order}
-								/>
-							</span>
-						</th>
-						<th>소개</th>
-						<th
-							className="cursor-pointer relative"
-							onClick={() => handleSort('startDate')}
-						>
-							시작일자
-							<span className="absolute right-2 bottom-1/2 translate-y-1/2">
-								<SortIcon
-									orderBy={orderBy}
-									currentColumn="startDate"
-									order={order}
-								/>
-							</span>
-						</th>
-						<th
-							className="cursor-pointer relative"
-							onClick={() => handleSort('endDate')}
-						>
-							종료일자
-							<span className="absolute right-2 bottom-1/2 translate-y-1/2">
-								<SortIcon
-									orderBy={orderBy}
-									currentColumn="endDate"
-									order={order}
-								/>
-							</span>
-						</th>
-						<th></th>
-					</tr>
-				</thead>
-				<tbody>
-					{projects.map((project) => (
-						<tr key={project.id}>
-							<td>{project.id}</td>
-							<td>{project.title}</td>
-							<td>{project.intro}</td>
-							<td>
-								{dayjs(project.startDate).format('YYYY-MM-DD')}
-							</td>
-							<td>
-								{project.endDate &&
-									dayjs(project.endDate).format('YYYY-MM-DD')}
-							</td>
-							<td>
-								<div className="flex gap-2 justify-center">
-									<Button asChild size="sm">
-										<Link
-											href={`/dashboard/project/${project.id}`}
-										>
-											수정
-										</Link>
-									</Button>
-									<Button
-										variant="destructive"
-										size="sm"
-										onClick={handleDeleteProject(
-											Number(project.id)
-										)}
-									>
-										삭제
-									</Button>
-								</div>
-							</td>
+			<DndContext
+				collisionDetection={closestCenter}
+				onDragEnd={handleDragEnd}
+			>
+				<table className="w-full border-collapse table-fixed [&_th]:border [&_th]:px-2 [&_th]:py-1 [&_th:first-of-type]:border-l-0 [&_th:last-of-type]:border-r-0 [&_td]:border [&_td]:px-2 [&_td]:py-1 [&_td]:overflow-auto [&_td:first-of-type]:border-l-0 [&_td:last-of-type]:border-r-0">
+					<thead>
+						<tr>
+							<th>
+								정렬
+								<Button
+									className="ml-4"
+									size="sm"
+									onClick={() => {
+										setChangeOrder(!changeOrder);
+										setOrderBy('order');
+										setOrder('asc');
+										setLoad(true);
+									}}
+								>
+									{changeOrder ? '취소' : '변경'}
+								</Button>
+							</th>
+							<th
+								className={cn(
+									!changeOrder && 'cursor-pointer',
+									'relative'
+								)}
+								onClick={() => handleSort('title')}
+							>
+								제목
+								{!changeOrder && (
+									<span className="absolute right-2 bottom-1/2 translate-y-1/2">
+										<SortIcon
+											orderBy={orderBy}
+											currentColumn="type"
+											order={order}
+										/>
+									</span>
+								)}
+							</th>
+							<th>소개</th>
+							<th
+								className={cn(
+									!changeOrder && 'cursor-pointer',
+									'relative'
+								)}
+								onClick={() => handleSort('startDate')}
+							>
+								시작일자
+								{!changeOrder && (
+									<span className="absolute right-2 bottom-1/2 translate-y-1/2">
+										<SortIcon
+											orderBy={orderBy}
+											currentColumn="type"
+											order={order}
+										/>
+									</span>
+								)}
+							</th>
+							<th
+								className={cn(
+									!changeOrder && 'cursor-pointer',
+									'relative'
+								)}
+								onClick={() => handleSort('endDate')}
+							>
+								종료일자
+								{!changeOrder && (
+									<span className="absolute right-2 bottom-1/2 translate-y-1/2">
+										<SortIcon
+											orderBy={orderBy}
+											currentColumn="type"
+											order={order}
+										/>
+									</span>
+								)}
+							</th>
+							<th></th>
 						</tr>
-					))}
-				</tbody>
-			</table>
+					</thead>
+					<tbody>
+						<SortableContext
+							items={projects}
+							strategy={verticalListSortingStrategy}
+						>
+							{projects.map((project, idx) => (
+								<ProjectRow
+									key={project.id}
+									idx={idx}
+									take={take}
+									total={totalCnt}
+									page={selectPage}
+									project={project}
+									changeOrder={changeOrder}
+									setLoad={setLoad}
+									onDelete={handleDeleteProject}
+								/>
+							))}
+						</SortableContext>
+					</tbody>
+				</table>
+			</DndContext>
 			<AdminPagination
 				className="mt-10"
 				page={selectPage}
