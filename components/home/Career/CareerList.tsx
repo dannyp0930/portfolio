@@ -9,6 +9,8 @@ export default function CareerList({ careers }: CareerListProps) {
 						{career.companyName}{' '}
 						<span className="text-sm">
 							{dayjs(career.startDate).format('YYYY-MM-DD')}
+							{career.endDate &&
+								` ~ ${dayjs(career.endDate).format('YYYY-MM-DD')}`}
 						</span>
 					</h2>
 					<h5 className="mt-1">{career.description}</h5>
