@@ -45,24 +45,61 @@ export async function PATCH(req: NextRequest) {
 		return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
 	}
 	const { data } = await req.json();
-	try {
-		await prisma.$transaction(async (tx) => {
-			const updates = data.filter(
-				(item: PatchOrderRequset) => item.order !== item.prevOrder
+	if (Array.isArray(data)) {
+		try {
+			await prisma.$transaction(async (tx) => {
+				const updates = data.filter(
+					(item: PatchOrderRequset) => item.order !== item.prevOrder
+				);
+				for (const education of updates) {
+					await tx.education.update({
+						where: { id: Number(education.id) },
+						data: { order: Number(education.order) },
+					});
+				}
+			});
+			return NextResponse.json({ message: 'OK' }, { status: 200 });
+		} catch (err) {
+			return NextResponse.json(
+				{ error: 'Something went wrong', details: err },
+				{ status: 500 }
 			);
-			for (const experience of updates) {
-				await tx.experience.update({
-					where: { id: Number(experience.id) },
-					data: { order: Number(experience.order) },
+		}
+	} else {
+		const { id, order, dir } = data;
+		try {
+			await prisma.$transaction(async (tx) => {
+				const currentEducation = await tx.education.findUnique({
+					where: { id: Number(id) },
 				});
-			}
-		});
-		return NextResponse.json({ message: 'OK' }, { status: 200 });
-	} catch (err) {
-		return NextResponse.json(
-			{ error: 'Something went wrong', details: err },
-			{ status: 500 }
-		);
+				if (!currentEducation) {
+					return NextResponse.json(
+						{ error: 'Education not found' },
+						{ status: 404 }
+					);
+				}
+				const newOrder = dir ? order + 1 : order - 1;
+				const adjacentEducation = await tx.education.findFirst({
+					where: { order: Number(newOrder) },
+				});
+				await tx.education.update({
+					where: { id: Number(id) },
+					data: { order: newOrder },
+				});
+				if (adjacentEducation) {
+					await tx.education.update({
+						where: { id: adjacentEducation.id },
+						data: { order },
+					});
+				}
+			});
+			return NextResponse.json({ message: 'OK' }, { status: 200 });
+		} catch (err) {
+			return NextResponse.json(
+				{ error: 'Something went wrong', details: err },
+				{ status: 500 }
+			);
+		}
 	}
 }
 
