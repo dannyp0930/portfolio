@@ -212,6 +212,7 @@ jobs:
 github repository에 환경 변수 등록 필수
 
 ## ToDo List
+- 대시보드 row 선택
 - 메일 로그 주기 삭제
 - 사용자
   - Oauth
