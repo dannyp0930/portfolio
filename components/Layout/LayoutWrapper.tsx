@@ -11,7 +11,7 @@ export default function LayoutWrapper({
 	children: React.ReactNode;
 }) {
 	const pathname = usePathname();
-	const [isDashboard, setIsDashboard] = useState<boolean>();
+	const [isDashboard, setIsDashboard] = useState<boolean>(true);
 	useEffect(() => {
 		setIsDashboard(pathname.startsWith('/dashboard'));
 	}, [pathname]);

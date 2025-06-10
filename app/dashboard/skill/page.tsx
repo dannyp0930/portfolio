@@ -217,13 +217,14 @@ function SkillComponent() {
 		}
 	}, [selectPage, selectCategory, take, orderBy, order]);
 
-	function handleCategoryChange(value: string) {
-		setSelectCategory(value !== 'All' ? value : '');
-		if (value !== 'All') {
-			router.push(`${pathname}?c=${value}`);
-		} else {
-			router.push(pathname);
-		}
+	function handleCategoryChange(value: string, page?: number) {
+		const params = {
+			...(value !== 'All' && { c: value }),
+			...(page && { p: String(page) }),
+		};
+		const searchParams = new URLSearchParams(params);
+		const queryString = searchParams.toString();
+		router.push(queryString ? `${pathname}?${queryString}` : pathname);
 	}
 
 	async function handleDragEnd(event: DragEndEvent) {
@@ -318,7 +319,7 @@ function SkillComponent() {
 										setChangeOrder(!changeOrder);
 										setOrderBy('order');
 										setOrder('asc');
-										handleCategoryChange('All');
+										handleCategoryChange('All', selectPage);
 										setLoad(true);
 									}}
 								>
@@ -462,14 +463,19 @@ function SkillComponent() {
 							items={skills}
 							strategy={verticalListSortingStrategy}
 						>
-							{skills.map((skill) => (
+							{skills.map((skill, idx) => (
 								<SkillRow
 									key={skill.id}
+									idx={idx}
+									take={take}
+									total={totalCnt}
+									page={selectPage}
 									skill={skill}
 									changeOrder={changeOrder}
 									updateSkillId={updateSkillId}
 									updateSkill={updateSkill}
 									setNewImage={setNewImage}
+									setLoad={setLoad}
 									onChange={changeSelectUpdateSkill}
 									onUpdate={handleUpdateSkill}
 									onSelect={selectUpdateSkill}
