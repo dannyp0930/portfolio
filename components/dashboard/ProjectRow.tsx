@@ -1,5 +1,6 @@
 import { instance } from '@/app/api/instance';
 import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { isAxiosError } from 'axios';
@@ -113,7 +114,20 @@ export default function ProjectRow({
 			</td>
 			<td>
 				<div className="flex gap-2 justify-center">
-					<Button asChild size="sm">
+					<Button
+						asChild
+						size="sm"
+						disabled={changeOrder}
+						className={cn(
+							changeOrder &&
+								'opacity-50 cursor-default hover:bg-primary'
+						)}
+						onClick={(e) => {
+							if (changeOrder) {
+								e.preventDefault();
+							}
+						}}
+					>
 						<Link href={`/dashboard/project/${project.id}`}>
 							수정
 						</Link>
