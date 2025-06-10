@@ -137,6 +137,7 @@ export async function GET(req: NextRequest) {
 				careers.map(async (career) => {
 					const careerDetail = await prisma.careerDetail.findMany({
 						where: { careerId: career.id },
+						orderBy: { order: 'asc' },
 					});
 					return {
 						...career,
