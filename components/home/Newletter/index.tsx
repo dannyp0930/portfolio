@@ -73,7 +73,7 @@ export default function Nesletter() {
 	return (
 		<section
 			id="newsletter"
-			className="m-auto my-20 bg-theme-sub/30 w-[90%] p-5 rounded-xl"
+			className="m-auto my-20 bg-theme-sub/30 w-[90%] p-5 rounded-xl max-w-[120rem]"
 		>
 			<h1>Newsletter</h1>
 			<Form {...form}>
