@@ -47,7 +47,7 @@ function EducationContent() {
 	const [updateEducationId, setUpdateEducationId] = useState<number | null>();
 	const [updateEducation, setUpdateEducation] = useState<Education | null>();
 	const take = 20;
-	const [orderBy, setOrderBy] = useState<string>('id');
+	const [orderBy, setOrderBy] = useState<string>('order');
 	const [order, setOrder] = useState<Order>('desc');
 	const [changeOrder, setChangeOrder] = useState<boolean>(false);
 

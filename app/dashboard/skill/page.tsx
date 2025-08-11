@@ -47,7 +47,7 @@ function SkillComponent() {
 	const pathname = usePathname();
 	const searchParams = useSearchParams();
 	const [load, setLoad] = useState<boolean>(true);
-	const [orderBy, setOrderBy] = useState<string>('id');
+	const [orderBy, setOrderBy] = useState<string>('order');
 	const [order, setOrder] = useState<Order>('desc');
 	const [title, setTitle] = useState<string>('');
 	const [description, setDescription] = useState<string>('');

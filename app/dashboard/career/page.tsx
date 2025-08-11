@@ -29,7 +29,7 @@ export default function Career() {
 function CareerComponent() {
 	const searchParams = useSearchParams();
 	const [load, setLoad] = useState<boolean>(true);
-	const [orderBy, setOrderBy] = useState<string>('id');
+	const [orderBy, setOrderBy] = useState<string>('order');
 	const [order, setOrder] = useState<Order>('desc');
 	const [selectPage, setSelectPage] = useState<number>(1);
 	const [careers, setCareers] = useState<Career[]>([]);

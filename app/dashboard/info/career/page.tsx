@@ -48,7 +48,7 @@ function CareerContent() {
 	const [updateCareerId, setUpdateCareerId] = useState<number | null>();
 	const [updateCareer, setUpdateCareer] = useState<CareerOverview | null>();
 	const take = 20;
-	const [orderBy, setOrderBy] = useState<string>('id');
+	const [orderBy, setOrderBy] = useState<string>('order');
 	const [order, setOrder] = useState<Order>('desc');
 	const [changeOrder, setChangeOrder] = useState<boolean>(false);
 
