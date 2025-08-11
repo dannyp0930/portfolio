@@ -20,7 +20,7 @@ export default function CareerList({ careers }: CareerListProps) {
 						{career.details.map((detail) => (
 							<li key={detail.title}>
 								<h5>{detail.title}</h5>
-								<p className="whitespace-pre-line">
+								<p className="whitespace-pre-wrap">
 									{detail.content}
 								</p>
 							</li>
