@@ -49,7 +49,7 @@ function CareerContent() {
 	const [updateCareer, setUpdateCareer] = useState<CareerOverview | null>();
 	const take = 20;
 	const [orderBy, setOrderBy] = useState<string>('order');
-	const [order, setOrder] = useState<Order>('desc');
+	const [order, setOrder] = useState<Order>('asc');
 	const [changeOrder, setChangeOrder] = useState<boolean>(false);
 
 	async function handleCreateCareer(e: MouseEvent<HTMLButtonElement>) {
