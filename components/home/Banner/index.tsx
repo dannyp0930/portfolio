@@ -47,7 +47,7 @@ export default function Banner({ intro }: BannerProps) {
 			)}
 			<div className="z-20 content">
 				<h1 className="w-80  mg:w-full m-auto">{intro.title}</h1>
-				<p className="px-5 mt-10 break-keep whitespace-pre-line">
+				<p className="px-5 mt-10 break-keep whitespace-pre-wrap">
 					{intro.description}
 				</p>
 			</div>
