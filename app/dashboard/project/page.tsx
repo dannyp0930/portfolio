@@ -33,7 +33,7 @@ function ProjectComponent() {
 	const [projects, setProjects] = useState<Project[]>([]);
 	const [totalCnt, setTotalCnt] = useState<number>(0);
 	const take = 20;
-	const [orderBy, setOrderBy] = useState<string>('id');
+	const [orderBy, setOrderBy] = useState<string>('order');
 	const [order, setOrder] = useState<Order>('desc');
 	const [changeOrder, setChangeOrder] = useState<boolean>(false);
 
