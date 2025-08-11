@@ -48,7 +48,7 @@ function LanguageContent() {
 	const [updateLanguage, setUpdateLanguage] = useState<Language | null>();
 	const take = 20;
 	const [orderBy, setOrderBy] = useState<string>('order');
-	const [order, setOrder] = useState<Order>('desc');
+	const [order, setOrder] = useState<Order>('asc');
 	const [changeOrder, setChangeOrder] = useState<boolean>(false);
 
 	async function handleCreateLanguage(e: MouseEvent<HTMLButtonElement>) {

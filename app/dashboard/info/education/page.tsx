@@ -48,7 +48,7 @@ function EducationContent() {
 	const [updateEducation, setUpdateEducation] = useState<Education | null>();
 	const take = 20;
 	const [orderBy, setOrderBy] = useState<string>('order');
-	const [order, setOrder] = useState<Order>('desc');
+	const [order, setOrder] = useState<Order>('asc');
 	const [changeOrder, setChangeOrder] = useState<boolean>(false);
 
 	async function handleCreateEducation(e: MouseEvent<HTMLButtonElement>) {

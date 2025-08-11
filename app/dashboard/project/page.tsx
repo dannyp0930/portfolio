@@ -34,7 +34,7 @@ function ProjectComponent() {
 	const [totalCnt, setTotalCnt] = useState<number>(0);
 	const take = 20;
 	const [orderBy, setOrderBy] = useState<string>('order');
-	const [order, setOrder] = useState<Order>('desc');
+	const [order, setOrder] = useState<Order>('asc');
 	const [changeOrder, setChangeOrder] = useState<boolean>(false);
 
 	function handleDeleteProject(projectId: number) {
