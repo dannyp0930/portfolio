@@ -3,7 +3,6 @@ import Info from '@/components/home/Info';
 import Skills from '@/components/home/Skills';
 import Project from '@/components/home/Project';
 import Career from '@/components/home/Career';
-import Nesletter from '@/components/home/Newletter';
 import { serverInstance } from '@/app/api/instance';
 
 async function fetchData() {
@@ -83,7 +82,6 @@ export default async function Home() {
 			<Skills skills={skills} />
 			<Career />
 			<Project />
-			<Nesletter />
 		</article>
 	);
 }
