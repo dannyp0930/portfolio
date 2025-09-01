@@ -92,7 +92,10 @@ export default function ProjectList({ projects }: ProjectListPros) {
 				<CarouselNext />
 			</Carousel>
 			{modalId !== 0 && (
-				<ModalContainer className="w-[90%]" closeModal={closeModal}>
+				<ModalContainer
+					className="w-[90%] max-w-[75rem]"
+					closeModal={closeModal}
+				>
 					<div className="p-2">
 						{modalLoad ? (
 							<>
