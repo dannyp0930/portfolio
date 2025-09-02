@@ -212,7 +212,9 @@ jobs:
 github repository에 환경 변수 등록 필수
 
 ## ToDo List
-- 대시보드 row 선택
+- 대시보드
+  - api 로딩 ui 추가
+  - 이미지 업로드 사이즈 확인
 - 메일 로그 주기 삭제
 - 사용자
   - Oauth
