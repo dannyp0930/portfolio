@@ -27,7 +27,9 @@ jobs:
 
             echo "Updating repository..."
             cd /srv/portfolio
-            sudo git pull origin main || { echo "Git pull failed"; exit 1; }
+            echo "Resetting repository to match origin/main..."
+            sudo git fetch origin main || { echo "Git fetch failed"; exit 1; }
+            sudo git reset --hard origin/main || { echo "Git reset failed"; exit 1; }
 
             echo "Setting up Node.js environment..."
             export NVM_DIR="$HOME/.nvm"
