@@ -181,7 +181,11 @@ export default function ProjectUpdate({ params }: ProjectUpdateParams) {
 	}
 
 	async function handleCreateImage(image: File) {
-		const id = toast.loading('이미지를 추가합니다...');
+		if (image.size > 10 * 1024 * 1024) {
+			toast.error('이미지는 10MB 이하만 업로드 가능합니다.');
+			return;
+		}
+		const id = toast.loading('Upload Image...');
 		if (image) {
 			try {
 				const formData = new FormData();
@@ -213,6 +217,11 @@ export default function ProjectUpdate({ params }: ProjectUpdateParams) {
 	}
 
 	async function handleUpdateImage(image: File, imageId: number) {
+		if (image.size > 10 * 1024 * 1024) {
+			toast.error('이미지는 10MB 이하만 업로드 가능합니다.');
+			return;
+		}
+		const id = toast.loading('Update Image...');
 		try {
 			const formData = new FormData();
 			formData.append('image', image);
@@ -222,11 +231,13 @@ export default function ProjectUpdate({ params }: ProjectUpdateParams) {
 				status,
 			} = await formInstance.put('/project/image', formData);
 			if (status === 200) {
-				toast.success(message);
+				toast.success(message, { id });
 			}
 		} catch (err) {
 			if (isAxiosError(err)) {
-				toast.error(err.response?.data.error || '오류가 발생했습니다');
+				toast.error(err.response?.data.error || '오류가 발생했습니다', {
+					id,
+				});
 			}
 		} finally {
 			setLoad(true);
