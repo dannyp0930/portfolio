@@ -286,7 +286,7 @@ function ExperienceContent() {
 									<span className="absolute right-2 bottom-1/2 translate-y-1/2">
 										<SortIcon
 											orderBy={orderBy}
-											currentColumn="type"
+											currentColumn="organization"
 											order={order}
 										/>
 									</span>
@@ -305,7 +305,7 @@ function ExperienceContent() {
 									<span className="absolute right-2 bottom-1/2 translate-y-1/2">
 										<SortIcon
 											orderBy={orderBy}
-											currentColumn="type"
+											currentColumn="startDate"
 											order={order}
 										/>
 									</span>
@@ -323,7 +323,7 @@ function ExperienceContent() {
 									<span className="absolute right-2 bottom-1/2 translate-y-1/2">
 										<SortIcon
 											orderBy={orderBy}
-											currentColumn="type"
+											currentColumn="endDate"
 											order={order}
 										/>
 									</span>

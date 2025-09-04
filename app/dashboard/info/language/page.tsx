@@ -284,7 +284,7 @@ function LanguageContent() {
 									<span className="absolute right-2 bottom-1/2 translate-y-1/2">
 										<SortIcon
 											orderBy={orderBy}
-											currentColumn="type"
+											currentColumn="languageName"
 											order={order}
 										/>
 									</span>
@@ -302,7 +302,7 @@ function LanguageContent() {
 									<span className="absolute right-2 bottom-1/2 translate-y-1/2">
 										<SortIcon
 											orderBy={orderBy}
-											currentColumn="type"
+											currentColumn="proficiency"
 											order={order}
 										/>
 									</span>
@@ -320,7 +320,7 @@ function LanguageContent() {
 									<span className="absolute right-2 bottom-1/2 translate-y-1/2">
 										<SortIcon
 											orderBy={orderBy}
-											currentColumn="type"
+											currentColumn="examDate"
 											order={order}
 										/>
 									</span>

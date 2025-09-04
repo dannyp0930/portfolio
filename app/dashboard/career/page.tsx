@@ -192,7 +192,7 @@ function CareerComponent() {
 									<span className="absolute right-2 bottom-1/2 translate-y-1/2">
 										<SortIcon
 											orderBy={orderBy}
-											currentColumn="type"
+											currentColumn="companyName"
 											order={order}
 										/>
 									</span>
@@ -213,7 +213,7 @@ function CareerComponent() {
 									<span className="absolute right-2 bottom-1/2 translate-y-1/2">
 										<SortIcon
 											orderBy={orderBy}
-											currentColumn="type"
+											currentColumn="startDate"
 											order={order}
 										/>
 									</span>
@@ -231,7 +231,7 @@ function CareerComponent() {
 									<span className="absolute right-2 bottom-1/2 translate-y-1/2">
 										<SortIcon
 											orderBy={orderBy}
-											currentColumn="type"
+											currentColumn="endDate"
 											order={order}
 										/>
 									</span>

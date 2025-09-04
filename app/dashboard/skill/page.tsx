@@ -338,7 +338,7 @@ function SkillComponent() {
 									<span className="absolute right-2 bottom-1/2 translate-y-1/2">
 										<SortIcon
 											orderBy={orderBy}
-											currentColumn="type"
+											currentColumn="title"
 											order={order}
 										/>
 									</span>
