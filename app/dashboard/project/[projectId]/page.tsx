@@ -181,6 +181,7 @@ export default function ProjectUpdate({ params }: ProjectUpdateParams) {
 	}
 
 	async function handleCreateImage(image: File) {
+		const id = toast.loading('이미지를 추가합니다...');
 		if (image) {
 			try {
 				const formData = new FormData();
@@ -193,7 +194,7 @@ export default function ProjectUpdate({ params }: ProjectUpdateParams) {
 					status,
 				} = await formInstance.post('/project/image', formData);
 				if (status === 200) {
-					toast.success(message);
+					toast.success(message, { id });
 					if (imageRef.current) {
 						imageRef.current.value = '';
 					}
@@ -201,7 +202,8 @@ export default function ProjectUpdate({ params }: ProjectUpdateParams) {
 			} catch (err) {
 				if (isAxiosError(err)) {
 					toast.error(
-						err.response?.data.error || '오류가 발생했습니다'
+						err.response?.data.error || '오류가 발생했습니다',
+						{ id }
 					);
 				}
 			} finally {
