@@ -495,24 +495,31 @@ export default function ProjectUpdate({ params }: ProjectUpdateParams) {
 								onChange={handleCreateImage}
 							/>
 						</div>
-						<DndContext
-							collisionDetection={closestCenter}
-							onDragEnd={handleDragEnd}
-						>
-							<SortableContext
-								items={projectImages?.map((img) => img.id)}
-								strategy={verticalListSortingStrategy}
+						{(projectImages?.length ?? 0) > 0 ? (
+							<DndContext
+								collisionDetection={closestCenter}
+								onDragEnd={handleDragEnd}
 							>
-								{projectImages?.map((image) => (
-									<ProjectSortableImage
-										key={image.id}
-										image={image}
-										onUpdate={handleUpdateImage}
-										onDelete={handleDeleteImage}
-									/>
-								))}
-							</SortableContext>
-						</DndContext>
+								<SortableContext
+									items={projectImages!.map((img) => img.id)}
+									strategy={verticalListSortingStrategy}
+								>
+									{projectImages!.map((image) => (
+										<ProjectSortableImage
+											key={image.id}
+											image={image}
+											onUpdate={handleUpdateImage}
+											onDelete={handleDeleteImage}
+										/>
+									))}
+								</SortableContext>
+							</DndContext>
+						) : (
+							<div className="h-40 flex items-center justify-center rounded-md border border-dashed text-sm text-muted-foreground">
+								이미지가 없습니다. 상단의 “이미지 추가”로
+								업로드하세요.
+							</div>
+						)}
 					</div>
 				)}
 			</div>
