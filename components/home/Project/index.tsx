@@ -1,9 +1,33 @@
 import ProjectList from './ProjectList';
-import { serverInstance } from '@/app/api/instance';
+import prisma from '@/lib/prisma';
 
 export default async function Project() {
-	const {
-		data: { data: projects },
-	} = await serverInstance.get('/project', { params: { take: -1 } });
-	return <ProjectList projects={projects} />;
+	const projects = await prisma.project.findMany({
+		include: {
+			projectDetail: {
+				select: {
+					id: true,
+				},
+			},
+		},
+		orderBy: [
+			{
+				order: 'asc',
+			},
+			{
+				endDate: {
+					sort: 'desc',
+					nulls: 'first',
+				},
+			},
+			{
+				startDate: 'desc',
+			},
+		],
+	});
+	const projectsWithDetailStatus = projects.map((project) => ({
+		...project,
+		hasProjectDetail: !!project.projectDetail,
+	}));
+	return <ProjectList projects={projectsWithDetailStatus} />;
 }

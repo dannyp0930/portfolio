@@ -19,12 +19,6 @@ const instance = axios.create({
 	httpsAgent,
 });
 
-const serverInstance = axios.create({
-	baseURL: process.env.API_URL + '/api',
-	...commonConfig,
-	httpsAgent,
-});
-
 const formInstance = axios.create({
 	baseURL: '/api',
 	headers: {
@@ -33,4 +27,4 @@ const formInstance = axios.create({
 	withCredentials: true,
 });
 
-export { instance, serverInstance, formInstance };
+export { instance, formInstance };
