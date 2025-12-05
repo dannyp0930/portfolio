@@ -5,8 +5,6 @@ import Project from '@/components/home/Project';
 import Career from '@/components/home/Career';
 import { serverInstance } from '@/app/api/instance';
 
-export const dynamic = 'force-dynamic';
-
 async function fetchData() {
 	try {
 		const [
