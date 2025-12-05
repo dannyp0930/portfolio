@@ -61,10 +61,38 @@ jobs:
 
             echo "Restarting application..."
             if pm2 describe portfolio > /dev/null 2>&1; then
-              pm2 restart portfolio --update-env || { echo "pm2 restart failed"; exit 1; }
+              echo "Stopping existing portfolio process..."
+              pm2 stop portfolio || true
+              sleep 3
+              
+              echo "Checking for processes using port 3000..."
+              PORT_PID=$(sudo lsof -ti :3000 || echo "")
+              if [ ! -z "$PORT_PID" ]; then
+                echo "Killing process $PORT_PID using port 3000..."
+                sudo kill -9 $PORT_PID 2>/dev/null || true
+                sleep 2
+              fi
+              
+              echo "Starting portfolio application..."
+              pm2 start portfolio --update-env || { echo "pm2 start failed"; exit 1; }
             else
+              echo "Checking for processes using port 3000..."
+              PORT_PID=$(sudo lsof -ti :3000 || echo "")
+              if [ ! -z "$PORT_PID" ]; then
+                echo "Killing process $PORT_PID using port 3000..."
+                sudo kill -9 $PORT_PID 2>/dev/null || true
+                sleep 2
+              fi
+              
+              echo "Starting portfolio application..."
               pm2 start "yarn start" --name portfolio --update-env || { echo "pm2 start failed"; exit 1; }
             fi
+            
+            echo "Waiting for application to start..."
+            sleep 5
+            
+            echo "Checking application status..."
+            pm2 status portfolio || { echo "pm2 status check failed"; exit 1; }
 
       - name: Notify Telegram on Success
         if: success()
