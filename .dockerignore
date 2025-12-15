@@ -2,6 +2,7 @@
 .gitignore
 node_modules
 .env
+.env.dev
 npm-debug.log
 yarn-error.log
 coverage

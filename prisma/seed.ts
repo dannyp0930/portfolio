@@ -1,6 +1,11 @@
 import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcrypt';
 
+if (process.env.ENABLE_SEED !== 'true') {
+	console.log('🌱 Seed skipped (ENABLE_SEED is not true)');
+	process.exit(0);
+}
+
 const prisma = new PrismaClient();
 
 async function main() {

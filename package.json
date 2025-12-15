@@ -13,7 +13,13 @@
 		"migrate:prod": "prisma migrate deploy && prisma generate && prisma db seed",
 		"migrate:dev": "prisma migrate dev --name init",
 		"db:seed": "prisma db seed",
-		"studio": "prisma studio"
+		"studio": "prisma studio",
+
+		"docker:dev:up": "docker compose --env-file .env.dev -f docker/docker-compose.dev.yml up -d",
+		"docker:dev:build": "docker compose --env-file .env.dev -f docker/docker-compose.dev.yml up -d --build",
+		"docker:dev:migrate": "docker compose --env-file .env.dev -f docker/docker-compose.dev.yml exec app yarn prisma migrate deploy",
+		"docker:dev:seed": "docker compose --env-file .env.dev -f docker/docker-compose.dev.yml exec app yarn prisma db seed",
+		"docker:dev:deploy": "yarn docker:dev:build && yarn docker:dev:migrate"
 	},
 	"prisma": {
 		"seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts"
