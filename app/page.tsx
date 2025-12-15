@@ -6,6 +6,8 @@ import Career from '@/components/home/Career';
 import prisma from '@/lib/prisma';
 import { SKILL_CATEGORY } from '@/lib/constants';
 
+export const dynamic = 'force-dynamic';
+
 async function fetchData() {
 	try {
 		const [
