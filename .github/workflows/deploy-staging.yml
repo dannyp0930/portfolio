@@ -1,0 +1,50 @@
+name: Deploy Staging
+
+on:
+  push:
+    branches:
+      - develop
+    paths-ignore:
+      - 'README.md'
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Execute remote ssh and Deploy
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            set -e
+            cd /srv/portfolio-develop
+            git fetch origin develop
+            git reset --hard origin/develop
+
+            export $(cat .env.dev | xargs)
+
+            docker compose -f docker-compose.dev.yml up -d --build
+            docker compose -f docker-compose.dev.yml exec app yarn migrate:prod
+            docker compose -f docker-compose.dev.yml exec app yarn db:seed
+            echo "✅ Staging deployed successfully"
+
+      - name: Notify Telegram on Success
+        if: success()
+        run: |
+          curl -s -X POST https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage \
+            -d chat_id=${{ secrets.TELEGRAM_CHAT_ID }} \
+            -d text="✅ SH Portfolio Staing 서버가 성공적으로 배포되었습니다!"
+
+      - name: Notify Telegram on Failure
+        if: failure()
+        run: |
+          curl -s -X POST https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage \
+            -d chat_id=${{ secrets.TELEGRAM_CHAT_ID }} \
+            -d text="❌ SH Portfolio Staging 서버 배포에 실패했습니다."
+
