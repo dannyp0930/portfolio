@@ -54,3 +54,5 @@ thumb
 sketch
 **/*.backup.*
 **/*.back.*
+
+db
