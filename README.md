@@ -126,12 +126,9 @@ API_URL=""
 ## 후속 작업 (TODO)
 
 ### Critical (즉시 조치 필요)
-1. `/api/profile` PUT에 JWT 인증 추가 — 누구나 타인의 사용자 정보를 수정 가능한 취약점
-2. 모든 API 라우트의 500 응답에서 `details: err` 제거 — DB 스키마/스택 트레이스 노출 (85곳)
-3. `isAdmin` 구현을 JWT 서명 검증으로 교체 — 현재 단순 쿠키 문자열 비교로 관리자 인가
-4. `authMiddleware.ts` 환경변수 이름 통일 (`JWT_SECRET_KEY` → `JWT_SECRET`) 및 실제 API 보호 적용
-5. `lib/utils/auth.ts`의 `generateRandomPassword`에서 `Math.random()` → `crypto.randomBytes()` 교체
-6. `app/api/subscription/route.ts`의 디버그 `console.log(token, isActive)` 즉시 제거
+1. `isAdmin` 구현을 JWT 서명 검증으로 교체 — 현재 단순 쿠키 문자열 비교로 관리자 인가
+2. `authMiddleware.ts` 환경변수 이름 통일 (`JWT_SECRET_KEY` → `JWT_SECRET`) 및 실제 API 보호 적용
+
 ### Major (단기 개선, 1-2주)
 - Next.js `middleware.ts` 추가: `/dashboard/*` 경로 서버 레벨 인증 게이트 구현
 - Career N+1 쿼리 수정: `prisma.career.findMany({ include: { careerDetails: true } })`로 교체
@@ -140,6 +137,11 @@ API_URL=""
 - `refresh/route.ts`에 DB refresh token 비교 검증 추가
 - `PatchOrderRequset` 오타 수정 → `PatchOrderRequest` (12개 파일)
 - 뉴스레터 구독 시 이메일 검증 (크롤링 시도 확인)
+
+### 리팩토링 / 코드 품질
+- 코드 리팩토링: JSDoc 주석 추가, 복잡한 로직 분리, 함수 단일 책임 원칙 적용 → `REFACTORING.md` 참고
+- 타입 구조화: 중앙화된 타입 정의 일관성 유지, Prisma 생성 타입과 커스텀 타입 분리, 타입 중복 제거
+- 프로젝트 디렉토리: Next.js 15 트렌드에 맞는 폴더 구조 검토 및 재정비
 
 ### 중장기 개선 (1개월+)
 - Vitest 도입 및 테스트 코드 작성 (유틸리티 함수 단위 테스트, API 라우트 통합 테스트)
