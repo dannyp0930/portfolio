@@ -1,6 +1,7 @@
 import { getImageProps } from 'next/image';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronDown, faDownload } from '@fortawesome/free-solid-svg-icons';
+import BannerDescription from './BannerDescription';
 
 export default function Banner({ intro }: BannerProps) {
 	const common = { alt: 'banner' };
@@ -51,9 +52,7 @@ export default function Banner({ intro }: BannerProps) {
 
 			<div className="z-20 content">
 				<h1 className="w-80 mg:w-full m-auto">{intro.title}</h1>
-				<p className="px-5 mt-10 break-keep whitespace-pre-wrap line-clamp-6 md:line-clamp-none">
-					{intro.description}
-				</p>
+				<BannerDescription description={intro.description as string} />
 			</div>
 
 			{/* 이력서 다운로드 버튼 */}
