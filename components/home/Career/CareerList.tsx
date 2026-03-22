@@ -25,7 +25,7 @@ export default function CareerList({ careers }: CareerListProps) {
 							<h2 className="text-lg md:text-xl leading-tight">
 								{career.companyName}
 							</h2>
-							<span className="text-xs text-theme/70 font-mono whitespace-nowrap flex-shrink-0">
+							<span className="text-xs text-theme-sub/85 font-mono whitespace-nowrap flex-shrink-0">
 								{dayjs(career.startDate).format('YYYY.MM')}
 								{' — '}
 								{career.endDate
@@ -36,31 +36,31 @@ export default function CareerList({ careers }: CareerListProps) {
 
 						{/* 회사 설명 */}
 						{career.description && (
-							<p className="text-sm text-white/60 mb-3">
+							<p className="text-sm text-theme-sub/70 mb-3">
 								{career.description}
 							</p>
 						)}
 
 						{/* 직책 + 담당 업무 카드 */}
-						<div className="bg-white/5 border border-white/10 rounded-xl p-4 md:p-5">
-							<h3 className="text-base font-bold text-theme mb-1">
+						<div className="bg-theme/20 border border-theme-sub/20 rounded-xl p-4 md:p-5">
+							<h3 className="text-base font-bold text-theme-sub mb-1">
 								{career.position}
 							</h3>
 							{career.duty && (
-								<h4 className="text-sm text-white/80 mb-4">
+								<h4 className="text-sm text-theme-sub mb-4">
 									{career.duty}
 								</h4>
 							)}
 
 							{/* 세부 업무 목록 */}
 							{career.details.length > 0 && (
-								<ul className="flex flex-col gap-4 mt-2 border-t border-white/10 pt-4">
+								<ul className="flex flex-col gap-4 mt-2 border-t border-theme-sub/20 pt-4">
 									{career.details.map((detail) => (
 										<li key={detail.title}>
-											<h5 className="text-sm font-semibold text-theme/90 mb-1">
+											<h5 className="text-sm font-semibold text-theme-sub mb-1">
 												{detail.title}
 											</h5>
-											<p className="text-sm text-white/70 whitespace-pre-wrap leading-relaxed">
+											<p className="text-sm text-theme-sub/85 whitespace-pre-wrap leading-relaxed">
 												{detail.content}
 											</p>
 										</li>
