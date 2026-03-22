@@ -35,7 +35,7 @@ export default function Banner({ intro }: BannerProps) {
 	return (
 		<section
 			id="banner"
-			className="relative flex flex-col items-center justify-center w-full text-center h-dvh gap-7"
+			className="relative flex flex-col items-center justify-center w-full text-center min-h-[100svh] h-dvh gap-7 py-24"
 		>
 			{intro.bannerImageUrl && (
 				<picture className="absolute top-0 left-0 z-10 w-full h-full opacity-40">
@@ -64,7 +64,7 @@ export default function Banner({ intro }: BannerProps) {
 					rel="noopener noreferrer"
 					className="z-20 inline-flex items-center gap-2 px-6 py-3 rounded-full font-semibold text-sm tracking-wide
 						bg-theme text-theme-sub border-2 border-theme
-						hover:bg-transparent hover:text-theme
+						hover:bg-theme-sub/10 hover:text-theme-sub
 						transition-all duration-300 shadow-lg hover:shadow-theme/40"
 				>
 					<FontAwesomeIcon icon={faDownload} className="w-4 h-4" />
@@ -73,7 +73,7 @@ export default function Banner({ intro }: BannerProps) {
 			)}
 
 			{/* 스크롤 다운 인디케이터 */}
-			<div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-1 text-theme/70">
+			<div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-1 text-white">
 				<span className="text-xs tracking-widest uppercase">
 					Scroll
 				</span>
