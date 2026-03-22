@@ -15,8 +15,9 @@ export async function POST(req: NextRequest) {
 		revalidatePath('/');
 		return NextResponse.json({ message: 'OK' }, { status: 200 });
 	} catch (err) {
+		console.error('[career]', err);
 		return NextResponse.json(
-			{ error: 'Something went wrong', details: err },
+			{ error: 'Something went wrong' },
 			{ status: 500 }
 		);
 	}
@@ -34,8 +35,9 @@ export async function PUT(req: NextRequest) {
 		revalidatePath('/');
 		return NextResponse.json({ message: 'OK' }, { status: 200 });
 	} catch (err) {
+		console.error('[career]', err);
 		return NextResponse.json(
-			{ error: 'Something went wrong', details: err },
+			{ error: 'Something went wrong' },
 			{ status: 500 }
 		);
 	}
@@ -62,8 +64,9 @@ export async function PATCH(req: NextRequest) {
 			revalidatePath('/');
 			return NextResponse.json({ message: 'OK' }, { status: 200 });
 		} catch (err) {
+			console.error('[career]', err);
 			return NextResponse.json(
-				{ error: 'Something went wrong', details: err },
+				{ error: 'Something went wrong' },
 				{ status: 500 }
 			);
 		}
@@ -98,8 +101,9 @@ export async function PATCH(req: NextRequest) {
 			revalidatePath('/');
 			return NextResponse.json({ message: 'OK' }, { status: 200 });
 		} catch (err) {
+			console.error('[career]', err);
 			return NextResponse.json(
-				{ error: 'Something went wrong', details: err },
+				{ error: 'Something went wrong' },
 				{ status: 500 }
 			);
 		}
@@ -165,8 +169,9 @@ export async function GET(req: NextRequest) {
 		const totalCnt = await prisma.career.count();
 		return NextResponse.json({ data: careers, totalCnt }, { status: 200 });
 	} catch (err) {
+		console.error('[career]', err);
 		return NextResponse.json(
-			{ error: 'Something went wrong', details: err },
+			{ error: 'Something went wrong' },
 			{ status: 500 }
 		);
 	}
@@ -189,8 +194,9 @@ export async function DELETE(req: NextRequest) {
 		revalidatePath('/');
 		return NextResponse.json({ message: 'OK' }, { status: 200 });
 	} catch (err) {
+		console.error('[career]', err);
 		return NextResponse.json(
-			{ error: 'Something went wrong', details: err },
+			{ error: 'Something went wrong' },
 			{ status: 500 }
 		);
 	}

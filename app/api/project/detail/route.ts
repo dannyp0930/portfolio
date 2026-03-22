@@ -21,8 +21,9 @@ export async function POST(req: NextRequest) {
 		revalidatePath('/');
 		return NextResponse.json({ message: 'OK', id }, { status: 200 });
 	} catch (err) {
+		console.error('[project/detail]', err);
 		return NextResponse.json(
-			{ error: 'Something went wrong', details: err },
+			{ error: 'Something went wrong' },
 			{ status: 500 }
 		);
 	}
@@ -45,8 +46,9 @@ export async function PUT(req: NextRequest) {
 		revalidatePath('/');
 		return NextResponse.json({ message: 'OK' }, { status: 200 });
 	} catch (err) {
+		console.error('[project/detail]', err);
 		return NextResponse.json(
-			{ error: 'Something went wrong', details: err },
+			{ error: 'Something went wrong' },
 			{ status: 500 }
 		);
 	}
@@ -73,8 +75,9 @@ export async function GET(req: NextRequest) {
 			{ status: 200 }
 		);
 	} catch (err) {
+		console.error('[project/detail]', err);
 		return NextResponse.json(
-			{ error: 'Something went wrong', details: err },
+			{ error: 'Something went wrong' },
 			{ status: 500 }
 		);
 	}

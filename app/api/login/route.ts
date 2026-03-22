@@ -71,8 +71,9 @@ export async function POST(req: NextRequest) {
 			{ status: 200 }
 		);
 	} catch (err) {
+		console.error('[login]', err);
 		return NextResponse.json(
-			{ error: 'Something went wrong', details: err },
+			{ error: 'Something went wrong' },
 			{ status: 500 }
 		);
 	}
