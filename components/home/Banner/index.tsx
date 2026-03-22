@@ -35,7 +35,7 @@ export default function Banner({ intro }: BannerProps) {
 	return (
 		<section
 			id="banner"
-			className="relative flex flex-col items-center justify-center w-full text-center min-h-[100svh] h-dvh gap-7 py-24"
+			className="relative flex flex-col items-center justify-center w-full text-center min-h-[100svh] gap-7 py-24"
 		>
 			{intro.bannerImageUrl && (
 				<picture className="absolute top-0 left-0 z-10 w-full h-full opacity-40">
