@@ -1,3 +1,6 @@
+'use client';
+
+import { useEffect, useRef } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faGithub } from '@fortawesome/free-brands-svg-icons';
 import { faHome } from '@fortawesome/free-solid-svg-icons';
@@ -7,8 +10,41 @@ import Image from 'next/image';
 import dayjs from 'dayjs';
 
 export default function ProjectCard({ project, setModalId }: ProjectCardProps) {
+	const cardRef = useRef<HTMLDivElement>(null);
+
+	useEffect(() => {
+		const el = cardRef.current;
+		if (!el) return;
+
+		const prefersReduced = window.matchMedia(
+			'(prefers-reduced-motion: reduce)'
+		).matches;
+		if (prefersReduced) return;
+
+		el.classList.add('scroll-hidden');
+
+		const observer = new IntersectionObserver(
+			(entries) => {
+				entries.forEach((entry) => {
+					if (entry.isIntersecting) {
+						entry.target.classList.remove('scroll-hidden');
+						entry.target.classList.add('scroll-visible');
+						observer.unobserve(entry.target);
+					}
+				});
+			},
+			{ threshold: 0.15 }
+		);
+
+		observer.observe(el);
+		return () => observer.disconnect();
+	}, []);
+
 	return (
-		<div className="box-border flex flex-col justify-between gap-4 w-full p-5 bg-white h-full rounded-xl">
+		<div
+			ref={cardRef}
+			className="box-border flex flex-col justify-between gap-4 w-full p-5 bg-white h-full rounded-xl"
+		>
 			<h1 className="break-all flex flex-col flex-wrap md:flex-row lg:justify-between lg:items-center">
 				{project.title}
 				<span className="text-base">{project.organization}</span>
