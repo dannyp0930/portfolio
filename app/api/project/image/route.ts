@@ -2,6 +2,7 @@ import deleteFromS3 from '@/lib/deleteFromS3';
 import { isAdmin } from '@/lib/isAdmin';
 import uploadToS3 from '@/lib/uploadToS3';
 import { NextRequest, NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import prisma from '@/lib/prisma';
 
 export async function POST(req: NextRequest) {
@@ -29,6 +30,7 @@ export async function POST(req: NextRequest) {
 				},
 			});
 		});
+		revalidatePath('/');
 		return NextResponse.json({ message: 'OK' }, { status: 200 });
 	} catch (err) {
 		if (imageUrl) {
@@ -76,6 +78,7 @@ export async function PUT(req: NextRequest) {
 		if (existingImageUrl) {
 			await deleteFromS3(existingImageUrl);
 		}
+		revalidatePath('/');
 		return NextResponse.json({ message: 'OK' }, { status: 200 });
 	} catch (err) {
 		if (newImageUrl) {
@@ -105,6 +108,7 @@ export async function PATCH(req: NextRequest) {
 				});
 			}
 		});
+		revalidatePath('/');
 		return NextResponse.json({ message: 'OK' }, { status: 200 });
 	} catch (err) {
 		return NextResponse.json(
@@ -137,6 +141,7 @@ export async function DELETE(req: NextRequest) {
 		await prisma.$transaction(async (tx) => {
 			await tx.projectImage.delete({ where: { id: Number(id) } });
 		});
+		revalidatePath('/');
 		return NextResponse.json({ message: 'OK' }, { status: 200 });
 	} catch (err) {
 		if (imageUrl) {

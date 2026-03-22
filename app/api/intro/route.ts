@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import { isAdmin } from '@/lib/isAdmin';
 import uploadToS3 from '@/lib/uploadToS3';
 import deleteFromS3 from '@/lib/deleteFromS3';
@@ -105,6 +106,7 @@ export async function PUT(req: NextRequest) {
 		if (existingBannerImageUrlMobile && newBannerImageUrlMobile) {
 			await deleteFromS3(existingBannerImageUrlMobile);
 		}
+		revalidatePath('/');
 		return NextResponse.json({ message: 'OK' }, { status: 200 });
 	} catch (err) {
 		if (newResumeFileUrl) {

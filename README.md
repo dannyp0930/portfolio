@@ -10,8 +10,7 @@
 - [배포 및 운영](#배포-및-운영)
 - [컨트리뷰션 가이드](#컨트리뷰션-가이드)
 - [라이센스](#라이센스)
-- [ToDo List](#todo-list)
-- [Next](#next)
+- [후속 작업 (TODO)](#후속-작업-todo)
 
 ## 프로젝트 개요
 SH Portfolio는 개발자 dannyp0930의 개인 포트폴리오 웹사이트입니다. 이 프로젝트는 다음과 같은 목표를 가지고 있습니다:
@@ -124,10 +123,33 @@ API_URL=""
 
 - 자세한 배포 및 환경 변수 관리법은 Vercel/Railway 공식문서 참고
 
-## ToDo List
-- 사용자
-  - Oauth
-- 블로그
-  - 주기별 or 게시글 별 뉴스레터 전송
-- grafana 등 로깅
-- 뉴스레터 구독시 이메일 검증(크롤링 시도 확인)
+## 후속 작업 (TODO)
+
+### Critical (즉시 조치 필요)
+1. `/api/profile` PUT에 JWT 인증 추가 — 누구나 타인의 사용자 정보를 수정 가능한 취약점
+2. 모든 API 라우트의 500 응답에서 `details: err` 제거 — DB 스키마/스택 트레이스 노출 (85곳)
+3. `isAdmin` 구현을 JWT 서명 검증으로 교체 — 현재 단순 쿠키 문자열 비교로 관리자 인가
+4. `authMiddleware.ts` 환경변수 이름 통일 (`JWT_SECRET_KEY` → `JWT_SECRET`) 및 실제 API 보호 적용
+5. `lib/utils/auth.ts`의 `generateRandomPassword`에서 `Math.random()` → `crypto.randomBytes()` 교체
+6. `app/api/subscription/route.ts`의 디버그 `console.log(token, isActive)` 즉시 제거
+### Major (단기 개선, 1-2주)
+- Next.js `middleware.ts` 추가: `/dashboard/*` 경로 서버 레벨 인증 게이트 구현
+- Career N+1 쿼리 수정: `prisma.career.findMany({ include: { careerDetails: true } })`로 교체
+- Skill 그룹핑 로직 추출: `page.tsx`와 `skill/route.ts` 중복 로직 → `lib/utils/skill.ts`로 분리
+- 동적 `orderBy` 파라미터 화이트리스트 검증 추가 (11개 라우트)
+- `refresh/route.ts`에 DB refresh token 비교 검증 추가
+- `PatchOrderRequset` 오타 수정 → `PatchOrderRequest` (12개 파일)
+- 뉴스레터 구독 시 이메일 검증 (크롤링 시도 확인)
+
+### 중장기 개선 (1개월+)
+- Vitest 도입 및 테스트 코드 작성 (유틸리티 함수 단위 테스트, API 라우트 통합 테스트)
+- `info/` 하위 6개 CRUD 라우트 공통화 (팩토리 패턴)
+- S3 클라이언트 단일화: `uploadToS3.ts`, `deleteFromS3.ts` → `lib/s3Client.ts`로 통합
+- 불필요한 `$transaction` 제거 (단일 쿼리를 트랜잭션으로 감싸는 패턴)
+- 로그인 엔드포인트에 Rate limiting 추가 (`@upstash/ratelimit` 등)
+- `next.config.ts` S3 버킷명 하드코딩 제거 → 환경변수 사용
+- Content Security Policy (CSP) 헤더 추가
+- Prisma 쿼리 로그 레벨 프로덕션 환경 조정 (`warn`, `error`만 활성화)
+- OAuth 소셜 로그인 추가
+- 블로그 기능: 주기별/게시글별 뉴스레터 전송
+- Grafana 등 로깅/모니터링 도입
