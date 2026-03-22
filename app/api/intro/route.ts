@@ -109,6 +109,7 @@ export async function PUT(req: NextRequest) {
 		revalidatePath('/');
 		return NextResponse.json({ message: 'OK' }, { status: 200 });
 	} catch (err) {
+		console.error('[intro]', err);
 		if (newResumeFileUrl) {
 			await deleteFromS3(newResumeFileUrl);
 		}
@@ -122,7 +123,7 @@ export async function PUT(req: NextRequest) {
 			await deleteFromS3(newBannerImageUrlMobile);
 		}
 		return NextResponse.json(
-			{ error: 'Something went wrong', details: err },
+			{ error: 'Something went wrong' },
 			{ status: 500 }
 		);
 	}
@@ -133,8 +134,9 @@ export async function GET() {
 		const intro = await prisma.intro.findFirst();
 		return NextResponse.json({ data: intro }, { status: 200 });
 	} catch (err) {
+		console.error('[intro]', err);
 		return NextResponse.json(
-			{ error: 'Something went wrong', details: err },
+			{ error: 'Something went wrong' },
 			{ status: 500 }
 		);
 	}
