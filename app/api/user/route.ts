@@ -46,8 +46,9 @@ export async function POST(req: NextRequest) {
 		});
 		return NextResponse.json({ message: 'OK' }, { status: 200 });
 	} catch (err) {
+		console.error('[user]', err);
 		return NextResponse.json(
-			{ error: 'Something went wrong', details: err },
+			{ error: 'Something went wrong' },
 			{ status: 500 }
 		);
 	}
@@ -97,8 +98,9 @@ export async function PUT(req: NextRequest) {
 		});
 		return NextResponse.json({ message: 'OK' }, { status: 200 });
 	} catch (err) {
+		console.error('[user]', err);
 		return NextResponse.json(
-			{ error: 'Something went wrong', details: err },
+			{ error: 'Something went wrong' },
 			{ status: 500 }
 		);
 	}
@@ -153,8 +155,9 @@ export async function GET(req: NextRequest) {
 		const totalCnt = await prisma.user.count();
 		return NextResponse.json({ data: users, totalCnt }, { status: 200 });
 	} catch (err) {
+		console.error('[user]', err);
 		return NextResponse.json(
-			{ error: 'Something went wrong', details: err },
+			{ error: 'Something went wrong' },
 			{ status: 500 }
 		);
 	}
@@ -173,8 +176,9 @@ export async function DELETE(req: NextRequest) {
 		});
 		return NextResponse.json({ message: 'OK' }, { status: 200 });
 	} catch (err) {
+		console.error('[user]', err);
 		return NextResponse.json(
-			{ error: 'Something went wrong', details: err },
+			{ error: 'Something went wrong' },
 			{ status: 500 }
 		);
 	}
