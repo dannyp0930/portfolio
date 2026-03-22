@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import { isAdmin } from '@/lib/isAdmin';
 import prisma from '@/lib/prisma';
 
@@ -11,6 +12,7 @@ export async function POST(req: NextRequest) {
 		await prisma.$transaction(async (tx) => {
 			await tx.education.create({ data });
 		});
+		revalidatePath('/');
 		return NextResponse.json({ message: 'OK' }, { status: 200 });
 	} catch (err) {
 		return NextResponse.json(
@@ -29,6 +31,7 @@ export async function PUT(req: NextRequest) {
 		await prisma.$transaction(async (tx) => {
 			await tx.education.update({ where: { id: Number(data.id) }, data });
 		});
+		revalidatePath('/');
 		return NextResponse.json({ message: 'OK' }, { status: 200 });
 	} catch (err) {
 		return NextResponse.json(
@@ -56,6 +59,7 @@ export async function PATCH(req: NextRequest) {
 					});
 				}
 			});
+			revalidatePath('/');
 			return NextResponse.json({ message: 'OK' }, { status: 200 });
 		} catch (err) {
 			return NextResponse.json(
@@ -91,6 +95,7 @@ export async function PATCH(req: NextRequest) {
 					});
 				}
 			});
+			revalidatePath('/');
 			return NextResponse.json({ message: 'OK' }, { status: 200 });
 		} catch (err) {
 			return NextResponse.json(
@@ -152,6 +157,7 @@ export async function DELETE(req: NextRequest) {
 				where: { id: Number(id) },
 			});
 		});
+		revalidatePath('/');
 		return NextResponse.json({ message: 'OK' }, { status: 200 });
 	} catch (err) {
 		return NextResponse.json(

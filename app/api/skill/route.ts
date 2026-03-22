@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import { isAdmin } from '@/lib/isAdmin';
 import uploadToS3 from '@/lib/uploadToS3';
 import deleteFromS3 from '@/lib/deleteFromS3';
@@ -31,6 +32,7 @@ export async function POST(req: NextRequest) {
 				},
 			});
 		});
+		revalidatePath('/');
 		return NextResponse.json({ message: 'OK' }, { status: 200 });
 	} catch (err) {
 		if (imageUrl) {
@@ -86,6 +88,7 @@ export async function PUT(req: NextRequest) {
 		if (existingImageUrl && newImageUrl) {
 			await deleteFromS3(existingImageUrl);
 		}
+		revalidatePath('/');
 		return NextResponse.json({ message: 'OK' }, { status: 200 });
 	} catch (err) {
 		if (newImageUrl) {
@@ -116,6 +119,7 @@ export async function PATCH(req: NextRequest) {
 					});
 				}
 			});
+			revalidatePath('/');
 			return NextResponse.json({ message: 'OK' }, { status: 200 });
 		} catch (err) {
 			return NextResponse.json(
@@ -151,6 +155,7 @@ export async function PATCH(req: NextRequest) {
 					});
 				}
 			});
+			revalidatePath('/');
 			return NextResponse.json({ message: 'OK' }, { status: 200 });
 		} catch (err) {
 			return NextResponse.json(
@@ -265,6 +270,7 @@ export async function DELETE(req: NextRequest) {
 				where: { id: Number(id) },
 			});
 		});
+		revalidatePath('/');
 		return NextResponse.json({ message: 'OK' }, { status: 200 });
 	} catch (err) {
 		if (imageUrl) {
