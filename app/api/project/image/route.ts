@@ -33,11 +33,12 @@ export async function POST(req: NextRequest) {
 		revalidatePath('/');
 		return NextResponse.json({ message: 'OK' }, { status: 200 });
 	} catch (err) {
+		console.error('[project/image POST]', err);
 		if (imageUrl) {
 			await deleteFromS3(imageUrl);
 		}
 		return NextResponse.json(
-			{ error: 'Something went wrong', details: err },
+			{ error: 'Something went wrong' },
 			{ status: 500 }
 		);
 	}
@@ -81,11 +82,12 @@ export async function PUT(req: NextRequest) {
 		revalidatePath('/');
 		return NextResponse.json({ message: 'OK' }, { status: 200 });
 	} catch (err) {
+		console.error('[project/image PUT]', err);
 		if (newImageUrl) {
 			await deleteFromS3(newImageUrl);
 		}
 		return NextResponse.json(
-			{ error: 'Something went wrong', details: err },
+			{ error: 'Something went wrong' },
 			{ status: 500 }
 		);
 	}
@@ -111,8 +113,9 @@ export async function PATCH(req: NextRequest) {
 		revalidatePath('/');
 		return NextResponse.json({ message: 'OK' }, { status: 200 });
 	} catch (err) {
+		console.error('[project/image]', err);
 		return NextResponse.json(
-			{ error: 'Something went wrong', details: err },
+			{ error: 'Something went wrong' },
 			{ status: 500 }
 		);
 	}
@@ -144,11 +147,12 @@ export async function DELETE(req: NextRequest) {
 		revalidatePath('/');
 		return NextResponse.json({ message: 'OK' }, { status: 200 });
 	} catch (err) {
+		console.error('[project/image DELETE]', err);
 		if (imageUrl) {
-			await uploadToS3(Buffer.from(''), 'project', imageUrl);
+			await deleteFromS3(imageUrl);
 		}
 		return NextResponse.json(
-			{ error: 'Something went wrong', details: err },
+			{ error: 'Something went wrong' },
 			{ status: 500 }
 		);
 	}

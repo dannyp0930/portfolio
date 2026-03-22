@@ -19,8 +19,9 @@ export async function POST(request: Request) {
 		}
 		return NextResponse.json({ email: user.email });
 	} catch (err) {
+		console.error('[find/email]', err);
 		return NextResponse.json(
-			{ error: 'Something went wrong', details: err },
+			{ error: 'Something went wrong' },
 			{ status: 500 }
 		);
 	}
