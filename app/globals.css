@@ -2,6 +2,20 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer utilities {
+	/* 스크롤 진입 애니메이션 - 초기 숨김 상태 */
+	.scroll-hidden {
+		opacity: 0;
+		transform: translateY(1rem);
+	}
+	/* 진입 완료 상태 */
+	.scroll-visible {
+		opacity: 1;
+		transform: translateY(0);
+		transition: opacity 0.5s ease, transform 0.5s ease;
+	}
+}
+
 @layer base {
 	@font-face {
 		font-family: 'Parisienne';

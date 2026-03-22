@@ -44,6 +44,7 @@ fix(scope): 버그 수정 설명
 refactor(scope): 리팩토링 설명
 chore: 기타 작업
 ```
+- 커밋 메시지에 `Co-Authored-By:` 트레일러 절대 포함 금지
 
 ## 환경변수 키 이름
 - `JWT_SECRET` (refresh 포함 모든 미들웨어에서 통일)

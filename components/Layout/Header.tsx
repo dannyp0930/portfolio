@@ -5,19 +5,59 @@ import Link from 'next/link';
 import { LogoutButton } from './LogoutButton';
 import { useUser } from '@/context/UserContext';
 
+const NAV_SECTIONS = ['info', 'skills', 'career', 'project'] as const;
+type SectionId = (typeof NAV_SECTIONS)[number];
+
 export default function Header() {
 	const { user } = useUser();
 	const [session, setSession] = useState<boolean>();
 	const [isAdmin, setIsAdmin] = useState<boolean>();
+	const [activeSection, setActiveSection] = useState<SectionId | null>(null);
 
 	useEffect(() => {
 		setSession(user ? true : false);
 		setIsAdmin(user?.isAdmin ?? false);
 	}, [user]);
 
+	// IntersectionObserver로 현재 뷰포트에 보이는 섹션 감지
+	useEffect(() => {
+		const observers: IntersectionObserver[] = [];
+
+		NAV_SECTIONS.forEach((id) => {
+			const el = document.getElementById(id);
+			if (!el) return;
+
+			const observer = new IntersectionObserver(
+				([entry]) => {
+					if (entry.isIntersecting) {
+						setActiveSection(id);
+					}
+				},
+				{
+					rootMargin: '-40% 0px -50% 0px',
+					threshold: 0,
+				}
+			);
+
+			observer.observe(el);
+			observers.push(observer);
+		});
+
+		return () => {
+			observers.forEach((obs) => obs.disconnect());
+		};
+	}, []);
+
+	const navLinkClass = (id: SectionId) =>
+		`hover:underline transition-colors duration-200 ${
+			activeSection === id
+				? 'text-theme font-bold underline underline-offset-4'
+				: 'text-white'
+		}`;
+
 	return (
 		<header className="fixed top-0 left-0 z-50 font-bold text-white w-full h-header underline-offset-4 flex flex-col">
-			<nav className="flex items-center justify-between w-[90%] h-3/4 m-auto px-5 md:px-12 bg-theme-sub/30 rounded-full">
+			<nav className="flex items-center justify-between w-[90%] h-3/4 m-auto px-5 md:px-12 bg-theme-sub/20 backdrop-blur-md rounded-full border border-white/10 shadow-lg">
 				<Link
 					className="text-3xl font-parisienne md:text-4xl lg:text-5xl"
 					href="/#banner"
@@ -27,10 +67,10 @@ export default function Header() {
 				</Link>
 				<ul className="flex items-center gap-3 md:gap-5 text-base">
 					<li>
-						<Link className="hover:underline" href="/#info">
+						<Link className={navLinkClass('info')} href="/#info">
 							<span className="hidden md:inline">Info</span>
 							<svg
-								className="w-6 h-6 stroke-2 md:hidden stroke-white fill-transparent"
+								className="w-6 h-6 stroke-2 md:hidden stroke-current fill-transparent"
 								xmlns="http://www.w3.org/2000/svg"
 								viewBox="0 0 24 24"
 							>
@@ -43,10 +83,13 @@ export default function Header() {
 						</Link>
 					</li>
 					<li>
-						<Link className="hover:underline" href="/#skills">
+						<Link
+							className={navLinkClass('skills')}
+							href="/#skills"
+						>
 							<span className="hidden md:inline">Skills</span>
 							<svg
-								className="w-6 h-6 stroke-2 md:hidden stroke-white fill-transparent"
+								className="w-6 h-6 stroke-2 md:hidden stroke-current fill-transparent"
 								xmlns="http://www.w3.org/2000/svg"
 								viewBox="0 0 24 24"
 							>
@@ -59,10 +102,13 @@ export default function Header() {
 						</Link>
 					</li>
 					<li>
-						<Link className="hover:underline" href="/#career">
+						<Link
+							className={navLinkClass('career')}
+							href="/#career"
+						>
 							<span className="hidden md:inline">Career</span>
 							<svg
-								className="w-6 h-6 stroke-2 md:hidden stroke-white fill-transparent"
+								className="w-6 h-6 stroke-2 md:hidden stroke-current fill-transparent"
 								xmlns="http://www.w3.org/2000/svg"
 								viewBox="0 0 24 24"
 							>
@@ -75,10 +121,13 @@ export default function Header() {
 						</Link>
 					</li>
 					<li>
-						<Link className="hover:underline" href="/#project">
+						<Link
+							className={navLinkClass('project')}
+							href="/#project"
+						>
 							<span className="hidden md:inline">Project</span>
 							<svg
-								className="w-6 h-6 stroke-2 md:hidden stroke-white fill-transparent"
+								className="w-6 h-6 stroke-2 md:hidden stroke-current fill-transparent"
 								xmlns="http://www.w3.org/2000/svg"
 								viewBox="0 0 24 24"
 							>
@@ -94,7 +143,7 @@ export default function Header() {
 						isAdmin ? (
 							<li>
 								<Link
-									className="hover:underline"
+									className="hover:underline text-white"
 									href="/dashboard"
 								>
 									<span className="hidden md:inline">
@@ -122,7 +171,7 @@ export default function Header() {
 							<>
 								<li>
 									<Link
-										className="hover:underline"
+										className="hover:underline text-white"
 										href="/profile"
 									>
 										<span className="hidden md:inline">
@@ -148,7 +197,10 @@ export default function Header() {
 						)
 					) : (
 						<li>
-							<Link className="hover:underline" href="/login">
+							<Link
+								className="hover:underline text-white"
+								href="/login"
+							>
 								<span className="hidden md:inline">Login</span>
 								<svg
 									className="w-6 h-6 stroke-2 md:hidden stroke-white fill-transparent"

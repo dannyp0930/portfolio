@@ -1,4 +1,6 @@
 import { getImageProps } from 'next/image';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faChevronDown, faDownload } from '@fortawesome/free-solid-svg-icons';
 
 export default function Banner({ intro }: BannerProps) {
 	const common = { alt: 'banner' };
@@ -29,6 +31,7 @@ export default function Banner({ intro }: BannerProps) {
 		quality: 70,
 		src: intro.bannerImageUrlMobile as string,
 	});
+
 	return (
 		<section
 			id="banner"
@@ -45,11 +48,39 @@ export default function Banner({ intro }: BannerProps) {
 					/>
 				</picture>
 			)}
+
 			<div className="z-20 content">
-				<h1 className="w-80  mg:w-full m-auto">{intro.title}</h1>
+				<h1 className="w-80 mg:w-full m-auto">{intro.title}</h1>
 				<p className="px-5 mt-10 break-keep whitespace-pre-wrap">
 					{intro.description}
 				</p>
+			</div>
+
+			{/* 이력서 다운로드 버튼 */}
+			{intro.resumeFileUrl && (
+				<a
+					href={intro.resumeFileUrl}
+					target="_blank"
+					rel="noopener noreferrer"
+					className="z-20 inline-flex items-center gap-2 px-6 py-3 rounded-full font-semibold text-sm tracking-wide
+						bg-theme text-theme-sub border-2 border-theme
+						hover:bg-transparent hover:text-theme
+						transition-all duration-300 shadow-lg hover:shadow-theme/40"
+				>
+					<FontAwesomeIcon icon={faDownload} className="w-4 h-4" />
+					Resume
+				</a>
+			)}
+
+			{/* 스크롤 다운 인디케이터 */}
+			<div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-1 text-theme/70">
+				<span className="text-xs tracking-widest uppercase">
+					Scroll
+				</span>
+				<FontAwesomeIcon
+					icon={faChevronDown}
+					className="w-4 h-4 animate-bounce"
+				/>
 			</div>
 		</section>
 	);
