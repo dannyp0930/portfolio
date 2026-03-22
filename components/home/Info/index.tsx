@@ -47,7 +47,7 @@ export default function Info({
 					<ul className="mt-1 grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2">
 						{safeContacts.map((contact) => (
 							<li key={contact.id} className="flex flex-col">
-								<span className="text-xs font-semibold uppercase tracking-wider text-theme-sub/60">
+								<span className="text-xs font-semibold uppercase tracking-wider text-theme-sub/85">
 									{contact.label}
 								</span>
 								<a
@@ -81,10 +81,10 @@ export default function Info({
 								<h4 className="text-sm font-semibold">
 									{career.organization}
 								</h4>
-								<p className="text-xs text-theme-sub/70">
+								<p className="text-xs text-theme-sub">
 									{career.position}
 								</p>
-								<p className="text-xs text-theme-sub/60">
+								<p className="text-xs text-theme-sub/85">
 									{dayjs(career.startDate).format('YYYY.MM')}{' '}
 									~{' '}
 									{career.endDate
@@ -123,10 +123,10 @@ export default function Info({
 								<h4 className="text-sm font-semibold">
 									{education.institutionName}
 								</h4>
-								<p className="text-xs text-theme-sub/70">
+								<p className="text-xs text-theme-sub">
 									{education.degreeStatus}
 								</p>
-								<p className="text-xs text-theme-sub/60">
+								<p className="text-xs text-theme-sub/85">
 									{dayjs(education.startDate).format(
 										'YYYY.MM'
 									)}{' '}
@@ -158,7 +158,7 @@ export default function Info({
 								<h4 className="text-sm font-semibold">
 									{experience.organization}
 								</h4>
-								<p className="text-xs text-theme-sub/60">
+								<p className="text-xs text-theme-sub/85">
 									{dayjs(experience.startDate).format(
 										'YYYY.MM.DD'
 									)}{' '}
@@ -196,7 +196,7 @@ export default function Info({
 									<h4 className="text-sm font-semibold">
 										{language.languageName}
 									</h4>
-									<p className="text-xs text-theme-sub/70">
+									<p className="text-xs text-theme-sub">
 										{language.institution}
 									</p>
 								</div>
@@ -228,7 +228,7 @@ export default function Info({
 								<h4 className="text-sm font-semibold">
 									{certificate.certificateName}
 								</h4>
-								<p className="text-xs text-theme-sub/60">
+								<p className="text-xs text-theme-sub/85">
 									{dayjs(certificate.issueDate).format(
 										'YYYY.MM.DD'
 									)}{' '}
