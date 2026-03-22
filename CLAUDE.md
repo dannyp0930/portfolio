@@ -51,6 +51,10 @@ chore: 기타 작업
 - `JWT_REFRESH_SECRET`
 - `S3_BUCKET_NAME`, `S3_REGION`
 
+### README.md TODO 관리
+- 작업을 완료하면 `README.md`의 `## 후속 작업 (TODO)` 섹션에서 해당 항목을 **즉시 제거**한다
+- 커밋 전에 README.md TODO 항목 제거 여부를 반드시 확인한다
+
 ## 주의사항
 - `Math.random()` 보안 목적 사용 금지 → `crypto.randomBytes()` 사용
 - 동적 `orderBy` 파라미터는 화이트리스트로 검증 후 사용
