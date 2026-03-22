@@ -69,8 +69,9 @@ export async function POST(req: NextRequest) {
 			status: 200,
 		});
 	} catch (err) {
+		console.error('[subscription POST]', err);
 		return NextResponse.json(
-			{ error: 'Something went wrong', details: err },
+			{ error: 'Something went wrong' },
 			{ status: 500 }
 		);
 	}
@@ -107,8 +108,9 @@ export async function GET(req: NextRequest) {
 			{ status: 200 }
 		);
 	} catch (err) {
+		console.error('[subscription GET]', err);
 		return NextResponse.json(
-			{ error: 'Something went wrong', details: err },
+			{ error: 'Something went wrong' },
 			{ status: 500 }
 		);
 	}
@@ -117,18 +119,17 @@ export async function GET(req: NextRequest) {
 export async function PATCH(req: NextRequest) {
 	const { token, isActive } = await req.json();
 	try {
-		console.log(token, isActive);
 		await prisma.subscription.update({
 			where: { token },
 			data: { isActive },
 		});
-		console.log(123123);
 		return NextResponse.json({
 			message: isActive ? 'Resusbcribed' : 'Unsubscribed',
 		});
 	} catch (err) {
+		console.error('[subscription PATCH]', err);
 		return NextResponse.json(
-			{ error: 'Something went wrong', details: err },
+			{ error: 'Something went wrong' },
 			{ status: 500 }
 		);
 	}
@@ -142,8 +143,9 @@ export async function DELETE(req: NextRequest) {
 		});
 		return NextResponse.json({ message: 'Subscription deleted' });
 	} catch (err) {
+		console.error('[subscription DELETE]', err);
 		return NextResponse.json(
-			{ error: 'Something went wrong', details: err },
+			{ error: 'Something went wrong' },
 			{ status: 500 }
 		);
 	}

@@ -18,8 +18,9 @@ export async function GET(req: NextRequest) {
 		const emails = [...users, ...subscriptions].map((email) => email.email);
 		return NextResponse.json({ data: emails }, { status: 200 });
 	} catch (err) {
+		console.error('[email]', err);
 		return NextResponse.json(
-			{ error: 'Something went wrong', details: err },
+			{ error: 'Something went wrong' },
 			{ status: 500 }
 		);
 	}

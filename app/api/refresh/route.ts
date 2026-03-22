@@ -39,8 +39,9 @@ export async function POST() {
 				},
 			});
 		} catch (err) {
+			console.error('[refresh]', err);
 			return NextResponse.json(
-				{ error: 'Access token is invalid or expired', details: err },
+				{ error: 'Access token is invalid or expired' },
 				{ status: 401 }
 			);
 		}
@@ -86,8 +87,9 @@ export async function POST() {
 			);
 		}
 	} catch (err) {
+		console.error('[refresh]', err);
 		return NextResponse.json(
-			{ error: 'Invalid refresh token', details: err },
+			{ error: 'Invalid refresh token' },
 			{ status: 401 }
 		);
 	}
