@@ -13,6 +13,10 @@ import {
 	CarouselNext,
 	CarouselPrevious,
 } from '@/components/ui/carousel';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTableCells, faSlidersH } from '@fortawesome/free-solid-svg-icons';
+
+type ViewMode = 'carousel' | 'grid';
 
 export default function ProjectList({ projects }: ProjectListPros) {
 	const [modalId, setModalId] = useState<number>(0);
@@ -20,6 +24,7 @@ export default function ProjectList({ projects }: ProjectListPros) {
 	const [projectImages, setProjectImages] = useState<ProjectImage[]>();
 	const [selectProjectTitle, setSelectProjectTitle] = useState<string>();
 	const [modalLoad, setModalLoad] = useState<boolean>(false);
+	const [viewMode, setViewMode] = useState<ViewMode>('carousel');
 
 	const getProjectDetail = useCallback(async () => {
 		setModalLoad(true);
@@ -71,24 +76,77 @@ export default function ProjectList({ projects }: ProjectListPros) {
 			id="project"
 			className="m-auto my-20 p-5 rounded-xl bg-theme-sub/30 w-[90%] max-w-[120rem]"
 		>
-			<h1>Project</h1>
-			<Carousel className="w-[70%] md:w-[90%] m-auto my-10">
-				<CarouselContent>
+			{/* 헤더: 제목 + 뷰 전환 버튼 */}
+			<div className="flex items-center justify-between">
+				<h1>Project</h1>
+				<div className="flex items-center gap-1 p-1 rounded-lg bg-theme-sub/10">
+					<button
+						aria-label="캐러셀 뷰"
+						onClick={() => setViewMode('carousel')}
+						className={[
+							'flex items-center justify-center w-9 h-9 rounded-md transition-colors',
+							viewMode === 'carousel'
+								? 'bg-theme-sub text-theme'
+								: 'text-theme-sub hover:bg-theme-sub/20',
+						].join(' ')}
+					>
+						<FontAwesomeIcon
+							icon={faSlidersH}
+							className="w-4 h-4"
+						/>
+					</button>
+					<button
+						aria-label="그리드 뷰"
+						onClick={() => setViewMode('grid')}
+						className={[
+							'flex items-center justify-center w-9 h-9 rounded-md transition-colors',
+							viewMode === 'grid'
+								? 'bg-theme-sub text-theme'
+								: 'text-theme-sub hover:bg-theme-sub/20',
+						].join(' ')}
+					>
+						<FontAwesomeIcon
+							icon={faTableCells}
+							className="w-4 h-4"
+						/>
+					</button>
+				</div>
+			</div>
+
+			{/* 캐러셀 뷰 */}
+			{viewMode === 'carousel' && (
+				<Carousel className="w-[70%] md:w-[90%] m-auto my-10">
+					<CarouselContent>
+						{projects.map((project) => (
+							<CarouselItem
+								key={project.id}
+								className="md:basis-1/2 lg:basis-1/3"
+							>
+								<ProjectCard
+									project={project}
+									setModalId={setModalId}
+								/>
+							</CarouselItem>
+						))}
+					</CarouselContent>
+					<CarouselPrevious />
+					<CarouselNext />
+				</Carousel>
+			)}
+
+			{/* 그리드 뷰 */}
+			{viewMode === 'grid' && (
+				<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 my-10">
 					{projects.map((project) => (
-						<CarouselItem
+						<ProjectCard
 							key={project.id}
-							className="md:basis-1/2 lg:basis-1/3"
-						>
-							<ProjectCard
-								project={project}
-								setModalId={setModalId}
-							/>
-						</CarouselItem>
+							project={project}
+							setModalId={setModalId}
+						/>
 					))}
-				</CarouselContent>
-				<CarouselPrevious />
-				<CarouselNext />
-			</Carousel>
+				</div>
+			)}
+
 			{modalId !== 0 && (
 				<ProjectDetailModal
 					loading={modalLoad}
