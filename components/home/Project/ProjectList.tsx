@@ -82,6 +82,7 @@ export default function ProjectList({ projects }: ProjectListPros) {
 				<div className="flex items-center gap-1 p-1 rounded-lg bg-theme-sub/10">
 					<button
 						aria-label="캐러셀 뷰"
+						aria-pressed={viewMode === 'carousel'}
 						onClick={() => setViewMode('carousel')}
 						className={[
 							'flex items-center justify-center w-9 h-9 rounded-md transition-colors',
@@ -97,6 +98,7 @@ export default function ProjectList({ projects }: ProjectListPros) {
 					</button>
 					<button
 						aria-label="그리드 뷰"
+						aria-pressed={viewMode === 'grid'}
 						onClick={() => setViewMode('grid')}
 						className={[
 							'flex items-center justify-center w-9 h-9 rounded-md transition-colors',

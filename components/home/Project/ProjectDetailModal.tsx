@@ -79,6 +79,7 @@ export default function ProjectDetailModal({
 			<div
 				aria-modal="true"
 				role="dialog"
+				aria-labelledby="project-modal-title"
 				className={cn(
 					'fixed top-0 left-0 z-50 flex items-center justify-center w-full h-svh',
 					/* 진입 */
@@ -121,7 +122,12 @@ export default function ProjectDetailModal({
 							</>
 						) : (
 							<>
-								<h2 className="text-xl">{title}</h2>
+								<h2
+									id="project-modal-title"
+									className="text-xl"
+								>
+									{title}
+								</h2>
 								<div className="w-full flex flex-col gap-10 mt-4 lg:flex-row">
 									<p className="text-xs break-keep whitespace-pre-wrap w-full sm:text-sm md:text-base lg:w-[45%]">
 										{description}
@@ -165,7 +171,7 @@ export default function ProjectDetailModal({
 										</Carousel>
 									) : (
 										<div className="w-2/3 lg:w-[41.5%] m-auto aspect-[4/3] flex justify-center items-center border rounded-md">
-											No Image
+											이미지 없음
 										</div>
 									)}
 								</div>
@@ -182,6 +188,7 @@ export default function ProjectDetailModal({
 					onClick={closeZoom}
 					role="dialog"
 					aria-modal="true"
+					aria-label={`${title} 이미지 ${(zoomIndex ?? 0) + 1} 보기`}
 				>
 					<div
 						className="relative w-full max-w-5xl aspect-[4/3] animate-in zoom-in-95 duration-150"
@@ -199,7 +206,7 @@ export default function ProjectDetailModal({
 							type="button"
 							onClick={closeZoom}
 							className="absolute top-3 right-3 w-10 h-10 text-white/60 hover:text-white transition-colors"
-							aria-label="Close"
+							aria-label="닫기"
 						>
 							<FontAwesomeIcon
 								className="w-full h-full"
@@ -210,7 +217,7 @@ export default function ProjectDetailModal({
 							type="button"
 							onClick={showPrev}
 							className="absolute left-2 top-1/2 -translate-y-1/2 w-10 h-10 text-white/60 hover:text-white transition-colors"
-							aria-label="Previous"
+							aria-label="이전 이미지"
 						>
 							<FontAwesomeIcon
 								className="w-full h-full"
@@ -221,7 +228,7 @@ export default function ProjectDetailModal({
 							type="button"
 							onClick={showNext}
 							className="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 text-white/60 hover:text-white transition-colors"
-							aria-label="Next"
+							aria-label="다음 이미지"
 						>
 							<FontAwesomeIcon
 								className="w-full h-full"
