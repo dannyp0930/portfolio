@@ -43,14 +43,16 @@ export default function ProjectCard({ project, setModalId }: ProjectCardProps) {
 	return (
 		<div
 			ref={cardRef}
-			className="box-border flex flex-col justify-between gap-4 w-full p-5 bg-white h-full rounded-xl"
+			className="box-border flex flex-col justify-between gap-4 w-full p-5 bg-card h-full rounded-xl"
 		>
-			<h1 className="break-all flex flex-col flex-wrap md:flex-row lg:justify-between lg:items-center">
+			<h3 className="break-keep flex flex-col flex-wrap md:flex-row lg:justify-between lg:items-center">
 				{project.title}
-				<span className="text-base">{project.organization}</span>
-			</h1>
+				<span className="text-base font-normal">
+					{project.organization}
+				</span>
+			</h3>
 			<div className="flex flex-col justify-end gap-4">
-				<h4 className="break-all">
+				<h4 className="break-keep">
 					{project.intro}
 					<br />
 					<span className="text-base font-normal">

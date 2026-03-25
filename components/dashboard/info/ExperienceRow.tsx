@@ -131,6 +131,7 @@ export default function ExperienceRow({
 					<td>
 						<input
 							className="w-full focus:outline-none"
+							aria-label="기관명"
 							onChange={onChange('organization')}
 							type="text"
 							value={updateExperience?.organization}
@@ -139,6 +140,7 @@ export default function ExperienceRow({
 					<td>
 						<input
 							className="w-full focus:outline-none"
+							aria-label="설명"
 							onChange={onChange('description')}
 							type="text"
 							value={updateExperience?.description}
@@ -147,6 +149,7 @@ export default function ExperienceRow({
 					<td>
 						<input
 							className="w-full focus:outline-none"
+							aria-label="시작일"
 							onChange={onChange('startDate')}
 							type="date"
 							value={dayjs(updateExperience?.startDate).format(
@@ -157,6 +160,7 @@ export default function ExperienceRow({
 					<td>
 						<input
 							className="w-full focus:outline-none"
+							aria-label="종료일"
 							onChange={onChange('endDate')}
 							type="date"
 							value={dayjs(updateExperience?.endDate).format(

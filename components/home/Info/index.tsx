@@ -31,6 +31,7 @@ export default function Info({
 			id="info"
 			className="flex flex-col items-center justify-center gap-5 my-10 max-w-[120rem] w-[90%] m-auto"
 		>
+			<h2 className="sr-only">Info</h2>
 			{/* Bento Grid: mobile 1col, md 2col, lg 4col */}
 			<div className="grid grid-cols-1 gap-5 w-full md:grid-cols-2 lg:grid-cols-4">
 				{/* CONTACT — col-span-2, 중요도 높아 넓게 배치 */}

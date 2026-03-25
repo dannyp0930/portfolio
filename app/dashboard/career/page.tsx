@@ -152,7 +152,7 @@ function CareerComponent() {
 	}, [selectPage]);
 
 	return (
-		<div className="m-5 py-10 rounded-lg bg-white">
+		<div className="m-5 py-10 rounded-lg bg-card">
 			<div className="flex justify-end px-5 pb-3">
 				<Button asChild size="sm">
 					<Link href="/dashboard/career/create">등록</Link>

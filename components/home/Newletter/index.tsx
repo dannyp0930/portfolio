@@ -75,7 +75,7 @@ export default function Nesletter() {
 			id="newsletter"
 			className="m-auto my-20 bg-theme-sub/30 w-[90%] p-5 rounded-xl max-w-[120rem]"
 		>
-			<h1>Newsletter</h1>
+			<h2 className="text-4xl">Newsletter</h2>
 			<Form {...form}>
 				<form
 					onSubmit={form.handleSubmit(handleSubmit)}
@@ -89,7 +89,7 @@ export default function Nesletter() {
 								<div className="flex flex-col gap-2">
 									<FormControl>
 										<Input
-											className="w-full bg-white"
+											className="w-full bg-background"
 											placeholder="Email"
 											{...field}
 										/>
@@ -112,7 +112,7 @@ export default function Nesletter() {
 											</FormLabel>
 											<FormControl>
 												<Checkbox
-													className="bg-white"
+													className="bg-background"
 													checked={field.value}
 													onCheckedChange={
 														field.onChange

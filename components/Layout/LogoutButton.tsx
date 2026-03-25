@@ -26,7 +26,10 @@ export function LogoutButton() {
 		}
 	}
 	return (
-		<button className="flex items-center" onClick={handleLogout}>
+		<button
+			className="inline-flex items-center justify-center min-h-[44px] min-w-[44px] md:min-h-0 md:min-w-0 text-white hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme focus-visible:rounded"
+			onClick={handleLogout}
+		>
 			<span className="hidden md:inline hover:underline">Logout</span>
 			<svg
 				className="w-6 h-6 stroke-2 md:hidden stroke-white fill-transparent"

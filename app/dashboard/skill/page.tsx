@@ -283,7 +283,7 @@ function SkillComponent() {
 	}, [selectPage, selectCategory]);
 
 	return (
-		<div className="m-5 py-10 rounded-lg bg-white">
+		<div className="m-5 py-10 rounded-lg bg-card">
 			<div className="p-4 pt-0">
 				<Select
 					onValueChange={handleCategoryChange}

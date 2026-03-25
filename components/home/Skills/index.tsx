@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { useMemo, useEffect, useRef } from 'react';
+import { useMemo, useEffect, useRef, useState } from 'react';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import {
 	TooltipProvider,
@@ -9,6 +9,8 @@ import {
 	TooltipTrigger,
 	TooltipContent,
 } from '@/components/ui/tooltip';
+import { Sheet, SheetContent, SheetTitle } from '@/components/ui/sheet';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 /* ----------------------------------------------------------------
    level(1~5) → 진행률(20%~100%) 변환
@@ -25,8 +27,8 @@ function SkillProgressBar({ level }: { level: number }) {
 	return (
 		<div className="w-full h-1.5 rounded-full bg-theme-sub/20 overflow-hidden mt-1">
 			<div
-				className="h-full rounded-full bg-theme-sub transition-all duration-700"
-				style={{ width: `${percent}%` }}
+				className="h-full w-full bg-theme-sub transition-transform duration-700 ease-out origin-left"
+				style={{ transform: `scaleX(${percent / 100})` }}
 			/>
 		</div>
 	);
@@ -37,6 +39,8 @@ function SkillProgressBar({ level }: { level: number }) {
 ---------------------------------------------------------------- */
 function SkillCard({ skill, delay }: { skill: Skill; delay: number }) {
 	const cardRef = useRef<HTMLDivElement>(null);
+	const isMobile = useIsMobile();
+	const [sheetOpen, setSheetOpen] = useState(false);
 
 	useEffect(() => {
 		const el = cardRef.current;
@@ -69,28 +73,64 @@ function SkillCard({ skill, delay }: { skill: Skill; delay: number }) {
 
 	const percent = levelToPercent(skill.level);
 
+	const cardEl = (
+		<div
+			ref={cardRef}
+			className="relative cursor-pointer bg-card p-4 rounded-lg hover:-translate-y-2 transition-transform duration-200 flex flex-col items-center gap-2"
+			onClick={isMobile ? () => setSheetOpen(true) : undefined}
+		>
+			<Image
+				className="object-contain w-full h-full"
+				width={150}
+				height={150}
+				src={skill.imageUrl}
+				alt={skill.title}
+			/>
+			<p className="text-center text-xs truncate w-full">{skill.title}</p>
+		</div>
+	);
+
+	if (isMobile) {
+		return (
+			<>
+				{cardEl}
+				<Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
+					<SheetContent side="bottom" className="rounded-t-2xl pb-8">
+						<SheetTitle className="sr-only">
+							{skill.title}
+						</SheetTitle>
+						<div className="flex items-center gap-4 mb-4">
+							<Image
+								className="object-contain"
+								width={52}
+								height={52}
+								src={skill.imageUrl}
+								alt={skill.title}
+							/>
+							<p className="font-bold text-lg">{skill.title}</p>
+						</div>
+						<div className="flex items-center justify-between text-sm text-theme-sub/70 mb-1">
+							<span>숙련도</span>
+							<span>{percent}%</span>
+						</div>
+						<SkillProgressBar level={skill.level} />
+						{skill.description && (
+							<p className="mt-3 text-sm whitespace-pre-wrap break-keep leading-relaxed text-theme-sub/80">
+								{skill.description}
+							</p>
+						)}
+					</SheetContent>
+				</Sheet>
+			</>
+		);
+	}
+
 	return (
 		<Tooltip>
-			<TooltipTrigger asChild>
-				<div
-					ref={cardRef}
-					className="relative cursor-pointer bg-white p-4 rounded-lg hover:-translate-y-2 transition-transform duration-200 flex flex-col items-center gap-2"
-				>
-					<Image
-						className="object-contain w-full h-full"
-						width={150}
-						height={150}
-						src={skill.imageUrl}
-						alt={skill.title}
-					/>
-					<p className="text-center text-xs truncate w-full">
-						{skill.title}
-					</p>
-				</div>
-			</TooltipTrigger>
+			<TooltipTrigger asChild>{cardEl}</TooltipTrigger>
 			<TooltipContent
 				side="top"
-				className="w-52 p-3 bg-white border border-theme-sub/20 text-theme-sub shadow-lg rounded-xl"
+				className="w-52 p-3 bg-card border border-theme-sub/20 text-theme-sub shadow-lg rounded-xl"
 			>
 				<p className="font-bold text-sm mb-1">{skill.title}</p>
 				<div className="flex items-center justify-between text-xs text-theme-sub/70 mb-1">
@@ -131,7 +171,7 @@ export default function Skills({ skills }: SkillsProps) {
 			id="skills"
 			className="w-[90%] mx-auto mt-10 rounded-xl box-border flex flex-col gap-5 p-5 bg-theme-sub/30 max-w-[120rem]"
 		>
-			<h1>SKILLS</h1>
+			<h2 className="text-4xl">SKILLS</h2>
 
 			<TooltipProvider delayDuration={200}>
 				<Tabs defaultValue={defaultTab}>

@@ -130,6 +130,7 @@ export default function SkillRow({
 					<td>
 						<input
 							className="w-full focus:outline-none"
+							aria-label="스킬 제목"
 							onChange={onChange('title')}
 							type="text"
 							value={updateSkill?.title}
@@ -138,6 +139,7 @@ export default function SkillRow({
 					<td>
 						<input
 							className="w-full focus:outline-none"
+							aria-label="설명"
 							onChange={onChange('description')}
 							type="text"
 							value={updateSkill?.description}
@@ -146,6 +148,7 @@ export default function SkillRow({
 					<td>
 						<input
 							className="w-full focus:outline-none"
+							aria-label="숙련도 (1-5)"
 							onChange={onChange('level')}
 							type="number"
 							value={updateSkill?.level}
@@ -167,6 +170,7 @@ export default function SkillRow({
 					<td>
 						<input
 							className="w-full focus:outline-none"
+							aria-label="카테고리"
 							onChange={onChange('category')}
 							type="text"
 							value={updateSkill?.category ?? ''}

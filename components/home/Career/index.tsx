@@ -22,7 +22,7 @@ export default async function Career() {
 			id="career"
 			className="w-[90%] m-auto my-20 p-5 bg-theme-sub/30 rounded-xl max-w-[120rem]"
 		>
-			<h1>Career</h1>
+			<h2 className="text-4xl">Career</h2>
 			<CareerList careers={careersWithDetails} />
 		</section>
 	);

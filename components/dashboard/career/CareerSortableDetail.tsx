@@ -99,7 +99,7 @@ export default function ProjectSortableDetail({
 										<FormLabel className="flex-shrink-0 w-20">
 											제목
 										</FormLabel>
-										<FormControl className="w-96">
+										<FormControl className="w-full min-w-0">
 											<Input
 												placeholder="제목"
 												{...field}
@@ -121,7 +121,7 @@ export default function ProjectSortableDetail({
 										</FormLabel>
 										<FormControl className="w-48">
 											<Textarea
-												className="resize-none w-96 h-40"
+												className="resize-none w-full h-40"
 												placeholder="내용"
 												{...field}
 											/>
@@ -131,7 +131,7 @@ export default function ProjectSortableDetail({
 								</FormItem>
 							)}
 						/>
-						<div className="flex justify-between w-80">
+						<div className="flex justify-between w-full">
 							<Button type="submit">저장</Button>
 							<Button
 								onClick={cancelDetailUpdate}
@@ -146,17 +146,17 @@ export default function ProjectSortableDetail({
 				<div className="space-y-8">
 					<div className="flex gap-4 items-center">
 						<div className="flex-shrink-0 w-20 text-sm">제목</div>
-						<div className="flex items-center h-9 rounded-md border border-input px-3 py-1 text-base shadow-sm transition-colors md:text-sm w-96">
+						<div className="flex items-center h-9 rounded-md border border-input px-3 py-1 text-base shadow-sm transition-colors md:text-sm w-full min-w-0">
 							{detail.title}
 						</div>
 					</div>
 					<div className="flex gap-4 items-center">
 						<div className="flex-shrink-0 w-20 text-sm">내용</div>
-						<div className="flex min-h-[60px] rounded-md border border-input px-3 py-2 text-base shadow-sm md:text-sm w-96 h-40 whitespace-pre-wrap overflow-auto">
+						<div className="flex min-h-[60px] rounded-md border border-input px-3 py-2 text-base shadow-sm md:text-sm w-full h-40 whitespace-pre-wrap overflow-auto">
 							{detail.content}
 						</div>
 					</div>
-					<div className="flex justify-between w-80">
+					<div className="flex justify-between w-full">
 						<Button onClick={selectDetailUpdate(detail)}>
 							수정
 						</Button>

@@ -131,6 +131,7 @@ export default function EducationRow({
 					<td>
 						<input
 							className="w-full focus:outline-none"
+							aria-label="학교명"
 							onChange={onChange('institutionName')}
 							type="text"
 							value={updateEducation?.institutionName}
@@ -139,6 +140,7 @@ export default function EducationRow({
 					<td>
 						<input
 							className="w-full focus:outline-none"
+							aria-label="학위 상태"
 							onChange={onChange('degreeStatus')}
 							type="text"
 							value={updateEducation?.degreeStatus}
@@ -147,6 +149,7 @@ export default function EducationRow({
 					<td>
 						<input
 							className="w-full focus:outline-none"
+							aria-label="시작일"
 							onChange={onChange('startDate')}
 							type="date"
 							value={dayjs(updateEducation?.startDate).format(
@@ -157,6 +160,7 @@ export default function EducationRow({
 					<td>
 						<input
 							className="w-full focus:outline-none"
+							aria-label="종료일"
 							onChange={onChange('endDate')}
 							type="date"
 							value={dayjs(updateEducation?.endDate).format(

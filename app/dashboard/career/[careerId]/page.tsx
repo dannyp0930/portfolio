@@ -246,7 +246,7 @@ export default function CareerUpdate({ params }: CareerUpdateParams) {
 	}
 
 	return (
-		<div className="m-5 p-10 rounded-lg bg-white">
+		<div className="m-5 p-10 rounded-lg bg-card">
 			<Form {...form}>
 				<form
 					onSubmit={form.handleSubmit(handleSubmit)}
@@ -380,7 +380,7 @@ export default function CareerUpdate({ params }: CareerUpdateParams) {
 										<FormLabel className="flex-shrink-0 w-20">
 											제목
 										</FormLabel>
-										<FormControl className="w-96">
+										<FormControl className="w-full min-w-0">
 											<Input
 												placeholder="제목"
 												{...field}
@@ -402,7 +402,7 @@ export default function CareerUpdate({ params }: CareerUpdateParams) {
 										</FormLabel>
 										<FormControl className="w-48">
 											<Textarea
-												className="resize-none w-96 h-40"
+												className="resize-none w-full h-40"
 												placeholder="내용"
 												{...field}
 											/>

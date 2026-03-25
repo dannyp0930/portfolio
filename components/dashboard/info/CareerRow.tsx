@@ -131,6 +131,7 @@ export default function CareerRow({
 					<td>
 						<input
 							className="w-full focus:outline-none"
+							aria-label="기관명"
 							onChange={onChange('organization')}
 							type="text"
 							value={updateCareer?.organization}
@@ -139,6 +140,7 @@ export default function CareerRow({
 					<td>
 						<input
 							className="w-full focus:outline-none"
+							aria-label="직위"
 							onChange={onChange('position')}
 							type="text"
 							value={updateCareer?.position}
@@ -147,6 +149,7 @@ export default function CareerRow({
 					<td>
 						<input
 							className="w-full focus:outline-none"
+							aria-label="설명"
 							onChange={onChange('description')}
 							type="text"
 							value={updateCareer?.description}
@@ -155,6 +158,7 @@ export default function CareerRow({
 					<td>
 						<input
 							className="w-full focus:outline-none"
+							aria-label="시작일"
 							onChange={onChange('startDate')}
 							type="date"
 							value={dayjs(updateCareer?.startDate).format(
@@ -165,6 +169,7 @@ export default function CareerRow({
 					<td>
 						<input
 							className="w-full focus:outline-none"
+							aria-label="종료일"
 							onChange={onChange('endDate')}
 							type="date"
 							value={dayjs(updateCareer?.endDate).format(

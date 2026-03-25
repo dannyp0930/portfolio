@@ -131,6 +131,7 @@ export default function CertificateRow({
 					<td>
 						<input
 							className="w-full focus:outline-none"
+							aria-label="자격증명"
 							onChange={onChange('certificateName')}
 							type="text"
 							value={updateCertificate?.certificateName}
@@ -139,6 +140,7 @@ export default function CertificateRow({
 					<td>
 						<input
 							className="w-full focus:outline-none"
+							aria-label="취득일"
 							onChange={onChange('issueDate')}
 							type="date"
 							value={dayjs(updateCertificate?.issueDate).format(
@@ -149,6 +151,7 @@ export default function CertificateRow({
 					<td>
 						<input
 							className="w-full focus:outline-none"
+							aria-label="발급 기관"
 							onChange={onChange('issuingOrganization')}
 							type="text"
 							value={updateCertificate?.issuingOrganization}

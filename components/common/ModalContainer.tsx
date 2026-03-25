@@ -17,7 +17,7 @@ export function ModalContainer({
 			<div
 				className={cn(
 					className,
-					'p-4 bg-white rounded-xl md:p-10 md:rounded-2xl'
+					'p-4 bg-card rounded-xl md:p-10 md:rounded-2xl'
 				)}
 				onClick={stop}
 			>

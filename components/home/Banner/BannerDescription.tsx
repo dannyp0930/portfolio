@@ -13,14 +13,14 @@ export default function BannerDescription({
 
 	return (
 		<div className="px-5 mt-10">
-			<p
+			<div
 				id="banner-description"
-				className={`break-keep whitespace-pre-wrap transition-all duration-300 ${
-					expanded ? '' : 'line-clamp-6'
-				} md:line-clamp-none`}
+				className={`overflow-hidden transition-[max-height] duration-300 ease-out md:max-h-none ${
+					expanded ? 'max-h-[800px]' : 'max-h-36'
+				}`}
 			>
-				{description}
-			</p>
+				<p className="break-keep whitespace-pre-wrap">{description}</p>
+			</div>
 			<button
 				onClick={() => setExpanded(!expanded)}
 				aria-expanded={expanded}
