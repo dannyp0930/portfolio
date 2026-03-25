@@ -73,27 +73,25 @@ function SkillCard({ skill, delay }: { skill: Skill; delay: number }) {
 
 	const percent = levelToPercent(skill.level);
 
-	const cardEl = (
-		<div
-			ref={cardRef}
-			className="relative cursor-pointer bg-card p-4 rounded-lg hover:-translate-y-2 transition-transform duration-200 flex flex-col items-center gap-2"
-			onClick={isMobile ? () => setSheetOpen(true) : undefined}
-		>
-			<Image
-				className="object-contain w-full h-full"
-				width={150}
-				height={150}
-				src={skill.imageUrl}
-				alt={skill.title}
-			/>
-			<p className="text-center text-xs truncate w-full">{skill.title}</p>
-		</div>
-	);
-
 	if (isMobile) {
 		return (
 			<>
-				{cardEl}
+				<div
+					ref={cardRef}
+					className="relative cursor-pointer bg-card p-4 rounded-lg hover:-translate-y-2 transition-transform duration-200 flex flex-col items-center gap-2"
+					onClick={() => setSheetOpen(true)}
+				>
+					<Image
+						className="object-contain w-full h-full"
+						width={150}
+						height={150}
+						src={skill.imageUrl}
+						alt={skill.title}
+					/>
+					<p className="text-center text-xs truncate w-full">
+						{skill.title}
+					</p>
+				</div>
 				<Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
 					<SheetContent side="bottom" className="rounded-t-2xl pb-8">
 						<SheetTitle className="sr-only">
@@ -127,7 +125,23 @@ function SkillCard({ skill, delay }: { skill: Skill; delay: number }) {
 
 	return (
 		<Tooltip>
-			<TooltipTrigger asChild>{cardEl}</TooltipTrigger>
+			<TooltipTrigger asChild>
+				<div
+					ref={cardRef}
+					className="relative cursor-pointer bg-card p-4 rounded-lg hover:-translate-y-2 transition-transform duration-200 flex flex-col items-center gap-2"
+				>
+					<Image
+						className="object-contain w-full h-full"
+						width={150}
+						height={150}
+						src={skill.imageUrl}
+						alt={skill.title}
+					/>
+					<p className="text-center text-xs truncate w-full">
+						{skill.title}
+					</p>
+				</div>
+			</TooltipTrigger>
 			<TooltipContent
 				side="top"
 				className="w-52 p-3 bg-card border border-theme-sub/20 text-theme-sub shadow-lg rounded-xl"
