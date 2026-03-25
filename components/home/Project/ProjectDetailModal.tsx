@@ -124,7 +124,7 @@ export default function ProjectDetailModal({
 							<>
 								<h2
 									id="project-modal-title"
-									className="text-xl"
+									className="text-xl font-bold leading-tight break-keep"
 								>
 									{title}
 								</h2>

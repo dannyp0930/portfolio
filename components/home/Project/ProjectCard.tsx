@@ -45,22 +45,27 @@ export default function ProjectCard({ project, setModalId }: ProjectCardProps) {
 			ref={cardRef}
 			className="box-border flex flex-col justify-between gap-4 w-full p-5 bg-card h-full rounded-xl"
 		>
-			<h3 className="break-keep flex flex-col flex-wrap md:flex-row lg:justify-between lg:items-center">
-				{project.title}
-				<span className="text-base font-normal">
-					{project.organization}
-				</span>
-			</h3>
+			<div>
+				<h3 className="text-xl font-bold leading-tight break-keep">
+					{project.title}
+				</h3>
+				{project.organization && (
+					<p className="text-xs text-foreground/60 mt-1 break-keep">
+						{project.organization}
+					</p>
+				)}
+			</div>
 			<div className="flex flex-col justify-end gap-4">
-				<h4 className="break-keep">
-					{project.intro}
-					<br />
-					<span className="text-base font-normal">
+				<div className="flex flex-col gap-1">
+					<p className="text-sm leading-relaxed break-keep text-foreground/80">
+						{project.intro}
+					</p>
+					<p className="text-xs text-foreground/50 tabular-nums">
 						{dayjs(project.startDate).format('YYYY.MM.DD')} ~{' '}
 						{project.endDate &&
 							dayjs(project.endDate).format('YYYY.MM.DD')}
-					</span>
-				</h4>
+					</p>
+				</div>
 				<div className="flex items-center gap-5 xl:gap-12">
 					{project.github && (
 						<a
