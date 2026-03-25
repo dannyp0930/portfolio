@@ -144,7 +144,7 @@ export default function ProjectDetailModal({
 																	)
 																}
 																className="relative w-full aspect-[4/3] cursor-zoom-in"
-																aria-label="Enlarge Image"
+																aria-label={`${title} 이미지 ${idx + 1} 확대`}
 															>
 																<Image
 																	className="object-contain"
@@ -153,9 +153,7 @@ export default function ProjectDetailModal({
 																	src={
 																		projectImage.url
 																	}
-																	alt={String(
-																		projectImage.id
-																	)}
+																	alt={`${title} 이미지 ${idx + 1}`}
 																/>
 															</button>
 														</CarouselItem>
@@ -194,7 +192,7 @@ export default function ProjectDetailModal({
 							sizes="100%"
 							className="object-contain select-none"
 							src={images[zoomIndex].url}
-							alt={String(images[zoomIndex].id)}
+							alt={`${title} 이미지 ${zoomIndex + 1}`}
 							priority
 						/>
 						<button

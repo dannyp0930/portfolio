@@ -197,7 +197,7 @@ export default function SkillRow({
 						<Image
 							className="m-auto"
 							src={skill.imageUrl}
-							alt={skill.imageUrl}
+							alt={skill.title}
 							width={36}
 							height={36}
 						/>

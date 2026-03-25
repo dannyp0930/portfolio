@@ -62,9 +62,11 @@ export default function ProjectCard({ project, setModalId }: ProjectCardProps) {
 				<div className="flex items-center gap-5 xl:gap-12">
 					{project.github && (
 						<a
-							className="w-12 h-12 text-theme-sub"
+							className="w-12 h-12 text-theme-sub rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-sub"
 							href={project.github}
 							target="_blank"
+							rel="noopener noreferrer"
+							aria-label={`${project.title} GitHub 저장소 (새 탭에서 열림)`}
 						>
 							<FontAwesomeIcon
 								className="w-full h-full"
@@ -74,9 +76,11 @@ export default function ProjectCard({ project, setModalId }: ProjectCardProps) {
 					)}
 					{project.homepage && (
 						<a
-							className="w-12 h-12 text-theme-sub"
+							className="w-12 h-12 text-theme-sub rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-sub"
 							href={project.homepage}
 							target="_blank"
+							rel="noopener noreferrer"
+							aria-label={`${project.title} 홈페이지 (새 탭에서 열림)`}
 						>
 							<FontAwesomeIcon
 								className="w-full h-full"
@@ -86,9 +90,11 @@ export default function ProjectCard({ project, setModalId }: ProjectCardProps) {
 					)}
 					{project.notion && (
 						<a
-							className="w-12 h-12 text-theme-sub"
+							className="w-12 h-12 text-theme-sub rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-sub"
 							href={project.notion}
 							target="_blank"
+							rel="noopener noreferrer"
+							aria-label={`${project.title} Notion 페이지 (새 탭에서 열림)`}
 						>
 							<Image
 								className="w-full h-full"
@@ -101,7 +107,8 @@ export default function ProjectCard({ project, setModalId }: ProjectCardProps) {
 					)}
 					{project.hasProjectDetail && (
 						<button
-							className="w-12 h-12 text-theme-sub"
+							className="w-12 h-12 text-theme-sub rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-sub"
+							aria-label={`${project.title} 상세 정보 보기`}
 							onClick={() => setModalId(project.id)}
 						>
 							<FontAwesomeIcon
