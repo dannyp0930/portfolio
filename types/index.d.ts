@@ -27,6 +27,7 @@ declare global {
 	interface ProjectCardProps {
 		project: ProjectWithHasDetail;
 		setModalId: Dispatch<SetStateAction<number>>;
+		delay?: number;
 	}
 
 	interface CareerListProps {

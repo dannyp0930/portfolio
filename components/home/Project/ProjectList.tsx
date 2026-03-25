@@ -52,9 +52,7 @@ export default function ProjectList({ projects }: ProjectListPros) {
 				setSelectProjectTitle('');
 			}
 		} finally {
-			setTimeout(() => {
-				setModalLoad(false);
-			}, 1000);
+			setModalLoad(false);
 		}
 	}, [modalId, projects]);
 
@@ -117,7 +115,7 @@ export default function ProjectList({ projects }: ProjectListPros) {
 
 			{/* 캐러셀 뷰 */}
 			{viewMode === 'carousel' && (
-				<Carousel className="w-[70%] md:w-[90%] m-auto my-10">
+				<Carousel className="w-[85%] md:w-[90%] m-auto my-10">
 					<CarouselContent>
 						{projects.map((project) => (
 							<CarouselItem
@@ -139,11 +137,12 @@ export default function ProjectList({ projects }: ProjectListPros) {
 			{/* 그리드 뷰 */}
 			{viewMode === 'grid' && (
 				<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 my-10">
-					{projects.map((project) => (
+					{projects.map((project, idx) => (
 						<ProjectCard
 							key={project.id}
 							project={project}
 							setModalId={setModalId}
+							delay={Math.min(idx, 5) * 80}
 						/>
 					))}
 				</div>

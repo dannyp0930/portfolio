@@ -9,7 +9,11 @@ import notionSvg from '@/assets/images/icons/notion.svg';
 import Image from 'next/image';
 import dayjs from 'dayjs';
 
-export default function ProjectCard({ project, setModalId }: ProjectCardProps) {
+export default function ProjectCard({
+	project,
+	setModalId,
+	delay = 0,
+}: ProjectCardProps) {
 	const cardRef = useRef<HTMLDivElement>(null);
 
 	useEffect(() => {
@@ -22,6 +26,7 @@ export default function ProjectCard({ project, setModalId }: ProjectCardProps) {
 		if (prefersReduced) return;
 
 		el.classList.add('scroll-hidden');
+		el.style.transitionDelay = `${delay}ms`;
 
 		const observer = new IntersectionObserver(
 			(entries) => {
@@ -69,7 +74,7 @@ export default function ProjectCard({ project, setModalId }: ProjectCardProps) {
 				<div className="flex items-center gap-5 xl:gap-12">
 					{project.github && (
 						<a
-							className="w-12 h-12 text-theme-sub rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-sub"
+							className="w-12 h-12 text-theme-sub rounded hover:scale-110 hover:text-theme transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-sub"
 							href={project.github}
 							target="_blank"
 							rel="noopener noreferrer"
@@ -83,7 +88,7 @@ export default function ProjectCard({ project, setModalId }: ProjectCardProps) {
 					)}
 					{project.homepage && (
 						<a
-							className="w-12 h-12 text-theme-sub rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-sub"
+							className="w-12 h-12 text-theme-sub rounded hover:scale-110 hover:text-theme transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-sub"
 							href={project.homepage}
 							target="_blank"
 							rel="noopener noreferrer"
@@ -97,7 +102,7 @@ export default function ProjectCard({ project, setModalId }: ProjectCardProps) {
 					)}
 					{project.notion && (
 						<a
-							className="w-12 h-12 text-theme-sub rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-sub"
+							className="w-12 h-12 text-theme-sub rounded hover:scale-110 hover:text-theme transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-sub"
 							href={project.notion}
 							target="_blank"
 							rel="noopener noreferrer"
@@ -114,7 +119,7 @@ export default function ProjectCard({ project, setModalId }: ProjectCardProps) {
 					)}
 					{project.hasProjectDetail && (
 						<button
-							className="w-12 h-12 text-theme-sub rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-sub"
+							className="w-12 h-12 text-theme-sub rounded hover:scale-110 hover:text-theme transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-sub"
 							aria-label={`${project.title} 상세 정보 보기`}
 							onClick={() => setModalId(project.id)}
 						>
