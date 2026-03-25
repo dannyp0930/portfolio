@@ -18,8 +18,11 @@ fix/*       ← 버그 수정
 feat/*      ← 신규 기능
 refactor/*  ← 리팩토링
 ```
-- 작업은 항상 `develop`에서 브랜치를 따서 진행
-- 완료 후 `develop` → `main` 순서로 merge
+
+### Claude 작업 기본 룰 (매 세션 적용)
+- 작업 시작 시 반드시 `develop`에서 브랜치를 생성 (`feat/*`, `fix/*`, `refactor/*`)
+- 커밋 및 push는 해당 작업 브랜치까지만 — `develop` merge 및 `main` push는 사용자가 명시적으로 요청할 때만 수행
+- 사용자가 별도로 지시하지 않는 한 `main`에 직접 커밋/push 금지
 
 ## 주요 규칙
 
