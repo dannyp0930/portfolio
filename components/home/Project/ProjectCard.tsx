@@ -43,14 +43,16 @@ export default function ProjectCard({ project, setModalId }: ProjectCardProps) {
 	return (
 		<div
 			ref={cardRef}
-			className="box-border flex flex-col justify-between gap-4 w-full p-5 bg-white h-full rounded-xl"
+			className="box-border flex flex-col justify-between gap-4 w-full p-5 bg-card h-full rounded-xl"
 		>
-			<h1 className="break-all flex flex-col flex-wrap md:flex-row lg:justify-between lg:items-center">
+			<h3 className="break-keep flex flex-col flex-wrap md:flex-row lg:justify-between lg:items-center">
 				{project.title}
-				<span className="text-base">{project.organization}</span>
-			</h1>
+				<span className="text-base font-normal">
+					{project.organization}
+				</span>
+			</h3>
 			<div className="flex flex-col justify-end gap-4">
-				<h4 className="break-all">
+				<h4 className="break-keep">
 					{project.intro}
 					<br />
 					<span className="text-base font-normal">
@@ -62,9 +64,11 @@ export default function ProjectCard({ project, setModalId }: ProjectCardProps) {
 				<div className="flex items-center gap-5 xl:gap-12">
 					{project.github && (
 						<a
-							className="w-12 h-12 text-theme-sub"
+							className="w-12 h-12 text-theme-sub rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-sub"
 							href={project.github}
 							target="_blank"
+							rel="noopener noreferrer"
+							aria-label={`${project.title} GitHub 저장소 (새 탭에서 열림)`}
 						>
 							<FontAwesomeIcon
 								className="w-full h-full"
@@ -74,9 +78,11 @@ export default function ProjectCard({ project, setModalId }: ProjectCardProps) {
 					)}
 					{project.homepage && (
 						<a
-							className="w-12 h-12 text-theme-sub"
+							className="w-12 h-12 text-theme-sub rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-sub"
 							href={project.homepage}
 							target="_blank"
+							rel="noopener noreferrer"
+							aria-label={`${project.title} 홈페이지 (새 탭에서 열림)`}
 						>
 							<FontAwesomeIcon
 								className="w-full h-full"
@@ -86,9 +92,11 @@ export default function ProjectCard({ project, setModalId }: ProjectCardProps) {
 					)}
 					{project.notion && (
 						<a
-							className="w-12 h-12 text-theme-sub"
+							className="w-12 h-12 text-theme-sub rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-sub"
 							href={project.notion}
 							target="_blank"
+							rel="noopener noreferrer"
+							aria-label={`${project.title} Notion 페이지 (새 탭에서 열림)`}
 						>
 							<Image
 								className="w-full h-full"
@@ -101,7 +109,8 @@ export default function ProjectCard({ project, setModalId }: ProjectCardProps) {
 					)}
 					{project.hasProjectDetail && (
 						<button
-							className="w-12 h-12 text-theme-sub"
+							className="w-12 h-12 text-theme-sub rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-sub"
+							aria-label={`${project.title} 상세 정보 보기`}
 							onClick={() => setModalId(project.id)}
 						>
 							<FontAwesomeIcon

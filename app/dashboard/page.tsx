@@ -135,7 +135,7 @@ export default function Dashboard() {
 		}
 	}
 	return (
-		<div className="m-5 p-10 rounded-lg bg-white">
+		<div className="m-5 p-10 rounded-lg bg-card">
 			<Form {...form}>
 				<form
 					onSubmit={form.handleSubmit(handleSubmit)}
@@ -169,7 +169,7 @@ export default function Dashboard() {
 									</FormLabel>
 									<FormControl className="w-80">
 										<Textarea
-											className="resize-none w-96 h-40"
+											className="resize-none w-full h-40"
 											placeholder="소개"
 											{...field}
 										/>
@@ -254,7 +254,7 @@ export default function Dashboard() {
 									</FormLabel>
 									<FormControl className="w-80">
 										<Textarea
-											className="resize-none w-96 h-40"
+											className="resize-none w-full h-40"
 											placeholder="본문"
 											{...field}
 										/>

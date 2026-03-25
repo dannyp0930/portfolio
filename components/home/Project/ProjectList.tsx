@@ -78,7 +78,7 @@ export default function ProjectList({ projects }: ProjectListPros) {
 		>
 			{/* 헤더: 제목 + 뷰 전환 버튼 */}
 			<div className="flex items-center justify-between">
-				<h1>Project</h1>
+				<h2 className="text-4xl">Project</h2>
 				<div className="flex items-center gap-1 p-1 rounded-lg bg-theme-sub/10">
 					<button
 						aria-label="캐러셀 뷰"

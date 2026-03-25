@@ -253,7 +253,7 @@ function CareerContent() {
 	}, [selectPage]);
 
 	return (
-		<div className="py-10 rounded-lg bg-white">
+		<div className="py-10 rounded-lg bg-card">
 			<DndContext
 				collisionDetection={closestCenter}
 				onDragEnd={handleDragEnd}

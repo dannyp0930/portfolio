@@ -31,7 +31,7 @@ export default function FileInput({
 
 	return (
 		<div
-			className={`flex h-9 w-96 items-center rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-sm transition-colors md:text-sm ${className}`}
+			className={`flex h-9 w-full items-center rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-sm transition-colors md:text-sm ${className}`}
 		>
 			<input
 				id={id}

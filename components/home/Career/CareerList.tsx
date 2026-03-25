@@ -22,9 +22,9 @@ export default function CareerList({ careers }: CareerListProps) {
 					<div className="flex-1 min-w-0 pb-2">
 						{/* 회사명 + 기간 */}
 						<div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 mb-2">
-							<h2 className="text-lg md:text-xl leading-tight">
+							<h3 className="text-lg md:text-xl leading-tight">
 								{career.companyName}
-							</h2>
+							</h3>
 							<span className="text-xs text-theme-sub/85 font-mono whitespace-nowrap flex-shrink-0">
 								{dayjs(career.startDate).format('YYYY.MM')}
 								{' — '}

@@ -35,8 +35,8 @@ export default function Login() {
 	}
 
 	return (
-		<article className="min-h-[calc(100dvh-theme(spacing.footer))] py-header flex justify-center items-center">
-			<div className="w-96 h-fit bg-white p-10 rounded-xl flex flex-col gap-4">
+		<article className="min-h-[calc(100dvh-theme(spacing.footer))] py-header flex justify-center items-center px-4">
+			<div className="w-full max-w-96 h-fit bg-card p-10 rounded-xl flex flex-col gap-4">
 				<h1>Login</h1>
 				<form onSubmit={handleLogin} className="flex flex-col gap-3">
 					<div className="flex flex-col gap-1">

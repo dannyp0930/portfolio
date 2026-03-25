@@ -49,7 +49,7 @@ export default function Header() {
 	}, []);
 
 	const navLinkClass = (id: SectionId) =>
-		`hover:underline transition-colors duration-200 ${
+		`inline-flex items-center justify-center min-h-[44px] min-w-[44px] md:min-h-0 md:min-w-0 hover:underline transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme focus-visible:rounded ${
 			activeSection === id
 				? 'text-theme font-bold underline underline-offset-4'
 				: 'text-white'
@@ -143,7 +143,7 @@ export default function Header() {
 						isAdmin ? (
 							<li>
 								<Link
-									className="hover:underline text-white"
+									className="inline-flex items-center justify-center min-h-[44px] min-w-[44px] md:min-h-0 md:min-w-0 hover:underline text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme focus-visible:rounded"
 									href="/dashboard"
 								>
 									<span className="hidden md:inline">
@@ -171,7 +171,7 @@ export default function Header() {
 							<>
 								<li>
 									<Link
-										className="hover:underline text-white"
+										className="inline-flex items-center justify-center min-h-[44px] min-w-[44px] md:min-h-0 md:min-w-0 hover:underline text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme focus-visible:rounded"
 										href="/profile"
 									>
 										<span className="hidden md:inline">
@@ -198,7 +198,7 @@ export default function Header() {
 					) : (
 						<li>
 							<Link
-								className="hover:underline text-white"
+								className="inline-flex items-center justify-center min-h-[44px] min-w-[44px] md:min-h-0 md:min-w-0 hover:underline text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme focus-visible:rounded"
 								href="/login"
 							>
 								<span className="hidden md:inline">Login</span>

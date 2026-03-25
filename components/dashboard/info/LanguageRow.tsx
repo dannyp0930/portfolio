@@ -131,6 +131,7 @@ export default function LanguageRow({
 					<td>
 						<input
 							className="w-full focus:outline-none"
+							aria-label="언어명"
 							onChange={onChange('languageName')}
 							type="text"
 							value={updateLanguage?.languageName}
@@ -139,6 +140,7 @@ export default function LanguageRow({
 					<td>
 						<input
 							className="w-full focus:outline-none"
+							aria-label="숙련도"
 							onChange={onChange('proficiency')}
 							type="text"
 							value={updateLanguage?.proficiency}
@@ -147,6 +149,7 @@ export default function LanguageRow({
 					<td>
 						<input
 							className="w-full focus:outline-none"
+							aria-label="시험일"
 							onChange={onChange('examDate')}
 							type="date"
 							value={dayjs(updateLanguage?.examDate).format(
@@ -157,6 +160,7 @@ export default function LanguageRow({
 					<td>
 						<input
 							className="w-full focus:outline-none"
+							aria-label="발급 기관"
 							onChange={onChange('institution')}
 							type="text"
 							value={updateLanguage?.institution}

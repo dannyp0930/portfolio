@@ -59,7 +59,7 @@ export default function ImageInput({
 			{newImageUrl && (
 				<Image
 					src={newImageUrl}
-					alt={newImageUrl}
+					alt="업로드 이미지 미리보기"
 					width={width}
 					height={height}
 					className="object-cover"

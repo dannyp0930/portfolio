@@ -146,7 +146,7 @@ function SubscriptionComponent() {
 	}, [selectPage]);
 
 	return (
-		<div className="m-5 py-10 rounded-lg bg-white">
+		<div className="m-5 py-10 rounded-lg bg-card">
 			<table className="w-full border-collapse table-fixed [&_th]:border [&_th]:px-2 [&_th]:py-1 [&_th:first-of-type]:border-l-0 [&_th:last-of-type]:border-r-0 [&_td]:border [&_td]:px-2 [&_td]:py-1 [&_td]:overflow-auto [&_td:first-of-type]:border-l-0 [&_td:last-of-type]:border-r-0">
 				<thead>
 					<tr>

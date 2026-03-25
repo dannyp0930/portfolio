@@ -94,7 +94,7 @@ export default function ProjectDetailModal({
 				{/* Content Panel */}
 				<div
 					className={cn(
-						'relative z-10 w-[90%] max-w-[75rem] p-4 bg-white rounded-xl md:p-10 md:rounded-2xl overflow-y-auto max-h-[90svh]',
+						'relative z-10 w-[90%] max-w-[75rem] p-4 bg-card rounded-xl md:p-10 md:rounded-2xl overflow-y-auto max-h-[90svh]',
 						/* 진입 */
 						!closing &&
 							'animate-in fade-in-0 zoom-in-95 slide-in-from-bottom-4 duration-200',
@@ -121,9 +121,9 @@ export default function ProjectDetailModal({
 							</>
 						) : (
 							<>
-								<h4>{title}</h4>
+								<h2 className="text-xl">{title}</h2>
 								<div className="w-full flex flex-col gap-10 mt-4 lg:flex-row">
-									<p className="text-xs break-all whitespace-pre-wrap w-full sm:text-sm md:text-base lg:w-[45%]">
+									<p className="text-xs break-keep whitespace-pre-wrap w-full sm:text-sm md:text-base lg:w-[45%]">
 										{description}
 									</p>
 									{images?.length !== 0 ? (
@@ -144,7 +144,7 @@ export default function ProjectDetailModal({
 																	)
 																}
 																className="relative w-full aspect-[4/3] cursor-zoom-in"
-																aria-label="Enlarge Image"
+																aria-label={`${title} 이미지 ${idx + 1} 확대`}
 															>
 																<Image
 																	className="object-contain"
@@ -153,9 +153,7 @@ export default function ProjectDetailModal({
 																	src={
 																		projectImage.url
 																	}
-																	alt={String(
-																		projectImage.id
-																	)}
+																	alt={`${title} 이미지 ${idx + 1}`}
 																/>
 															</button>
 														</CarouselItem>
@@ -194,13 +192,13 @@ export default function ProjectDetailModal({
 							sizes="100%"
 							className="object-contain select-none"
 							src={images[zoomIndex].url}
-							alt={String(images[zoomIndex].id)}
+							alt={`${title} 이미지 ${zoomIndex + 1}`}
 							priority
 						/>
 						<button
 							type="button"
 							onClick={closeZoom}
-							className="absolute top-3 right-3 w-10 h-10 text-zinc-400/40 hover:text-zinc-400 transition-colors"
+							className="absolute top-3 right-3 w-10 h-10 text-white/60 hover:text-white transition-colors"
 							aria-label="Close"
 						>
 							<FontAwesomeIcon
@@ -211,7 +209,7 @@ export default function ProjectDetailModal({
 						<button
 							type="button"
 							onClick={showPrev}
-							className="absolute left-2 top-1/2 -translate-y-1/2 w-10 h-10 text-zinc-400/40 hover:text-zinc-400 transition-colors"
+							className="absolute left-2 top-1/2 -translate-y-1/2 w-10 h-10 text-white/60 hover:text-white transition-colors"
 							aria-label="Previous"
 						>
 							<FontAwesomeIcon
@@ -222,7 +220,7 @@ export default function ProjectDetailModal({
 						<button
 							type="button"
 							onClick={showNext}
-							className="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 text-zinc-400/40 hover:text-zinc-400 transition-colors"
+							className="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 text-white/60 hover:text-white transition-colors"
 							aria-label="Next"
 						>
 							<FontAwesomeIcon

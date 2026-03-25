@@ -128,6 +128,7 @@ export default function ContactRow({
 					<td>
 						<input
 							className="w-full focus:outline-none"
+							aria-label="유형"
 							onChange={onChange('type')}
 							type="text"
 							value={updateContact?.type}
@@ -136,6 +137,7 @@ export default function ContactRow({
 					<td>
 						<input
 							className="w-full focus:outline-none"
+							aria-label="값"
 							onChange={onChange('value')}
 							type="text"
 							value={updateContact?.value}
@@ -144,6 +146,7 @@ export default function ContactRow({
 					<td>
 						<input
 							className="w-full focus:outline-none"
+							aria-label="라벨"
 							onChange={onChange('label')}
 							type="text"
 							value={updateContact?.label}

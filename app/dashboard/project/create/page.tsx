@@ -70,7 +70,7 @@ export default function ProjectCreate() {
 		}
 	}
 	return (
-		<div className="m-5 p-10 rounded-lg bg-white">
+		<div className="m-5 p-10 rounded-lg bg-card">
 			<Form {...form}>
 				<form
 					onSubmit={form.handleSubmit(handleSubmit)}
