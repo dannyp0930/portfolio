@@ -61,8 +61,8 @@ SH Portfolio는 개발자 dannyp0930의 개인 포트폴리오 웹사이트입�
 
 | Category | Technology | Version | Description |
 |----------|-----------|---------|-------------|
-| **Frontend** | Next.js | ^16.0.8 | React 기반 풀스택 프레임워크, App Router / SSR / SSG |
-| | React | ^19.2.1 | UI 구축 라이브러리 |
+| **Frontend** | Next.js | 16.4.6 | React 기반 풀스택 프레임워크, App Router / SSR / SSG |
+| | React | 19.2.9 | UI 구축 라이브러리 |
 | | Tailwind CSS | ^3.4.1 | 유틸리티 기반 CSS 프레임워크 |
 | | shadcn/ui | - | Radix UI + Tailwind 기반 컴포넌트 라이브러리 |
 | | next-themes | ^0.4.4 | 다크모드 테마 지원 |
@@ -71,6 +71,7 @@ SH Portfolio는 개발자 dannyp0930의 개인 포트폴리오 웹사이트입�
 | | Embla Carousel | ^8.5.2 | 이미지 캐러셀 |
 | **Form** | React Hook Form | ^7.54.2 | 폼 상태 관리 |
 | | Zod | ^3.24.2 | 스키마 기반 입력값 검증 |
+| **Runtime** | Node.js | 24.22.3 | 로컬 버전; Vercel은 24.x 패치를 자동 관리 |
 | **Backend** | Prisma | ^6.3.1 | 타입 안전한 DB ORM (싱글톤 패턴) |
 | | MySQL | - | 관계형 데이터베이스 (Railway 호스팅) |
 | | bcrypt | ^5.1.1 | 비밀번호 해싱 |
