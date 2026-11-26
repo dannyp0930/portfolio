@@ -2,6 +2,12 @@
 
 import { formInstance, instance } from '@/app/api/instance';
 import ImageInput from '@/components/common/ImageInput';
+import {
+	actionError,
+	usePendingAction,
+	FormLoadFeedback,
+	useFormLoad,
+} from '@/components/dashboard/FormFeedback';
 import { Button } from '@/components/ui/button';
 import {
 	Form,
@@ -14,16 +20,8 @@ import {
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { isAxiosError } from 'axios';
-import dayjs from 'dayjs';
-import {
-	MouseEvent,
-	use,
-	useCallback,
-	useEffect,
-	useRef,
-	useState,
-} from 'react';
+import { parsePortfolioDate, portfolioDate } from '@/lib/portfolioDate';
+import { use, useCallback, useId, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
@@ -55,11 +53,15 @@ const detailFormSchema = z.object({
 type formSchemaType = typeof formSchema.shape;
 
 export default function ProjectUpdate({ params }: ProjectUpdateParams) {
+	const sortId = useId();
+	const save = usePendingAction();
 	const { projectId } = use(params);
-	const [load, setLoad] = useState<boolean>(true);
 	const [projectImages, setProjectImages] = useState<ProjectImage[]>([]);
 	const [projectDetailId, setProjectDetailId] = useState<number>();
-	const imageRef = useRef<HTMLInputElement>(null);
+	const detailSave = usePendingAction();
+	const imageAction = usePendingAction();
+	const [imagesStale, setImagesStale] = useState(false);
+	const imagesDisabled = imageAction.pending || imagesStale;
 
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
@@ -82,56 +84,47 @@ export default function ProjectUpdate({ params }: ProjectUpdateParams) {
 		},
 	});
 
-	const getProject = useCallback(async () => {
-		try {
+	const getProject = useCallback(
+		async (signal: AbortSignal) => {
 			const params = { id: projectId };
 			const {
 				data: { data },
-			} = await instance.get('/project', { params });
+			} = await instance.get('/project', { params, signal });
+			if (signal.aborted) return;
+			if (!data?.id) throw new Error('Record not found');
 			(Object.keys(formSchema.shape) as (keyof formSchemaType)[]).forEach(
-				async (key) => {
+				(key) => {
 					const value = data[key];
 					if (key === 'startDate' || key === 'endDate') {
-						if (value) {
-							form.setValue(
-								key,
-								dayjs(value as string).format('YYYY-MM-DD')
-							);
-						}
+						form.setValue(
+							key,
+							value ? portfolioDate(value, 'YYYY-MM-DD') : ''
+						);
 					} else {
 						form.setValue(key, value ?? '');
 					}
 				}
 			);
-			if (data.projectDetail) {
-				detailForm.setValue(
-					'description',
-					data.projectDetail.description
-				);
-				setProjectDetailId(data.projectDetail.id);
-			}
-			setProjectImages(data.projectImages);
-			setLoad(false);
-		} catch (err) {
-			if (isAxiosError(err)) {
-				toast.error(err.response?.data.error || '오류가 발생했습니다');
-			}
-		}
-	}, [detailForm, form, projectId]);
-
-	useEffect(() => {
-		if (load) {
-			getProject();
-		}
-	}, [load, getProject]);
+			detailForm.setValue(
+				'description',
+				data.projectDetail?.description ?? ''
+			);
+			setProjectDetailId(data.projectDetail?.id);
+			setProjectImages(data.projectImages ?? []);
+		},
+		[detailForm, form, projectId]
+	);
+	const load = useFormLoad(getProject);
 
 	async function handleSubmit(values: z.infer<typeof formSchema>) {
 		try {
 			const body = {
 				...values,
 				id: projectId,
-				startDate: dayjs(values.startDate).toDate(),
-				endDate: values.endDate ? dayjs(values.endDate).toDate() : null,
+				startDate: parsePortfolioDate(values.startDate),
+				endDate: values.endDate
+					? parsePortfolioDate(values.endDate)
+					: null,
 			};
 			const {
 				data: { message },
@@ -141,9 +134,7 @@ export default function ProjectUpdate({ params }: ProjectUpdateParams) {
 				toast.success(message);
 			}
 		} catch (err) {
-			if (isAxiosError(err)) {
-				toast.error(err.response?.data.error || '오류가 발생했습니다');
-			}
+			toast.error(actionError(err));
 		}
 	}
 
@@ -174,315 +165,135 @@ export default function ProjectUpdate({ params }: ProjectUpdateParams) {
 				}
 			}
 		} catch (err) {
-			if (isAxiosError(err)) {
-				toast.error(err.response?.data.error || '오류가 발생했습니다');
-			}
+			toast.error(actionError(err));
 		}
 	}
 
-	async function handleCreateImage(image: File) {
-		if (image.size > 10 * 1024 * 1024) {
-			toast.error('이미지는 10MB 이하만 업로드 가능합니다.');
-			return;
-		}
-		const id = toast.loading('Upload Image...');
-		if (image) {
-			try {
-				const formData = new FormData();
-				const newOrder = projectImages ? projectImages.length + 1 : 1;
-				formData.append('image', image);
-				formData.append('id', String(projectDetailId));
-				formData.append('order', String(newOrder));
-				const {
-					data: { message },
-					status,
-				} = await formInstance.post('/project/image', formData);
-				if (status === 200) {
-					toast.success(message, { id });
-					if (imageRef.current) {
-						imageRef.current.value = '';
-					}
-				}
-			} catch (err) {
-				if (isAxiosError(err)) {
-					toast.error(
-						err.response?.data.error || '오류가 발생했습니다',
-						{ id }
-					);
-				}
-			} finally {
-				setLoad(true);
-			}
-		}
-	}
-
-	async function handleUpdateImage(image: File, imageId: number) {
-		if (image.size > 10 * 1024 * 1024) {
-			toast.error('이미지는 10MB 이하만 업로드 가능합니다.');
-			return;
-		}
-		const id = toast.loading('Update Image...');
+	async function refreshImages() {
 		try {
-			const formData = new FormData();
-			formData.append('image', image);
-			formData.append('id', String(imageId));
 			const {
-				data: { message },
-				status,
-			} = await formInstance.put('/project/image', formData);
-			if (status === 200) {
-				toast.success(message, { id });
+				data: { data },
+			} = await instance.get('/project', { params: { id: projectId } });
+			if (!data?.id) throw new Error('Record not found');
+			setProjectImages(data.projectImages ?? []);
+			setImagesStale(false);
+		} catch {
+			setImagesStale(true);
+		}
+	}
+
+	async function saveImage(image: File, imageId?: number) {
+		if (imagesStale || !projectDetailId) return;
+		if (image.size > 10 * 1024 * 1024) {
+			toast.error('이미지는 10MB 이하만 업로드 가능합니다.');
+			return;
+		}
+		await imageAction.run(async () => {
+			try {
+				const body = new FormData();
+				body.append('image', image);
+				body.append('id', String(imageId ?? projectDetailId));
+				if (imageId === undefined) {
+					const lastOrder = projectImages.reduce(
+						(max, item) => Math.max(max, item.order ?? 0),
+						0
+					);
+					body.append('order', String(lastOrder + 1));
+				}
+				const {
+					data: { message },
+				} = await formInstance[imageId === undefined ? 'post' : 'put'](
+					'/project/image',
+					body
+				);
+				toast.success(message);
+				await refreshImages();
+			} catch (err) {
+				toast.error(actionError(err));
 			}
-		} catch (err) {
-			if (isAxiosError(err)) {
-				toast.error(err.response?.data.error || '오류가 발생했습니다', {
-					id,
+		});
+	}
+
+	async function handleDeleteImage(imageId: number) {
+		if (imagesStale) return;
+		await imageAction.run(async () => {
+			try {
+				const {
+					data: { message },
+				} = await instance.delete('/project/image', {
+					data: { id: imageId },
 				});
+				toast.success(message);
+				await refreshImages();
+			} catch (err) {
+				toast.error(actionError(err));
 			}
-		} finally {
-			setLoad(true);
-		}
+		});
 	}
 
-	function handleDeleteImage(imageId: number) {
-		return async (e: MouseEvent<HTMLButtonElement>) => {
-			e.preventDefault();
+	async function handleDragEnd({ active, over }: DragEndEvent) {
+		if (imagesStale || !over || active.id === over.id) return;
+		const oldIndex = projectImages.findIndex(
+			(image) => image.id === active.id
+		);
+		const newIndex = projectImages.findIndex(
+			(image) => image.id === over.id
+		);
+		if (oldIndex < 0 || newIndex < 0) return;
+		await imageAction.run(async () => {
+			const newOrder = arrayMove(projectImages, oldIndex, newIndex);
+			const data = newOrder.map((item, index) => ({
+				id: item.id,
+				prevOrder: item.order,
+				order: index + 1,
+			}));
+			setProjectImages(newOrder);
 			try {
-				const body = { id: imageId };
 				const {
 					data: { message },
-					status,
-				} = await instance.delete('/project/image', { data: body });
-				if (status === 200) {
-					toast.success(message);
-				}
+				} = await instance.patch('/project/image', { data });
+				setProjectImages(
+					newOrder.map((item, index) => ({
+						...item,
+						order: index + 1,
+					}))
+				);
+				toast.success(message);
 			} catch (err) {
-				if (isAxiosError(err)) {
-					toast.error(
-						err.response?.data.error || '오류가 발생했습니다'
-					);
-				}
-			} finally {
-				setLoad(true);
+				setProjectImages(projectImages);
+				toast.error(actionError(err));
 			}
-		};
+		});
 	}
 
-	async function handleDragEnd(event: DragEndEvent) {
-		const { active, over } = event;
-		const originalImages = [...projectImages];
-		if (active.id !== over?.id && projectImages) {
-			try {
-				const oldIndex = projectImages.findIndex(
-					(img) => img.id === active.id
-				);
-				const newIndex = projectImages.findIndex(
-					(img) => img.id === over?.id
-				);
-				const newOrder = arrayMove(projectImages, oldIndex, newIndex);
-				setProjectImages(newOrder);
-				const body = newOrder.map((item, index) => ({
-					id: item.id,
-					prevOrder: item.order,
-					order: index + 1,
-				}));
-				const {
-					data: { message },
-					status,
-				} = await instance.patch('/project/image', { data: body });
-				if (status === 200) {
-					toast.success(message);
-				}
-			} catch (err) {
-				if (isAxiosError(err)) {
-					toast.error(
-						err.response?.data.error || '오류가 발생했습니다'
-					);
-				}
-				setProjectImages(originalImages);
-			}
-		}
-	}
+	if (load.loading || load.failed) return <FormLoadFeedback {...load} />;
 
 	return (
-		<div className="m-5 p-10 rounded-lg bg-card">
+		<div className="m-3 min-w-0 rounded-lg bg-card p-4 sm:m-5 sm:p-10">
 			<Form {...form}>
 				<form
-					onSubmit={form.handleSubmit(handleSubmit)}
+					onSubmit={form.handleSubmit((values) =>
+						save.run(() => handleSubmit(values))
+					)}
+					aria-busy={save.pending}
 					className="space-y-8"
 				>
-					<FormField
-						control={form.control}
-						name="title"
-						render={({ field }) => (
-							<FormItem>
-								<div className="flex gap-4 items-center">
-									<FormLabel className="flex-shrink-0 w-20">
-										제목
-									</FormLabel>
-									<FormControl className="w-48">
-										<Input placeholder="제목" {...field} />
-									</FormControl>
-									<FormMessage />
-								</div>
-							</FormItem>
-						)}
-					/>
-					<FormField
-						control={form.control}
-						name="intro"
-						render={({ field }) => (
-							<FormItem>
-								<div className="flex gap-4 items-center">
-									<FormLabel className="flex-shrink-0 w-20">
-										개요
-									</FormLabel>
-									<FormControl className="w-80">
-										<Input placeholder="개요" {...field} />
-									</FormControl>
-									<FormMessage />
-								</div>
-							</FormItem>
-						)}
-					/>
-					<FormField
-						control={form.control}
-						name="organization"
-						render={({ field }) => (
-							<FormItem>
-								<div className="flex gap-4 items-center">
-									<FormLabel className="flex-shrink-0 w-20">
-										조직
-									</FormLabel>
-									<FormControl className="w-48">
-										<Input placeholder="조직" {...field} />
-									</FormControl>
-									<FormMessage />
-								</div>
-							</FormItem>
-						)}
-					/>
-					<FormField
-						control={form.control}
-						name="startDate"
-						render={({ field }) => (
-							<FormItem>
-								<div className="flex gap-4 items-center">
-									<FormLabel className="flex-shrink-0 w-20">
-										시작일자
-									</FormLabel>
-									<FormControl className="w-40">
-										<Input type="date" {...field} />
-									</FormControl>
-									<FormMessage />
-								</div>
-							</FormItem>
-						)}
-					/>
-					<FormField
-						control={form.control}
-						name="endDate"
-						render={({ field }) => (
-							<FormItem>
-								<div className="flex gap-4 items-center">
-									<FormLabel className="flex-shrink-0 w-20">
-										종료일자
-									</FormLabel>
-									<FormControl className="w-40">
-										<Input
-											type="date"
-											{...field}
-											min={form.getValues('startDate')}
-										/>
-									</FormControl>
-									<FormMessage />
-								</div>
-							</FormItem>
-						)}
-					/>
-					<FormField
-						control={form.control}
-						name="github"
-						render={({ field }) => (
-							<FormItem>
-								<div className="flex gap-4 items-center">
-									<FormLabel className="flex-shrink-0 w-20">
-										Github
-									</FormLabel>
-									<FormControl className="w-80">
-										<Input
-											placeholder="Github"
-											{...field}
-										/>
-									</FormControl>
-									<FormMessage />
-								</div>
-							</FormItem>
-						)}
-					/>
-					<FormField
-						control={form.control}
-						name="homepage"
-						render={({ field }) => (
-							<FormItem>
-								<div className="flex gap-4 items-center">
-									<FormLabel className="flex-shrink-0 w-20">
-										Homepage
-									</FormLabel>
-									<FormControl className="w-80">
-										<Input
-											placeholder="Homepage"
-											{...field}
-										/>
-									</FormControl>
-									<FormMessage />
-								</div>
-							</FormItem>
-						)}
-					/>
-					<FormField
-						control={form.control}
-						name="notion"
-						render={({ field }) => (
-							<FormItem>
-								<div className="flex gap-4 items-center">
-									<FormLabel className="flex-shrink-0 w-20">
-										Notion
-									</FormLabel>
-									<FormControl className="w-80">
-										<Input
-											placeholder="Notion"
-											{...field}
-										/>
-									</FormControl>
-									<FormMessage />
-								</div>
-							</FormItem>
-						)}
-					/>
-					<Button type="submit">수정</Button>
-				</form>
-			</Form>
-			<div className="pt-10">
-				<h4>프로젝트 상세</h4>
-				<Form {...detailForm}>
-					<form
-						className="pt-5"
-						onSubmit={detailForm.handleSubmit(handleDetailSubmit)}
+					<fieldset
+						className="min-w-0 space-y-6"
+						disabled={save.pending}
 					>
 						<FormField
-							control={detailForm.control}
-							name="description"
+							control={form.control}
+							name="title"
 							render={({ field }) => (
 								<FormItem>
-									<div className="flex gap-4 items-center">
-										<FormLabel className="flex-shrink-0 w-20">
-											내용
+									<div className="flex min-w-0 flex-col items-start gap-2 lg:flex-row lg:gap-4">
+										<FormLabel className="shrink-0 lg:w-20 lg:pt-2">
+											제목
 										</FormLabel>
-										<FormControl className="w-48">
-											<Textarea
-												className="resize-none w-full h-40"
-												placeholder="내용"
+										<FormControl className="w-full min-w-0 lg:max-w-48">
+											<Input
+												placeholder="제목"
 												{...field}
 											/>
 										</FormControl>
@@ -491,42 +302,248 @@ export default function ProjectUpdate({ params }: ProjectUpdateParams) {
 								</FormItem>
 							)}
 						/>
-						<Button type="submit">저장</Button>
+						<FormField
+							control={form.control}
+							name="intro"
+							render={({ field }) => (
+								<FormItem>
+									<div className="flex min-w-0 flex-col items-start gap-2 lg:flex-row lg:gap-4">
+										<FormLabel className="shrink-0 lg:w-20 lg:pt-2">
+											개요
+										</FormLabel>
+										<FormControl className="w-full min-w-0 lg:max-w-80">
+											<Input
+												placeholder="개요"
+												{...field}
+											/>
+										</FormControl>
+										<FormMessage />
+									</div>
+								</FormItem>
+							)}
+						/>
+						<FormField
+							control={form.control}
+							name="organization"
+							render={({ field }) => (
+								<FormItem>
+									<div className="flex min-w-0 flex-col items-start gap-2 lg:flex-row lg:gap-4">
+										<FormLabel className="shrink-0 lg:w-20 lg:pt-2">
+											조직
+										</FormLabel>
+										<FormControl className="w-full min-w-0 lg:max-w-48">
+											<Input
+												placeholder="조직"
+												{...field}
+											/>
+										</FormControl>
+										<FormMessage />
+									</div>
+								</FormItem>
+							)}
+						/>
+						<FormField
+							control={form.control}
+							name="startDate"
+							render={({ field }) => (
+								<FormItem>
+									<div className="flex min-w-0 flex-col items-start gap-2 lg:flex-row lg:gap-4">
+										<FormLabel className="shrink-0 lg:w-20 lg:pt-2">
+											시작일자
+										</FormLabel>
+										<FormControl className="w-full min-w-0 lg:max-w-40">
+											<Input type="date" {...field} />
+										</FormControl>
+										<FormMessage />
+									</div>
+								</FormItem>
+							)}
+						/>
+						<FormField
+							control={form.control}
+							name="endDate"
+							render={({ field }) => (
+								<FormItem>
+									<div className="flex min-w-0 flex-col items-start gap-2 lg:flex-row lg:gap-4">
+										<FormLabel className="shrink-0 lg:w-20 lg:pt-2">
+											종료일자
+										</FormLabel>
+										<FormControl className="w-full min-w-0 lg:max-w-40">
+											<Input
+												type="date"
+												{...field}
+												min={form.getValues(
+													'startDate'
+												)}
+											/>
+										</FormControl>
+										<FormMessage />
+									</div>
+								</FormItem>
+							)}
+						/>
+						<FormField
+							control={form.control}
+							name="github"
+							render={({ field }) => (
+								<FormItem>
+									<div className="flex min-w-0 flex-col items-start gap-2 lg:flex-row lg:gap-4">
+										<FormLabel className="shrink-0 lg:w-20 lg:pt-2">
+											Github
+										</FormLabel>
+										<FormControl className="w-full min-w-0 lg:max-w-80">
+											<Input
+												placeholder="Github"
+												{...field}
+											/>
+										</FormControl>
+										<FormMessage />
+									</div>
+								</FormItem>
+							)}
+						/>
+						<FormField
+							control={form.control}
+							name="homepage"
+							render={({ field }) => (
+								<FormItem>
+									<div className="flex min-w-0 flex-col items-start gap-2 lg:flex-row lg:gap-4">
+										<FormLabel className="shrink-0 lg:w-20 lg:pt-2">
+											Homepage
+										</FormLabel>
+										<FormControl className="w-full min-w-0 lg:max-w-80">
+											<Input
+												placeholder="Homepage"
+												{...field}
+											/>
+										</FormControl>
+										<FormMessage />
+									</div>
+								</FormItem>
+							)}
+						/>
+						<FormField
+							control={form.control}
+							name="notion"
+							render={({ field }) => (
+								<FormItem>
+									<div className="flex min-w-0 flex-col items-start gap-2 lg:flex-row lg:gap-4">
+										<FormLabel className="shrink-0 lg:w-20 lg:pt-2">
+											Notion
+										</FormLabel>
+										<FormControl className="w-full min-w-0 lg:max-w-80">
+											<Input
+												placeholder="Notion"
+												{...field}
+											/>
+										</FormControl>
+										<FormMessage />
+									</div>
+								</FormItem>
+							)}
+						/>
+						<Button type="submit">
+							{save.pending ? '저장 중…' : '수정'}
+						</Button>
+					</fieldset>
+				</form>
+			</Form>
+			<div className="pt-10">
+				<h4>프로젝트 상세</h4>
+				<Form {...detailForm}>
+					<form
+						className="pt-5"
+						onSubmit={detailForm.handleSubmit((values) =>
+							detailSave.run(() => handleDetailSubmit(values))
+						)}
+						aria-busy={detailSave.pending}
+					>
+						<fieldset
+							className="min-w-0 space-y-4"
+							disabled={detailSave.pending}
+						>
+							<FormField
+								control={detailForm.control}
+								name="description"
+								render={({ field }) => (
+									<FormItem>
+										<div className="flex min-w-0 flex-col items-start gap-2 lg:flex-row lg:gap-4">
+											<FormLabel className="shrink-0 lg:w-20 lg:pt-2">
+												내용
+											</FormLabel>
+											<FormControl className="w-full min-w-0 lg:max-w-48">
+												<Textarea
+													className="resize-none w-full h-40"
+													placeholder="내용"
+													{...field}
+												/>
+											</FormControl>
+											<FormMessage />
+										</div>
+									</FormItem>
+								)}
+							/>
+							<Button type="submit">
+								{detailSave.pending ? '저장 중…' : '저장'}
+							</Button>
+						</fieldset>
 					</form>
 				</Form>
 				{projectDetailId && (
-					<div className="pt-5 flex flex-col gap-10">
+					<div className="flex min-w-0 flex-col gap-4 pt-5">
+						{imageAction.pending && (
+							<p role="status">이미지 처리 중…</p>
+						)}
+						{imagesStale && (
+							<div className="space-y-2">
+								<p role="alert">
+									이미지 목록을 갱신하지 못했습니다.
+								</p>
+								<Button
+									variant="outline"
+									disabled={imageAction.pending}
+									onClick={() =>
+										void imageAction.run(refreshImages)
+									}
+								>
+									다시 시도
+								</Button>
+							</div>
+						)}
 						<div className="flex items-center gap-4">
 							<h5>이미지 추가</h5>
 							<ImageInput
 								id="image-create"
-								ref={imageRef}
+								disabled={imagesDisabled}
+								previewSelection={false}
 								width={160}
 								height={90}
-								onChange={handleCreateImage}
+								onChange={(file) => void saveImage(file)}
 							/>
 						</div>
-						{(projectImages?.length ?? 0) > 0 ? (
+						{projectImages.length > 0 ? (
 							<DndContext
+								id={sortId}
 								collisionDetection={closestCenter}
 								onDragEnd={handleDragEnd}
 							>
 								<SortableContext
-									items={projectImages!.map((img) => img.id)}
+									items={projectImages.map((img) => img.id)}
 									strategy={verticalListSortingStrategy}
 								>
-									{projectImages!.map((image) => (
+									{projectImages.map((image) => (
 										<ProjectSortableImage
 											key={image.id}
 											image={image}
-											onUpdate={handleUpdateImage}
+											disabled={imagesDisabled}
+											onUpdate={saveImage}
 											onDelete={handleDeleteImage}
 										/>
 									))}
 								</SortableContext>
 							</DndContext>
 						) : (
-							<div className="h-40 flex items-center justify-center rounded-md border border-dashed text-sm text-muted-foreground">
+							<div className="h-40 flex items-center justify-center rounded-md border border-dashed p-4 text-center text-sm text-muted-foreground">
 								이미지가 없습니다. 상단의 “이미지 추가”로
 								업로드하세요.
 							</div>

@@ -171,6 +171,7 @@ const Sidebar = React.forwardRef<
 		side?: 'left' | 'right';
 		variant?: 'sidebar' | 'floating' | 'inset';
 		collapsible?: 'offcanvas' | 'icon' | 'none';
+		mobileTitle?: string;
 	}
 >(
 	(
@@ -178,6 +179,7 @@ const Sidebar = React.forwardRef<
 			side = 'left',
 			variant = 'sidebar',
 			collapsible = 'offcanvas',
+			mobileTitle = 'Navigation',
 			className,
 			children,
 			...props
@@ -185,6 +187,8 @@ const Sidebar = React.forwardRef<
 		ref
 	) => {
 		const { isMobile, state, openMobile, setOpenMobile } = useSidebar();
+		const mobileTitleId = React.useId();
+		const restoreFocus = React.useRef<HTMLElement | null>(null);
 
 		if (collapsible === 'none') {
 			return (
@@ -211,7 +215,21 @@ const Sidebar = React.forwardRef<
 					<SheetContent
 						data-sidebar="sidebar"
 						data-mobile="true"
-						className="w-[--sidebar-width] bg-sidebar p-0 text-sidebar-foreground [&>button]:hidden"
+						aria-labelledby={mobileTitleId}
+						aria-describedby={undefined}
+						className="flex w-[--sidebar-width] max-w-[calc(100%-2rem)] flex-col gap-0 bg-sidebar p-0 text-sidebar-foreground [&>button]:right-2 [&>button]:top-2 [&>button]:grid [&>button]:size-11 [&>button]:place-items-center"
+						onOpenAutoFocus={() => {
+							restoreFocus.current =
+								document.activeElement instanceof HTMLElement
+									? document.activeElement
+									: null;
+						}}
+						onCloseAutoFocus={(event) => {
+							if (restoreFocus.current?.isConnected) {
+								event.preventDefault();
+								restoreFocus.current.focus();
+							}
+						}}
 						style={
 							{
 								'--sidebar-width': SIDEBAR_WIDTH_MOBILE,
@@ -219,7 +237,13 @@ const Sidebar = React.forwardRef<
 						}
 						side={side}
 					>
-						<div className="flex h-full w-full flex-col">
+						<h2
+							id={mobileTitleId}
+							className="px-4 py-5 pr-14 font-semibold"
+						>
+							{mobileTitle}
+						</h2>
+						<div className="flex min-h-0 w-full flex-1 flex-col">
 							{children}
 						</div>
 					</SheetContent>
@@ -278,7 +302,7 @@ const SidebarTrigger = React.forwardRef<
 	React.ElementRef<typeof Button>,
 	React.ComponentProps<typeof Button>
 >(({ className, onClick, ...props }, ref) => {
-	const { toggleSidebar } = useSidebar();
+	const { isMobile, open, openMobile, toggleSidebar } = useSidebar();
 
 	return (
 		<Button
@@ -286,7 +310,10 @@ const SidebarTrigger = React.forwardRef<
 			data-sidebar="trigger"
 			variant="ghost"
 			size="icon"
-			className={cn('h-7 w-7', className)}
+			className={cn('h-11 w-11 md:h-7 md:w-7', className)}
+			type="button"
+			aria-haspopup={isMobile ? 'dialog' : undefined}
+			aria-expanded={isMobile ? openMobile : open}
 			onClick={(event) => {
 				onClick?.(event);
 				toggleSidebar();

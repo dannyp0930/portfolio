@@ -1,14 +1,11 @@
-import { instance } from '@/app/api/instance';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { isAxiosError } from 'axios';
-import dayjs from 'dayjs';
+import { portfolioDate } from '@/lib/portfolioDate';
 import { ArrowDownFromLine, ArrowUpFromLine } from 'lucide-react';
 import Link from 'next/link';
-import { Dispatch, MouseEvent, SetStateAction } from 'react';
-import { toast } from 'sonner';
+import { MouseEvent } from 'react';
 
 export default function CareerRow({
 	idx,
@@ -17,7 +14,8 @@ export default function CareerRow({
 	page,
 	career,
 	changeOrder,
-	setLoad,
+	busy,
+	onMove,
 	onDelete,
 }: {
 	idx: number;
@@ -26,44 +24,20 @@ export default function CareerRow({
 	page: number;
 	career: Career;
 	changeOrder: boolean;
-	setLoad: Dispatch<SetStateAction<boolean>>;
+	busy: boolean;
+	onMove: (id: number, order: number, dir: boolean) => Promise<void>;
 	onDelete: (
 		careerId: number
 	) => (e: MouseEvent<HTMLButtonElement>) => Promise<void>;
 }) {
 	const totalPages = Math.ceil(total / take);
 	const { attributes, listeners, setNodeRef, transform, transition } =
-		useSortable({ id: career.id });
+		useSortable({ id: career.id, disabled: busy || !changeOrder });
 
 	const style = {
 		transform: CSS.Transform.toString(transform),
 		transition,
 	};
-
-	function handleOrder(id: number, order: number, dir: boolean) {
-		return async (e: MouseEvent<HTMLButtonElement>) => {
-			e.preventDefault();
-			try {
-				const {
-					data: { message },
-					status,
-				} = await instance.patch('/info/career', {
-					data: { id, order, dir },
-				});
-				if (status === 200) {
-					toast.success(message);
-				}
-			} catch (err) {
-				if (isAxiosError(err)) {
-					toast.error(
-						err.response?.data.error || '오류가 발생했습니다'
-					);
-				}
-			} finally {
-				setLoad(true);
-			}
-		};
-	}
 
 	return (
 		<tr ref={setNodeRef} style={style}>
@@ -80,11 +54,16 @@ export default function CareerRow({
 						{idx === 0 && page !== 1 && (
 							<Button
 								variant="ghost"
-								onClick={handleOrder(
-									career.id,
-									career.order as number,
-									false
-								)}
+								disabled={busy || career.order == null}
+								aria-label="이전 페이지로 이동"
+								onClick={() => {
+									if (career.order != null)
+										void onMove(
+											career.id,
+											career.order,
+											false
+										);
+								}}
 							>
 								<ArrowUpFromLine />
 							</Button>
@@ -92,11 +71,16 @@ export default function CareerRow({
 						{idx === take - 1 && page !== totalPages && (
 							<Button
 								variant="ghost"
-								onClick={handleOrder(
-									career.id,
-									career.order as number,
-									true
-								)}
+								disabled={busy || career.order == null}
+								aria-label="다음 페이지로 이동"
+								onClick={() => {
+									if (career.order != null)
+										void onMove(
+											career.id,
+											career.order,
+											true
+										);
+								}}
 							>
 								<ArrowDownFromLine />
 							</Button>
@@ -110,22 +94,24 @@ export default function CareerRow({
 			<td>{career.description}</td>
 			<td>{career.position}</td>
 			<td>{career.duty}</td>
-			<td>{dayjs(career.startDate).format('YYYY-MM-DD')}</td>
+			<td>{portfolioDate(career.startDate, 'YYYY-MM-DD')}</td>
 			<td>
-				{career.endDate && dayjs(career.endDate).format('YYYY-MM-DD')}
+				{career.endDate && portfolioDate(career.endDate, 'YYYY-MM-DD')}
 			</td>
 			<td>
 				<div className="flex gap-2 justify-center">
 					<Button
 						asChild
+						aria-disabled={changeOrder || busy || undefined}
+						tabIndex={changeOrder || busy ? -1 : undefined}
 						size="sm"
-						disabled={changeOrder}
+						disabled={changeOrder || busy}
 						className={cn(
-							changeOrder &&
+							(changeOrder || busy) &&
 								'opacity-50 cursor-default hover:bg-primary'
 						)}
 						onClick={(e) => {
-							if (changeOrder) {
+							if (changeOrder || busy) {
 								e.preventDefault();
 							}
 						}}
@@ -138,7 +124,7 @@ export default function CareerRow({
 						variant="destructive"
 						size="sm"
 						onClick={onDelete(Number(career.id))}
-						disabled={changeOrder}
+						disabled={changeOrder || busy}
 					>
 						삭제
 					</Button>

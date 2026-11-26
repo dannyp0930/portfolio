@@ -1,14 +1,11 @@
-import { instance } from '@/app/api/instance';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { isAxiosError } from 'axios';
-import dayjs from 'dayjs';
+import { portfolioDate } from '@/lib/portfolioDate';
 import { ArrowDownFromLine, ArrowUpFromLine } from 'lucide-react';
 import Link from 'next/link';
-import { Dispatch, MouseEvent, SetStateAction } from 'react';
-import { toast } from 'sonner';
+import { MouseEvent } from 'react';
 
 export default function ProjectRow({
 	idx,
@@ -17,7 +14,8 @@ export default function ProjectRow({
 	page,
 	project,
 	changeOrder,
-	setLoad,
+	busy,
+	onMove,
 	onDelete,
 }: {
 	idx: number;
@@ -26,44 +24,20 @@ export default function ProjectRow({
 	page: number;
 	project: Project;
 	changeOrder: boolean;
-	setLoad: Dispatch<SetStateAction<boolean>>;
+	busy: boolean;
+	onMove: (id: number, order: number, dir: boolean) => Promise<void>;
 	onDelete: (
 		projectId: number
 	) => (e: MouseEvent<HTMLButtonElement>) => Promise<void>;
 }) {
 	const totalPages = Math.ceil(total / take);
 	const { attributes, listeners, setNodeRef, transform, transition } =
-		useSortable({ id: project.id });
+		useSortable({ id: project.id, disabled: busy || !changeOrder });
 
 	const style = {
 		transform: CSS.Transform.toString(transform),
 		transition,
 	};
-
-	function handleOrder(id: number, order: number, dir: boolean) {
-		return async (e: MouseEvent<HTMLButtonElement>) => {
-			e.preventDefault();
-			try {
-				const {
-					data: { message },
-					status,
-				} = await instance.patch('/info/project', {
-					data: { id, order, dir },
-				});
-				if (status === 200) {
-					toast.success(message);
-				}
-			} catch (err) {
-				if (isAxiosError(err)) {
-					toast.error(
-						err.response?.data.error || '오류가 발생했습니다'
-					);
-				}
-			} finally {
-				setLoad(true);
-			}
-		};
-	}
 
 	return (
 		<tr ref={setNodeRef} style={style}>
@@ -80,11 +54,16 @@ export default function ProjectRow({
 						{idx === 0 && page !== 1 && (
 							<Button
 								variant="ghost"
-								onClick={handleOrder(
-									project.id,
-									project.order as number,
-									false
-								)}
+								disabled={busy || project.order == null}
+								aria-label="이전 페이지로 이동"
+								onClick={() => {
+									if (project.order != null)
+										void onMove(
+											project.id,
+											project.order,
+											false
+										);
+								}}
 							>
 								<ArrowUpFromLine />
 							</Button>
@@ -92,11 +71,16 @@ export default function ProjectRow({
 						{idx === take - 1 && page !== totalPages && (
 							<Button
 								variant="ghost"
-								onClick={handleOrder(
-									project.id,
-									project.order as number,
-									true
-								)}
+								disabled={busy || project.order == null}
+								aria-label="다음 페이지로 이동"
+								onClick={() => {
+									if (project.order != null)
+										void onMove(
+											project.id,
+											project.order,
+											true
+										);
+								}}
 							>
 								<ArrowDownFromLine />
 							</Button>
@@ -108,22 +92,25 @@ export default function ProjectRow({
 			)}
 			<td>{project.title}</td>
 			<td>{project.intro}</td>
-			<td>{dayjs(project.startDate).format('YYYY-MM-DD')}</td>
+			<td>{portfolioDate(project.startDate, 'YYYY-MM-DD')}</td>
 			<td>
-				{project.endDate && dayjs(project.endDate).format('YYYY-MM-DD')}
+				{project.endDate &&
+					portfolioDate(project.endDate, 'YYYY-MM-DD')}
 			</td>
 			<td>
 				<div className="flex gap-2 justify-center">
 					<Button
 						asChild
+						aria-disabled={changeOrder || busy || undefined}
+						tabIndex={changeOrder || busy ? -1 : undefined}
 						size="sm"
-						disabled={changeOrder}
+						disabled={changeOrder || busy}
 						className={cn(
-							changeOrder &&
+							(changeOrder || busy) &&
 								'opacity-50 cursor-default hover:bg-primary'
 						)}
 						onClick={(e) => {
-							if (changeOrder) {
+							if (changeOrder || busy) {
 								e.preventDefault();
 							}
 						}}
@@ -136,7 +123,7 @@ export default function ProjectRow({
 						variant="destructive"
 						size="sm"
 						onClick={onDelete(Number(project.id))}
-						disabled={changeOrder}
+						disabled={changeOrder || busy}
 					>
 						삭제
 					</Button>

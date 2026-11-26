@@ -5,9 +5,11 @@ import { MouseEvent } from 'react';
 import { toast } from 'sonner';
 import { isAxiosError } from 'axios';
 import { instance } from '@/app/api/instance';
+import { useUser } from '@/context/UserContext';
 
 export function LogoutButton() {
 	const router = useRouter();
+	const { setUser } = useUser();
 	async function handleLogout(e: MouseEvent<HTMLButtonElement>) {
 		e.preventDefault();
 		try {
@@ -16,6 +18,7 @@ export function LogoutButton() {
 				status,
 			} = await instance.post('/logout');
 			if (status === 200) {
+				setUser(null);
 				toast.success(message);
 				router.push('/');
 			}

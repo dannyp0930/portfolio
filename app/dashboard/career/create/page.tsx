@@ -1,6 +1,10 @@
 'use client';
 
 import { instance } from '@/app/api/instance';
+import {
+	actionError,
+	usePendingAction,
+} from '@/components/dashboard/FormFeedback';
 import { Button } from '@/components/ui/button';
 import {
 	Form,
@@ -12,8 +16,7 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { isAxiosError } from 'axios';
-import dayjs from 'dayjs';
+import { parsePortfolioDate } from '@/lib/portfolioDate';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
@@ -29,6 +32,7 @@ const formSchema = z.object({
 });
 
 export default function CareerCreate() {
+	const save = usePendingAction();
 	const router = useRouter();
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
@@ -46,8 +50,10 @@ export default function CareerCreate() {
 		try {
 			const body = {
 				...values,
-				startDate: dayjs(values.startDate).toDate(),
-				endDate: values.endDate ? dayjs(values.endDate).toDate() : null,
+				startDate: parsePortfolioDate(values.startDate),
+				endDate: values.endDate
+					? parsePortfolioDate(values.endDate)
+					: null,
 			};
 			const {
 				data: { message },
@@ -58,128 +64,147 @@ export default function CareerCreate() {
 				router.push('/dashboard/career');
 			}
 		} catch (err) {
-			if (isAxiosError(err)) {
-				toast.error(err.response?.data.error || '오류가 발생했습니다');
-			}
+			toast.error(actionError(err));
 		}
 	}
 	return (
-		<div className="m-5 p-10 rounded-lg bg-card">
+		<div className="m-3 min-w-0 rounded-lg bg-card p-4 sm:m-5 sm:p-10">
 			<Form {...form}>
 				<form
-					onSubmit={form.handleSubmit(handleSubmit)}
+					onSubmit={form.handleSubmit((values) =>
+						save.run(() => handleSubmit(values))
+					)}
+					aria-busy={save.pending}
 					className="space-y-8"
 				>
-					<FormField
-						control={form.control}
-						name="companyName"
-						render={({ field }) => (
-							<FormItem>
-								<div className="flex gap-4 items-center">
-									<FormLabel className="flex-shrink-0 w-20">
-										회사
-									</FormLabel>
-									<FormControl className="w-48">
-										<Input placeholder="회사" {...field} />
-									</FormControl>
-									<FormMessage />
-								</div>
-							</FormItem>
-						)}
-					/>
-					<FormField
-						control={form.control}
-						name="description"
-						render={({ field }) => (
-							<FormItem>
-								<div className="flex gap-4 items-center">
-									<FormLabel className="flex-shrink-0 w-20">
-										설명
-									</FormLabel>
-									<FormControl className="w-80">
-										<Input placeholder="설명" {...field} />
-									</FormControl>
-									<FormMessage />
-								</div>
-							</FormItem>
-						)}
-					/>
-					<FormField
-						control={form.control}
-						name="position"
-						render={({ field }) => (
-							<FormItem>
-								<div className="flex gap-4 items-center">
-									<FormLabel className="flex-shrink-0 w-20">
-										직무
-									</FormLabel>
-									<FormControl className="w-48">
-										<Input placeholder="직무" {...field} />
-									</FormControl>
-									<FormMessage />
-								</div>
-							</FormItem>
-						)}
-					/>
-					<FormField
-						control={form.control}
-						name="duty"
-						render={({ field }) => (
-							<FormItem>
-								<div className="flex gap-4 items-center">
-									<FormLabel className="flex-shrink-0 w-20">
-										업무 상세
-									</FormLabel>
-									<FormControl className="w-80">
-										<Input
-											placeholder="업무 상세"
-											{...field}
-										/>
-									</FormControl>
-									<FormMessage />
-								</div>
-							</FormItem>
-						)}
-					/>
-					<FormField
-						control={form.control}
-						name="startDate"
-						render={({ field }) => (
-							<FormItem>
-								<div className="flex gap-4 items-center">
-									<FormLabel className="flex-shrink-0 w-20">
-										근무 시작
-									</FormLabel>
-									<FormControl className="w-40">
-										<Input type="date" {...field} />
-									</FormControl>
-									<FormMessage />
-								</div>
-							</FormItem>
-						)}
-					/>
-					<FormField
-						control={form.control}
-						name="endDate"
-						render={({ field }) => (
-							<FormItem>
-								<div className="flex gap-4 items-center">
-									<FormLabel className="flex-shrink-0 w-20">
-										근무 종료
-									</FormLabel>
-									<FormControl className="w-40">
-										<Input
-											type="date"
-											{...field}
-											min={form.getValues('startDate')}
-										/>
-									</FormControl>
-									<FormMessage />
-								</div>
-							</FormItem>
-						)}
-					/>
-					<Button type="submit">등록</Button>
+					<fieldset
+						className="min-w-0 space-y-6"
+						disabled={save.pending}
+					>
+						<FormField
+							control={form.control}
+							name="companyName"
+							render={({ field }) => (
+								<FormItem>
+									<div className="flex min-w-0 flex-col items-start gap-2 lg:flex-row lg:gap-4">
+										<FormLabel className="shrink-0 lg:w-20 lg:pt-2">
+											회사
+										</FormLabel>
+										<FormControl className="w-full min-w-0 lg:max-w-48">
+											<Input
+												placeholder="회사"
+												{...field}
+											/>
+										</FormControl>
+										<FormMessage />
+									</div>
+								</FormItem>
+							)}
+						/>
+						<FormField
+							control={form.control}
+							name="description"
+							render={({ field }) => (
+								<FormItem>
+									<div className="flex min-w-0 flex-col items-start gap-2 lg:flex-row lg:gap-4">
+										<FormLabel className="shrink-0 lg:w-20 lg:pt-2">
+											설명
+										</FormLabel>
+										<FormControl className="w-full min-w-0 lg:max-w-80">
+											<Input
+												placeholder="설명"
+												{...field}
+											/>
+										</FormControl>
+										<FormMessage />
+									</div>
+								</FormItem>
+							)}
+						/>
+						<FormField
+							control={form.control}
+							name="position"
+							render={({ field }) => (
+								<FormItem>
+									<div className="flex min-w-0 flex-col items-start gap-2 lg:flex-row lg:gap-4">
+										<FormLabel className="shrink-0 lg:w-20 lg:pt-2">
+											직무
+										</FormLabel>
+										<FormControl className="w-full min-w-0 lg:max-w-48">
+											<Input
+												placeholder="직무"
+												{...field}
+											/>
+										</FormControl>
+										<FormMessage />
+									</div>
+								</FormItem>
+							)}
+						/>
+						<FormField
+							control={form.control}
+							name="duty"
+							render={({ field }) => (
+								<FormItem>
+									<div className="flex min-w-0 flex-col items-start gap-2 lg:flex-row lg:gap-4">
+										<FormLabel className="shrink-0 lg:w-20 lg:pt-2">
+											업무 상세
+										</FormLabel>
+										<FormControl className="w-full min-w-0 lg:max-w-80">
+											<Input
+												placeholder="업무 상세"
+												{...field}
+											/>
+										</FormControl>
+										<FormMessage />
+									</div>
+								</FormItem>
+							)}
+						/>
+						<FormField
+							control={form.control}
+							name="startDate"
+							render={({ field }) => (
+								<FormItem>
+									<div className="flex min-w-0 flex-col items-start gap-2 lg:flex-row lg:gap-4">
+										<FormLabel className="shrink-0 lg:w-20 lg:pt-2">
+											근무 시작
+										</FormLabel>
+										<FormControl className="w-full min-w-0 lg:max-w-40">
+											<Input type="date" {...field} />
+										</FormControl>
+										<FormMessage />
+									</div>
+								</FormItem>
+							)}
+						/>
+						<FormField
+							control={form.control}
+							name="endDate"
+							render={({ field }) => (
+								<FormItem>
+									<div className="flex min-w-0 flex-col items-start gap-2 lg:flex-row lg:gap-4">
+										<FormLabel className="shrink-0 lg:w-20 lg:pt-2">
+											근무 종료
+										</FormLabel>
+										<FormControl className="w-full min-w-0 lg:max-w-40">
+											<Input
+												type="date"
+												{...field}
+												min={form.getValues(
+													'startDate'
+												)}
+											/>
+										</FormControl>
+										<FormMessage />
+									</div>
+								</FormItem>
+							)}
+						/>
+						<Button type="submit">
+							{save.pending ? '등록 중…' : '등록'}
+						</Button>
+					</fieldset>
 				</form>
 			</Form>
 		</div>

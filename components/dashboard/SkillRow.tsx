@@ -5,9 +5,6 @@ import { ChangeEvent, Dispatch, MouseEvent, SetStateAction } from 'react';
 import ImageInput from '../common/ImageInput';
 import Image from 'next/image';
 import { ArrowDownFromLine, ArrowUpFromLine } from 'lucide-react';
-import { instance } from '@/app/api/instance';
-import { toast } from 'sonner';
-import { isAxiosError } from 'axios';
 
 export default function SkillRow({
 	idx,
@@ -19,7 +16,8 @@ export default function SkillRow({
 	updateSkillId,
 	updateSkill,
 	setNewImage,
-	setLoad,
+	busy,
+	onMove,
 	onChange,
 	onUpdate,
 	onSelect,
@@ -34,7 +32,8 @@ export default function SkillRow({
 	updateSkillId: number | null | undefined;
 	updateSkill: Skill | null | undefined;
 	setNewImage: Dispatch<SetStateAction<File | null | undefined>>;
-	setLoad: Dispatch<SetStateAction<boolean>>;
+	busy: boolean;
+	onMove: (id: number, order: number, dir: boolean) => Promise<void>;
 	onChange: (key: keyof Skill) => (e: ChangeEvent<HTMLInputElement>) => void;
 	onUpdate: (e: MouseEvent<HTMLButtonElement>) => Promise<void>;
 	onSelect: (skill?: Skill) => (e: MouseEvent<HTMLButtonElement>) => void;
@@ -44,37 +43,12 @@ export default function SkillRow({
 }) {
 	const totalPages = Math.ceil(total / take);
 	const { attributes, listeners, setNodeRef, transform, transition } =
-		useSortable({ id: skill.id });
+		useSortable({ id: skill.id, disabled: busy || !changeOrder });
 
 	const style = {
 		transform: CSS.Transform.toString(transform),
 		transition,
 	};
-
-	function handleOrder(id: number, order: number, dir: boolean) {
-		return async (e: MouseEvent<HTMLButtonElement>) => {
-			e.preventDefault();
-			try {
-				const {
-					data: { message },
-					status,
-				} = await instance.patch('/skill', {
-					data: { id, order, dir },
-				});
-				if (status === 200) {
-					toast.success(message);
-				}
-			} catch (err) {
-				if (isAxiosError(err)) {
-					toast.error(
-						err.response?.data.error || '오류가 발생했습니다'
-					);
-				}
-			} finally {
-				setLoad(true);
-			}
-		};
-	}
 
 	return (
 		<tr
@@ -99,11 +73,16 @@ export default function SkillRow({
 						{idx === 0 && page !== 1 && (
 							<Button
 								variant="ghost"
-								onClick={handleOrder(
-									skill.id,
-									skill.order as number,
-									false
-								)}
+								disabled={busy || skill.order == null}
+								aria-label="이전 페이지로 이동"
+								onClick={() => {
+									if (skill.order != null)
+										void onMove(
+											skill.id,
+											skill.order,
+											false
+										);
+								}}
 							>
 								<ArrowUpFromLine />
 							</Button>
@@ -111,11 +90,16 @@ export default function SkillRow({
 						{idx === take - 1 && page !== totalPages && (
 							<Button
 								variant="ghost"
-								onClick={handleOrder(
-									skill.id,
-									skill.order as number,
-									true
-								)}
+								disabled={busy || skill.order == null}
+								aria-label="다음 페이지로 이동"
+								onClick={() => {
+									if (skill.order != null)
+										void onMove(
+											skill.id,
+											skill.order,
+											true
+										);
+								}}
 							>
 								<ArrowDownFromLine />
 							</Button>
@@ -131,6 +115,7 @@ export default function SkillRow({
 						<input
 							className="w-full focus:outline-none"
 							aria-label="스킬 제목"
+							disabled={busy}
 							onChange={onChange('title')}
 							type="text"
 							value={updateSkill?.title}
@@ -140,6 +125,7 @@ export default function SkillRow({
 						<input
 							className="w-full focus:outline-none"
 							aria-label="설명"
+							disabled={busy}
 							onChange={onChange('description')}
 							type="text"
 							value={updateSkill?.description}
@@ -149,6 +135,7 @@ export default function SkillRow({
 						<input
 							className="w-full focus:outline-none"
 							aria-label="숙련도 (1-5)"
+							disabled={busy}
 							onChange={onChange('level')}
 							type="number"
 							value={updateSkill?.level}
@@ -163,6 +150,7 @@ export default function SkillRow({
 							className="items-center justify-center"
 							imageUrl={updateSkill?.imageUrl}
 							onChange={setNewImage}
+							disabled={busy}
 							width={36}
 							height={36}
 						/>
@@ -171,6 +159,7 @@ export default function SkillRow({
 						<input
 							className="w-full focus:outline-none"
 							aria-label="카테고리"
+							disabled={busy}
 							onChange={onChange('category')}
 							type="text"
 							value={updateSkill?.category ?? ''}
@@ -179,13 +168,18 @@ export default function SkillRow({
 					</td>
 					<td>
 						<div className="flex gap-2 justify-center">
-							<Button size="sm" onClick={onUpdate}>
+							<Button
+								size="sm"
+								onClick={onUpdate}
+								disabled={busy || changeOrder}
+							>
 								저장
 							</Button>
 							<Button
 								variant="secondary"
 								size="sm"
 								onClick={onSelect()}
+								disabled={busy}
 							>
 								취소
 							</Button>
@@ -212,7 +206,7 @@ export default function SkillRow({
 							<Button
 								size="sm"
 								onClick={onSelect(skill)}
-								disabled={changeOrder}
+								disabled={changeOrder || busy}
 							>
 								수정
 							</Button>
@@ -220,7 +214,7 @@ export default function SkillRow({
 								variant="destructive"
 								size="sm"
 								onClick={onDelete(skill.id)}
-								disabled={changeOrder}
+								disabled={changeOrder || busy}
 							>
 								삭제
 							</Button>

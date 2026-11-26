@@ -4,6 +4,8 @@ import { createContext, useContext } from 'react';
 
 const UserContext = createContext<UserContextValue>({
 	user: null,
+	authStatus: 'pending',
+	retryAuth: () => {},
 	setUser: () => {},
 });
 

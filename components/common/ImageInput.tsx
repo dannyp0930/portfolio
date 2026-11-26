@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
 import { ImagePlus, RotateCw } from 'lucide-react';
@@ -6,64 +6,86 @@ import { cn } from '@/lib/utils';
 
 export default function ImageInput({
 	id,
-	className = '',
+	className,
 	imageUrl,
 	width = 100,
 	height = 100,
 	disabled,
 	ref,
 	onChange,
-}: ImageInputProps) {
-	const [newImageUrl, setNewImageUrl] = useState<string>('');
+	previewSelection = true,
+}: Omit<ImageInputProps, 'onChange'> & {
+	previewSelection?: boolean;
+	onChange: (file: File) => void;
+}) {
+	const localRef = useRef<HTMLInputElement>(null);
+	const inputRef = ref ?? localRef;
+	const [selection, setSelection] = useState<{
+		url: string;
+		imageUrl?: string;
+	}>();
+	const preview =
+		selection?.imageUrl === imageUrl && selection?.url
+			? selection.url
+			: imageUrl;
+
+	// The skill form clears its file input through the ref after saving.
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	useEffect(() => {
+		if (selection && ref?.current?.value === '') setSelection(undefined);
+	});
 
 	useEffect(() => {
-		if (imageUrl) {
-			setNewImageUrl(imageUrl);
-		}
-	}, [imageUrl]);
-
-	useEffect(() => {
-		if (ref?.current?.value === '') {
-			setNewImageUrl('');
-		}
-	}, [ref, ref?.current?.value, setNewImageUrl]);
+		return () => {
+			if (selection) URL.revokeObjectURL(selection.url);
+		};
+	}, [selection]);
 
 	const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-		const file = event.target.files?.[0] || undefined;
-		const newUrl = file && URL.createObjectURL(file);
-		onChange(file as File);
-		setNewImageUrl(newUrl as string);
+		const file = event.target.files?.[0];
+		if (!file) return;
+		if (previewSelection) {
+			setSelection({ url: URL.createObjectURL(file), imageUrl });
+		} else {
+			event.target.value = '';
+		}
+		onChange(file);
 	};
 
 	return (
-		<div className={`flex gap-4 ${className}`}>
+		<div
+			className={cn(
+				'flex min-w-0 max-w-full flex-wrap items-center gap-2 sm:gap-4',
+				className
+			)}
+		>
 			<input
 				id={id}
 				hidden
 				type="file"
 				accept="image/*"
-				ref={ref}
+				ref={inputRef}
 				onChange={handleChange}
 				disabled={disabled}
 			/>
 			<Button
-				asChild
+				type="button"
 				size="icon"
 				disabled={disabled}
-				className={cn(disabled && 'opacity-50 hover:bg-primary')}
+				className="h-11 w-11 shrink-0 md:h-9 md:w-9"
+				aria-label={preview ? '이미지 변경' : '이미지 선택'}
+				onClick={() => inputRef.current?.click()}
 			>
-				<label className="shrink-0" htmlFor={id}>
-					{newImageUrl ? <RotateCw /> : <ImagePlus />}
-				</label>
+				{preview ? <RotateCw /> : <ImagePlus />}
 			</Button>
-			{newImageUrl && (
+			{preview && (
 				<Image
-					src={newImageUrl}
+					src={preview}
 					alt="업로드 이미지 미리보기"
 					width={width}
 					height={height}
-					className="object-cover"
-					style={{ width: width, height: height }}
+					className="block h-auto max-w-full object-cover"
+					style={{ width, aspectRatio: `${width} / ${height}` }}
 				/>
 			)}
 		</div>

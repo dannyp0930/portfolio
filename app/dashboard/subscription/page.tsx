@@ -2,35 +2,41 @@
 
 import { instance } from '@/app/api/instance';
 import AdminPagination from '@/components/dashboard/AdminPagination';
-import SortIcon from '@/components/dashboard/SortIcon';
+import ListTable, {
+	ListFallback,
+	ListStatusRow,
+} from '@/components/dashboard/ListTable';
+import useAdminList from '@/components/dashboard/useAdminList';
+import { SortHeader } from '@/components/dashboard/SortIcon';
 import { Button } from '@/components/ui/button';
-import { isAxiosError } from 'axios';
-import { useSearchParams } from 'next/navigation';
-import { MouseEvent, Suspense, useCallback, useEffect, useState } from 'react';
+import { MouseEvent, Suspense, useState } from 'react';
 import { toast } from 'sonner';
 
 export default function Subscription() {
 	return (
-		<Suspense>
+		<Suspense fallback={<ListFallback />}>
 			<SubscriptionComponent />
 		</Suspense>
 	);
 }
 
 function SubscriptionComponent() {
-	const searchParams = useSearchParams();
-	const [load, setLoad] = useState<boolean>(true);
-	const [email, setEmail] = useState<string>();
-	const [selectPage, setSelectPage] = useState<number>(1);
-	const [subscriptions, setSubscriptions] = useState<Subscription[]>([]);
-	const [totalCnt, setTotalCnt] = useState<number>(0);
-	const take = 20;
-	const [orderBy, setOrderBy] = useState<string>('id');
-	const [order, setOrder] = useState<Order>('desc');
+	const [email, setEmail] = useState('');
+
+	const list = useAdminList<Subscription>('/subscription', 'id', 'desc');
+	const {
+		rows: subscriptions,
+		page: selectPage,
+		totalCnt,
+		take,
+		orderBy,
+		order,
+		busy,
+	} = list;
 
 	async function handleCreateSubscription(e: MouseEvent<HTMLButtonElement>) {
 		e.preventDefault();
-		try {
+		await list.mutate(async () => {
 			const body = { email };
 			const {
 				data: { message },
@@ -40,19 +46,13 @@ function SubscriptionComponent() {
 				toast.success(message);
 				setEmail('');
 			}
-		} catch (err) {
-			if (isAxiosError(err)) {
-				toast.error(err.response?.data.error || '오류가 발생했습니다');
-			}
-		} finally {
-			setLoad(true);
-		}
+		});
 	}
 
 	function handlePatchSubscription(token: string, isActive: boolean) {
 		return async (e: MouseEvent<HTMLButtonElement>) => {
 			e.preventDefault();
-			try {
+			await list.mutate(async () => {
 				const body = { token, isActive };
 				const {
 					data: { message },
@@ -61,22 +61,15 @@ function SubscriptionComponent() {
 				if (status === 200) {
 					toast.success(message);
 				}
-			} catch (err) {
-				if (isAxiosError(err)) {
-					toast.error(
-						err.response?.data.error || '오류가 발생했습니다'
-					);
-				}
-			} finally {
-				setLoad(true);
-			}
+			});
 		};
 	}
 
 	function handleDeleteSubscription(token: string) {
 		return async (e: MouseEvent<HTMLButtonElement>) => {
 			e.preventDefault();
-			try {
+			if (busy || !window.confirm('이 항목을 삭제하시겠습니까?')) return;
+			await list.mutate(async () => {
 				const body = { token };
 				const {
 					data: { message },
@@ -85,84 +78,24 @@ function SubscriptionComponent() {
 				if (status === 200) {
 					toast.success(message);
 				}
-			} catch (err) {
-				if (isAxiosError(err)) {
-					toast.error(
-						err.response?.data.error || '오류가 발생했습니다'
-					);
-				}
-			} finally {
-				setLoad(true);
-			}
+			});
 		};
 	}
 
-	const handleSort = (column: string) => {
-		if (orderBy === column) {
-			setOrder(order === 'asc' ? 'desc' : 'asc');
-		} else {
-			setOrderBy(column);
-			setOrder('asc');
-		}
-		setLoad(true);
-	};
-
-	const getSubscription = useCallback(async () => {
-		const params = {
-			page: selectPage,
-			take,
-			orderBy,
-			order,
-		};
-		try {
-			const {
-				data: { data, totalCnt },
-			} = await instance.get('/subscription', { params });
-			setSubscriptions(data);
-			setTotalCnt(totalCnt);
-			setLoad(false);
-		} catch (err) {
-			if (isAxiosError(err)) {
-				toast.error(err.response?.data.error || '오류가 발생했습니다');
-			}
-		}
-	}, [selectPage, take, orderBy, order]);
-
-	useEffect(() => {
-		if (load) {
-			getSubscription();
-		}
-	}, [load, getSubscription]);
-
-	useEffect(() => {
-		const parmasPage = searchParams.get('p');
-		if (parmasPage) {
-			setSelectPage(parseInt(parmasPage));
-		}
-	}, [searchParams]);
-
-	useEffect(() => {
-		setLoad(true);
-	}, [selectPage]);
-
 	return (
 		<div className="m-5 py-10 rounded-lg bg-card">
-			<table className="w-full border-collapse table-fixed [&_th]:border [&_th]:px-2 [&_th]:py-1 [&_th:first-of-type]:border-l-0 [&_th:last-of-type]:border-r-0 [&_td]:border [&_td]:px-2 [&_td]:py-1 [&_td]:overflow-auto [&_td:first-of-type]:border-l-0 [&_td:last-of-type]:border-r-0">
+			<ListTable columns={2}>
 				<thead>
 					<tr>
-						<th
-							className="cursor-pointer relative"
-							onClick={() => handleSort('email')}
+						<SortHeader
+							orderBy={orderBy}
+							order={order}
+							currentColumn="email"
+							onSort={list.sort}
+							disabled={list.writing}
 						>
 							Email
-							<span className="absolute right-2 bottom-1/2 translate-y-1/2">
-								<SortIcon
-									orderBy={orderBy}
-									currentColumn="email"
-									order={order}
-								/>
-							</span>
-						</th>
+						</SortHeader>
 						<th></th>
 					</tr>
 				</thead>
@@ -172,6 +105,8 @@ function SubscriptionComponent() {
 							<input
 								className="w-full focus:outline-none"
 								type="email"
+								aria-label="Email"
+								disabled={busy}
 								value={email}
 								required
 								onChange={(e) => setEmail(e.target.value)}
@@ -181,6 +116,7 @@ function SubscriptionComponent() {
 							<div className="flex justify-center">
 								<Button
 									size="sm"
+									disabled={busy}
 									onClick={handleCreateSubscription}
 								>
 									추가
@@ -188,6 +124,14 @@ function SubscriptionComponent() {
 							</div>
 						</td>
 					</tr>
+					<ListStatusRow
+						columns={2}
+						loading={list.loading}
+						writing={list.writing}
+						error={list.error}
+						empty={subscriptions.length === 0}
+						reload={list.reload}
+					/>
 					{subscriptions.map((subscription) => (
 						<tr key={subscription.id}>
 							<td>{subscription.email}</td>
@@ -200,6 +144,7 @@ function SubscriptionComponent() {
 												: 'default'
 										}
 										size="sm"
+										disabled={busy}
 										onClick={handlePatchSubscription(
 											subscription.token,
 											!subscription.isActive
@@ -212,6 +157,7 @@ function SubscriptionComponent() {
 									<Button
 										variant="destructive"
 										size="sm"
+										disabled={busy}
 										onClick={handleDeleteSubscription(
 											subscription.token
 										)}
@@ -223,13 +169,13 @@ function SubscriptionComponent() {
 						</tr>
 					))}
 				</tbody>
-			</table>
+			</ListTable>
 			<AdminPagination
 				className="mt-10"
 				page={selectPage}
 				totalCnt={totalCnt}
 				take={take}
-				size={5}
+				disabled={list.loading || list.writing}
 			/>
 		</div>
 	);

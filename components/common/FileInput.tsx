@@ -1,37 +1,48 @@
 import { useEffect, useRef, useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 
 export default function FileInput({
 	id,
-	className = '',
+	className,
 	fileUrl,
 	accept,
 	onChange,
 }: FileInputProps) {
 	const inputRef = useRef<HTMLInputElement>(null);
-	const [newFileUrl, setNewFileUrl] = useState<string>('');
-	const [newFileName, setNewFileName] = useState<string>('');
+	const [selection, setSelection] = useState<{
+		url: string;
+		name: string;
+		fileUrl?: string;
+	}>();
+	const selected = selection?.fileUrl === fileUrl ? selection : undefined;
+	const previewUrl = selected?.url ?? fileUrl;
+	const fileName =
+		selected?.name ?? fileUrl?.split('/').pop()?.split('-').pop();
 
 	useEffect(() => {
-		if (fileUrl) {
-			setNewFileUrl(fileUrl);
-			setNewFileName(
-				fileUrl.split('/').pop()?.split('-').pop() as string
-			);
-		}
-	}, [fileUrl]);
+		return () => {
+			if (selection) URL.revokeObjectURL(selection.url);
+		};
+	}, [selection]);
 
 	const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-		const file = event.target.files?.[0] || undefined;
-		const newUrl = file && URL.createObjectURL(file);
-		const newFileName = file && file.name;
-		onChange(file as File);
-		setNewFileUrl(newUrl as string);
-		setNewFileName(newFileName as string);
+		const file = event.target.files?.[0];
+		if (!file) return;
+		setSelection({
+			url: URL.createObjectURL(file),
+			name: file.name,
+			fileUrl,
+		});
+		onChange(file);
 	};
 
 	return (
 		<div
-			className={`flex h-9 w-full items-center rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-sm transition-colors md:text-sm ${className}`}
+			className={cn(
+				'flex w-full min-w-0 max-w-full items-center gap-2',
+				className
+			)}
 		>
 			<input
 				id={id}
@@ -41,20 +52,28 @@ export default function FileInput({
 				ref={inputRef}
 				onChange={handleChange}
 			/>
-			<label className="shrink-0 pr-2" htmlFor={id}>
+			<Button
+				type="button"
+				variant="outline"
+				className="h-11 shrink-0 md:h-9"
+				onClick={() => inputRef.current?.click()}
+			>
 				파일 선택
-			</label>
-			{newFileUrl ? (
+			</Button>
+			{previewUrl ? (
 				<a
-					className="w-full flex-grow-0 truncate"
-					href={newFileUrl}
-					download={newFileName}
+					className="min-w-0 truncate underline"
+					href={previewUrl}
+					download={fileName}
 					target="_blank"
+					rel="noopener noreferrer"
 				>
-					{newFileName}
+					{fileName}
 				</a>
 			) : (
-				<span>선택 파일 없음</span>
+				<span className="min-w-0 text-sm text-muted-foreground">
+					선택 파일 없음
+				</span>
 			)}
 		</div>
 	);

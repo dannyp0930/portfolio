@@ -1,6 +1,8 @@
 declare global {
 	type UserContextValue = {
 		user: UserContextType;
+		authStatus: 'pending' | 'ready' | 'error';
+		retryAuth: () => void;
 		setUser: (user: UserContextType) => void;
 	};
 

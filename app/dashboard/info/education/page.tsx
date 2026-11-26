@@ -2,54 +2,51 @@
 
 import { instance } from '@/app/api/instance';
 import AdminPagination from '@/components/dashboard/AdminPagination';
+import ListTable, {
+	ListFallback,
+	ListStatusRow,
+} from '@/components/dashboard/ListTable';
+import useAdminList from '@/components/dashboard/useAdminList';
 import { Button } from '@/components/ui/button';
-import SortIcon from '@/components/dashboard/SortIcon';
-import { isAxiosError } from 'axios';
+import { SortHeader } from '@/components/dashboard/SortIcon';
 import dayjs from 'dayjs';
-import { useSearchParams } from 'next/navigation';
-import {
-	ChangeEvent,
-	MouseEvent,
-	Suspense,
-	useCallback,
-	useEffect,
-	useState,
-} from 'react';
+import { ChangeEvent, MouseEvent, Suspense, useState } from 'react';
 import { toast } from 'sonner';
 import { validateAndShowRequiredFields } from '@/lib/utils/validation';
-import { closestCenter, DndContext, DragEndEvent } from '@dnd-kit/core';
+import { closestCenter, DndContext } from '@dnd-kit/core';
 import {
-	arrayMove,
 	SortableContext,
 	verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
 import EducationRow from '@/components/dashboard/info/EducationRow';
-import { cn } from '@/lib/utils';
 
 export default function Education() {
 	return (
-		<Suspense>
+		<Suspense fallback={<ListFallback />}>
 			<EducationContent />
 		</Suspense>
 	);
 }
 
 function EducationContent() {
-	const searchParams = useSearchParams();
-	const [load, setLoad] = useState<boolean>(true);
 	const [institutionName, setInstitutionName] = useState<string>('');
 	const [degreeStatus, setDegreeStatus] = useState<string>('');
 	const [startDate, setStartDate] = useState<string>('');
 	const [endDate, setEndDate] = useState<string>('');
-	const [selectPage, setSelectPage] = useState<number>(1);
-	const [educations, setEducations] = useState<Education[]>([]);
-	const [totalCnt, setTotalCnt] = useState<number>(0);
 	const [updateEducationId, setUpdateEducationId] = useState<number | null>();
 	const [updateEducation, setUpdateEducation] = useState<Education | null>();
-	const take = 20;
-	const [orderBy, setOrderBy] = useState<string>('order');
-	const [order, setOrder] = useState<Order>('asc');
 	const [changeOrder, setChangeOrder] = useState<boolean>(false);
+
+	const list = useAdminList<Education>('/info/education');
+	const {
+		rows: educations,
+		page: selectPage,
+		totalCnt,
+		take,
+		orderBy,
+		order,
+		busy,
+	} = list;
 
 	async function handleCreateEducation(e: MouseEvent<HTMLButtonElement>) {
 		e.preventDefault();
@@ -61,7 +58,7 @@ function EducationContent() {
 		};
 		const erroRes = validateAndShowRequiredFields(fields, 'education');
 		if (erroRes) return true;
-		try {
+		await list.mutate(async () => {
 			const body = {
 				institutionName,
 				degreeStatus,
@@ -79,18 +76,12 @@ function EducationContent() {
 				setStartDate('');
 				setEndDate('');
 			}
-		} catch (err) {
-			if (isAxiosError(err)) {
-				toast.error(err.response?.data.error || '오류가 발생했습니다');
-			}
-		} finally {
-			setLoad(true);
-		}
+		});
 	}
 
 	async function handleUpdateEducation(e: MouseEvent<HTMLButtonElement>) {
 		e.preventDefault();
-		try {
+		await list.mutate(async () => {
 			const body = {
 				...updateEducation,
 				startDate: dayjs(updateEducation?.startDate).toDate(),
@@ -105,19 +96,14 @@ function EducationContent() {
 				setUpdateEducationId(null);
 				setUpdateEducation(null);
 			}
-		} catch (err) {
-			if (isAxiosError(err)) {
-				toast.error(err.response?.data.error || '오류가 발생했습니다');
-			}
-		} finally {
-			setLoad(true);
-		}
+		});
 	}
 
 	function handleDeleteEducation(educationId: number) {
 		return async (e: MouseEvent<HTMLButtonElement>) => {
 			e.preventDefault();
-			try {
+			if (busy || !window.confirm('이 항목을 삭제하시겠습니까?')) return;
+			await list.mutate(async () => {
 				const body = { id: educationId };
 				const {
 					data: { message },
@@ -130,15 +116,7 @@ function EducationContent() {
 					setUpdateEducationId(null);
 					setUpdateEducation(null);
 				}
-			} catch (err) {
-				if (isAxiosError(err)) {
-					toast.error(
-						err.response?.data.error || '오류가 발생했습니다'
-					);
-				}
-			} finally {
-				setLoad(true);
-			}
+			});
 		};
 	}
 
@@ -164,100 +142,18 @@ function EducationContent() {
 		};
 	}
 
-	const handleSort = (column: string) => {
-		if (changeOrder) return;
-		if (orderBy === column) {
-			setOrder(order === 'asc' ? 'desc' : 'asc');
-		} else {
-			setOrderBy(column);
-			setOrder('asc');
-		}
-		setLoad(true);
-	};
-
-	const getEducation = useCallback(async () => {
-		const params = {
-			page: selectPage,
-			take,
-			orderBy,
-			order,
-		};
-		try {
-			const {
-				data: { data, totalCnt },
-			} = await instance.get('/info/education', { params });
-			setEducations(data);
-			setTotalCnt(totalCnt);
-			setLoad(false);
-		} catch (err) {
-			if (isAxiosError(err)) {
-				toast.error(err.response?.data.error || '오류가 발생했습니다');
-			}
-		}
-	}, [selectPage, take, orderBy, order]);
-
-	async function handleDragEnd(event: DragEndEvent) {
-		const { active, over } = event;
-		const originalEducations = [...educations];
-		if (active.id !== over?.id && educations) {
-			try {
-				const oldIndex = educations.findIndex(
-					(education) => education.id === active.id
-				);
-				const newIndex = educations.findIndex(
-					(education) => education.id === over?.id
-				);
-				const newOrder = arrayMove(educations, oldIndex, newIndex);
-				setEducations(newOrder);
-				const body = newOrder.map((item, index) => ({
-					id: item.id,
-					prevOrder: item.order,
-					order: (selectPage - 1) * take + index + 1,
-				}));
-				const {
-					data: { message },
-					status,
-				} = await instance.patch('/info/education', { data: body });
-				if (status === 200) {
-					toast.success(message);
-				}
-			} catch (err) {
-				if (isAxiosError(err)) {
-					toast.error(
-						err.response?.data.error || '오류가 발생했습니다'
-					);
-				}
-				setEducations(originalEducations);
-			} finally {
-				setChangeOrder(false);
-			}
-		}
-	}
-
-	useEffect(() => {
-		if (load) {
-			getEducation();
-		}
-	}, [load, getEducation]);
-
-	useEffect(() => {
-		const parmasPage = searchParams.get('p');
-		if (parmasPage) {
-			setSelectPage(parseInt(parmasPage));
-		}
-	}, [searchParams]);
-
-	useEffect(() => {
-		setLoad(true);
-	}, [selectPage]);
-
 	return (
 		<div className="py-10 rounded-lg bg-card">
 			<DndContext
 				collisionDetection={closestCenter}
-				onDragEnd={handleDragEnd}
+				onDragEnd={(event) => {
+					if (changeOrder)
+						list.reorder(event, educations, () =>
+							setChangeOrder(false)
+						);
+				}}
 			>
-				<table className="w-full border-collapse table-fixed [&_th]:border [&_th]:px-2 [&_th]:py-1 [&_th:first-of-type]:border-l-0 [&_th:last-of-type]:border-r-0 [&_td]:border [&_td]:px-2 [&_td]:py-1 [&_td]:overflow-auto [&_td:first-of-type]:border-l-0 [&_td:last-of-type]:border-r-0">
+				<ListTable columns={6}>
 					<thead>
 						<tr>
 							<th>
@@ -265,71 +161,46 @@ function EducationContent() {
 								<Button
 									className="ml-4"
 									size="sm"
+									disabled={busy}
 									onClick={() => {
 										setChangeOrder(!changeOrder);
-										setOrderBy('order');
-										setOrder('asc');
-										setLoad(true);
+										list.resetSort();
 									}}
 								>
 									{changeOrder ? '취소' : '변경'}
 								</Button>
 							</th>
-							<th
-								className={cn(
-									!changeOrder && 'cursor-pointer',
-									'relative'
-								)}
-								onClick={() => handleSort('institutionName')}
+							<SortHeader
+								orderBy={orderBy}
+								order={order}
+								currentColumn="institutionName"
+								onSort={list.sort}
+								disabled={list.writing || changeOrder}
+								hideIcon={changeOrder}
 							>
 								학교명
-								{!changeOrder && (
-									<span className="absolute right-2 bottom-1/2 translate-y-1/2">
-										<SortIcon
-											orderBy={orderBy}
-											currentColumn="institutionName"
-											order={order}
-										/>
-									</span>
-								)}
-							</th>
+							</SortHeader>
 							<th>학적</th>
-							<th
-								className={cn(
-									!changeOrder && 'cursor-pointer',
-									'relative'
-								)}
-								onClick={() => handleSort('startDate')}
+							<SortHeader
+								orderBy={orderBy}
+								order={order}
+								currentColumn="startDate"
+								onSort={list.sort}
+								disabled={list.writing || changeOrder}
+								hideIcon={changeOrder}
 							>
 								입학
-								{!changeOrder && (
-									<span className="absolute right-2 bottom-1/2 translate-y-1/2">
-										<SortIcon
-											orderBy={orderBy}
-											currentColumn="startDate"
-											order={order}
-										/>
-									</span>
-								)}
-							</th>
-							<th
-								className={cn(
-									!changeOrder && 'cursor-pointer',
-									'relative'
-								)}
-								onClick={() => handleSort('endDate')}
+							</SortHeader>
+							<SortHeader
+								orderBy={orderBy}
+								order={order}
+								currentColumn="endDate"
+								onSort={list.sort}
+								disabled={list.writing || changeOrder}
+								hideIcon={changeOrder}
 							>
 								졸업
-								{!changeOrder && (
-									<span className="absolute right-2 bottom-1/2 translate-y-1/2">
-										<SortIcon
-											orderBy={orderBy}
-											currentColumn="endDate"
-											order={order}
-										/>
-									</span>
-								)}
-							</th>
+							</SortHeader>
 							<th></th>
 						</tr>
 					</thead>
@@ -345,7 +216,7 @@ function EducationContent() {
 									onChange={(e) =>
 										setInstitutionName(e.target.value)
 									}
-									disabled={changeOrder}
+									disabled={changeOrder || busy}
 								/>
 							</td>
 							<td>
@@ -357,7 +228,7 @@ function EducationContent() {
 									onChange={(e) =>
 										setDegreeStatus(e.target.value)
 									}
-									disabled={changeOrder}
+									disabled={changeOrder || busy}
 								/>
 							</td>
 							<td>
@@ -369,7 +240,7 @@ function EducationContent() {
 									onChange={(e) =>
 										setStartDate(e.target.value)
 									}
-									disabled={changeOrder}
+									disabled={changeOrder || busy}
 								/>
 							</td>
 							<td>
@@ -379,7 +250,7 @@ function EducationContent() {
 									value={endDate}
 									required
 									onChange={(e) => setEndDate(e.target.value)}
-									disabled={changeOrder}
+									disabled={changeOrder || busy}
 								/>
 							</td>
 							<td>
@@ -387,13 +258,21 @@ function EducationContent() {
 									<Button
 										size="sm"
 										onClick={handleCreateEducation}
-										disabled={changeOrder}
+										disabled={changeOrder || busy}
 									>
 										추가
 									</Button>
 								</div>
 							</td>
 						</tr>
+						<ListStatusRow
+							columns={6}
+							loading={list.loading}
+							writing={list.writing}
+							error={list.error}
+							empty={educations.length === 0}
+							reload={list.reload}
+						/>
 						<SortableContext
 							items={educations}
 							strategy={verticalListSortingStrategy}
@@ -409,7 +288,8 @@ function EducationContent() {
 									updateEducationId={updateEducationId}
 									updateEducation={updateEducation}
 									changeOrder={changeOrder}
-									setLoad={setLoad}
+									busy={busy}
+									onMove={list.move}
 									onChange={changeSelectUpdateEducation}
 									onUpdate={handleUpdateEducation}
 									onSelect={selectUpdateEducation}
@@ -418,14 +298,14 @@ function EducationContent() {
 							))}
 						</SortableContext>
 					</tbody>
-				</table>
+				</ListTable>
 			</DndContext>
 			<AdminPagination
 				className="mt-10"
 				page={selectPage}
 				totalCnt={totalCnt}
 				take={take}
-				size={5}
+				disabled={list.loading || list.writing}
 			/>
 		</div>
 	);
