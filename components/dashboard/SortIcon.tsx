@@ -8,6 +8,7 @@ export default function SortIcon({
 			<span className="text-sm">
 				{order === 'asc' ? (
 					<svg
+						aria-hidden="true"
 						xmlns="http://www.w3.org/2000/svg"
 						fill="none"
 						viewBox="0 0 24 24"
@@ -21,6 +22,7 @@ export default function SortIcon({
 					</svg>
 				) : (
 					<svg
+						aria-hidden="true"
 						xmlns="http://www.w3.org/2000/svg"
 						fill="none"
 						viewBox="0 0 24 24"
@@ -39,6 +41,7 @@ export default function SortIcon({
 
 	return (
 		<svg
+			aria-hidden="true"
 			xmlns="http://www.w3.org/2000/svg"
 			fill="none"
 			viewBox="0 0 24 24"
@@ -50,5 +53,42 @@ export default function SortIcon({
 				d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
 			/>
 		</svg>
+	);
+}
+
+export function SortHeader({
+	children,
+	disabled,
+	hideIcon,
+	onSort,
+	...sort
+}: SortIconProps & {
+	children: React.ReactNode;
+	disabled?: boolean;
+	hideIcon?: boolean;
+	onSort: (column: string) => void;
+}) {
+	const active = sort.orderBy === sort.currentColumn;
+	return (
+		<th
+			scope="col"
+			aria-sort={
+				active
+					? sort.order === 'asc'
+						? 'ascending'
+						: 'descending'
+					: undefined
+			}
+		>
+			<button
+				type="button"
+				disabled={disabled}
+				onClick={() => onSort(sort.currentColumn)}
+				className="inline-flex w-full items-center justify-center gap-1 rounded-sm focus-visible:outline focus-visible:outline-ring disabled:cursor-default"
+			>
+				{children}
+				{!hideIcon && <SortIcon {...sort} />}
+			</button>
+		</th>
 	);
 }

@@ -1,5 +1,11 @@
 'use client';
 
+import {
+	actionError,
+	usePendingAction,
+	FormLoadFeedback,
+	useFormLoad,
+} from '@/components/dashboard/FormFeedback';
 import { Button } from '@/components/ui/button';
 import {
 	Form,
@@ -16,12 +22,11 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { formInstance, instance } from '@/app/api/instance';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { isAxiosError } from 'axios';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
 import dayjs from 'dayjs';
-import { MouseEvent, useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 
 const formSchema = z.object({
 	title: z.string().min(1, { message: '제목을 입력하세요.' }),
@@ -31,7 +36,7 @@ const formSchema = z.object({
 });
 
 export default function Dashboard() {
-	const [load, setLoad] = useState<boolean>(true);
+	const save = usePendingAction();
 	const [resume, setResume] = useState<File | null>();
 	const [resumeUrl, setResumeUrl] = useState<string>();
 	const [banner, setBanner] = useState<File | null>();
@@ -40,7 +45,8 @@ export default function Dashboard() {
 	const [bannerUrl, setBannerUrl] = useState<string>();
 	const [bannerUrlTablet, setBannerUrlTablet] = useState<string>();
 	const [bannerUrlMobile, setBannerUrlMobile] = useState<string>();
-	const [sendMail, setSendMail] = useState<boolean>(false);
+	const [attachmentVersion, setAttachmentVersion] = useState(0);
+	const [attachmentsStale, setAttachmentsStale] = useState(false);
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
@@ -51,31 +57,43 @@ export default function Dashboard() {
 		},
 	});
 
-	const getIntro = useCallback(async () => {
+	const setAttachmentUrls = useCallback((data: Intro | null) => {
+		setResumeUrl(data?.resumeFileUrl ?? '');
+		setBannerUrl(data?.bannerImageUrl ?? '');
+		setBannerUrlTablet(data?.bannerImageUrlTablet ?? '');
+		setBannerUrlMobile(data?.bannerImageUrlMobile ?? '');
+	}, []);
+
+	const getIntro = useCallback(
+		async (signal: AbortSignal) => {
+			const {
+				data: { data },
+			} = await instance.get('/intro', { signal });
+			if (signal.aborted) return;
+			if (!data) throw new Error('Intro not found');
+			form.reset({
+				title: data?.title ?? '',
+				description: data?.description ?? '',
+				mailSubject: data?.mailSubject ?? '',
+				mailText: data?.mailText ?? '',
+			});
+			setAttachmentUrls(data);
+		},
+		[form, setAttachmentUrls]
+	);
+	const load = useFormLoad(getIntro);
+
+	async function refreshAttachments() {
 		try {
 			const {
 				data: { data },
 			} = await instance.get('/intro');
-			form.setValue('title', data.title ?? '');
-			form.setValue('description', data.description ?? '');
-			form.setValue('mailSubject', data.mailSubject ?? '');
-			form.setValue('mailText', data.mailText ?? '');
-			setResumeUrl(data.resumeFileUrl ?? '');
-			setBannerUrl(data.bannerImageUrl ?? '');
-			setBannerUrlTablet(data.bannerImageUrlTablet ?? '');
-			setBannerUrlMobile(data.bannerImageUrlMobile ?? '');
-		} catch (err) {
-			if (isAxiosError(err)) {
-				toast.error(err.response?.data.error || '오류가 발생했습니다');
-			}
+			setAttachmentUrls(data);
+			setAttachmentsStale(false);
+		} catch {
+			setAttachmentsStale(true);
 		}
-	}, [form]);
-
-	useEffect(() => {
-		if (load) {
-			getIntro();
-		}
-	}, [load, getIntro]);
+	}
 
 	async function handleSubmit(values: z.infer<typeof formSchema>) {
 		try {
@@ -92,19 +110,22 @@ export default function Dashboard() {
 			} = await formInstance.put('/intro', body);
 			if (status === 200) {
 				toast.success(message);
+				if (resume || banner || bannerTablet || bannerMobile) {
+					setResume(null);
+					setBanner(null);
+					setBannerTablet(null);
+					setBannerMobile(null);
+					setAttachmentVersion((current) => current + 1);
+					await refreshAttachments();
+				}
 			}
 		} catch (err) {
-			if (isAxiosError(err)) {
-				toast.error(err.response?.data.error || '오류가 발생했습니다');
-			}
-		} finally {
-			setLoad(true);
+			toast.error(actionError(err));
 		}
 	}
-	async function handleSubmitMail(e: MouseEvent<HTMLButtonElement>) {
-		e.preventDefault();
-		setSendMail(true);
-		const toastId = toast.loading('Sending Mail...');
+	async function handleSubmitMail() {
+		if (attachmentsStale) return;
+		const toastId = toast.loading('메일 전송 중…');
 		const subject = form.getValues('mailSubject');
 		const text = form.getValues('mailText');
 		try {
@@ -126,154 +147,205 @@ export default function Dashboard() {
 				toast.success(message);
 			}
 		} catch (err) {
-			if (isAxiosError(err)) {
-				toast.error(err.response?.data.error || '오류가 발생했습니다');
-			}
+			toast.error(actionError(err));
 		} finally {
 			toast.dismiss(toastId);
-			setSendMail(false);
 		}
 	}
+	if (load.loading || load.failed) return <FormLoadFeedback {...load} />;
+
 	return (
-		<div className="m-5 p-10 rounded-lg bg-card">
+		<div className="m-3 min-w-0 rounded-lg bg-card p-4 sm:m-5 sm:p-10">
 			<Form {...form}>
 				<form
-					onSubmit={form.handleSubmit(handleSubmit)}
+					onSubmit={form.handleSubmit((values) =>
+						save.run(() => handleSubmit(values))
+					)}
+					aria-busy={save.pending}
 					className="space-y-8"
 				>
-					<FormField
-						control={form.control}
-						name="title"
-						render={({ field }) => (
-							<FormItem>
-								<div className="flex gap-4 items-center">
-									<FormLabel className="flex-shrink-0 w-20">
-										제목
-									</FormLabel>
-									<FormControl className="w-48">
-										<Input placeholder="제목" {...field} />
-									</FormControl>
-									<FormMessage />
-								</div>
-							</FormItem>
-						)}
-					/>
-					<FormField
-						control={form.control}
-						name="description"
-						render={({ field }) => (
-							<FormItem>
-								<div className="flex gap-4 items-center">
-									<FormLabel className="flex-shrink-0 w-20">
-										소개
-									</FormLabel>
-									<FormControl className="w-80">
-										<Textarea
-											className="resize-none w-full h-40"
-											placeholder="소개"
-											{...field}
-										/>
-									</FormControl>
-									<FormMessage />
-								</div>
-							</FormItem>
-						)}
-					/>
-					<div className="flex gap-4 items-center">
-						<Label className="flex-shrink-0 w-20">이력서</Label>
-						<FileInput
-							id="resume"
-							fileUrl={resumeUrl}
-							accept=".pdf"
-							onChange={setResume}
+					<fieldset
+						className="min-w-0 space-y-6"
+						disabled={save.pending}
+					>
+						<FormField
+							control={form.control}
+							name="title"
+							render={({ field }) => (
+								<FormItem>
+									<div className="flex min-w-0 flex-col items-start gap-2 lg:flex-row lg:gap-4">
+										<FormLabel className="shrink-0 lg:w-20 lg:pt-2">
+											제목
+										</FormLabel>
+										<FormControl className="w-full min-w-0 lg:max-w-48">
+											<Input
+												placeholder="제목"
+												{...field}
+											/>
+										</FormControl>
+										<FormMessage />
+									</div>
+								</FormItem>
+							)}
 						/>
-					</div>
-					<div className="flex gap-4 items-center">
-						<Label className="flex-shrink-0 w-20">배너</Label>
-						<ImageInput
-							id="banner"
-							className="items-center"
-							width={400}
-							height={225}
-							imageUrl={bannerUrl}
-							onChange={setBanner}
+						<FormField
+							control={form.control}
+							name="description"
+							render={({ field }) => (
+								<FormItem>
+									<div className="flex min-w-0 flex-col items-start gap-2 lg:flex-row lg:gap-4">
+										<FormLabel className="shrink-0 lg:w-20 lg:pt-2">
+											소개
+										</FormLabel>
+										<FormControl className="w-full min-w-0 lg:max-w-80">
+											<Textarea
+												className="resize-none w-full h-40"
+												placeholder="소개"
+												{...field}
+											/>
+										</FormControl>
+										<FormMessage />
+									</div>
+								</FormItem>
+							)}
 						/>
-					</div>
-					<div className="flex gap-4 items-center">
-						<Label className="flex-shrink-0 w-20">
-							배너(태블릿)
-						</Label>
-						<ImageInput
-							id="banner-tablet"
-							className="items-center"
-							width={300}
-							height={400}
-							imageUrl={bannerUrlTablet}
-							onChange={setBannerTablet}
+						<div className="flex min-w-0 flex-col items-start gap-2 lg:flex-row lg:gap-4">
+							<Label
+								className="shrink-0 lg:w-20 lg:pt-2"
+								htmlFor="resume"
+							>
+								이력서
+							</Label>
+							<FileInput
+								id="resume"
+								key={attachmentVersion}
+								fileUrl={resumeUrl}
+								accept=".pdf"
+								onChange={setResume}
+							/>
+						</div>
+						<div className="flex min-w-0 flex-col items-start gap-2 lg:flex-row lg:gap-4">
+							<Label
+								className="shrink-0 lg:w-20 lg:pt-2"
+								htmlFor="banner"
+							>
+								배너
+							</Label>
+							<ImageInput
+								id="banner"
+								key={attachmentVersion}
+								className="items-center"
+								width={400}
+								height={225}
+								imageUrl={bannerUrl}
+								onChange={setBanner}
+							/>
+						</div>
+						<div className="flex min-w-0 flex-col items-start gap-2 lg:flex-row lg:gap-4">
+							<Label
+								className="shrink-0 lg:w-20 lg:pt-2"
+								htmlFor="banner-tablet"
+							>
+								배너(태블릿)
+							</Label>
+							<ImageInput
+								id="banner-tablet"
+								key={attachmentVersion}
+								className="items-center"
+								width={300}
+								height={400}
+								imageUrl={bannerUrlTablet}
+								onChange={setBannerTablet}
+							/>
+						</div>
+						<div className="flex min-w-0 flex-col items-start gap-2 lg:flex-row lg:gap-4">
+							<Label
+								className="shrink-0 lg:w-20 lg:pt-2"
+								htmlFor="banner-mobile"
+							>
+								배너(모바일)
+							</Label>
+							<ImageInput
+								id="banner-mobile"
+								key={attachmentVersion}
+								className="items-center"
+								width={180}
+								height={320}
+								imageUrl={bannerUrlMobile}
+								onChange={setBannerMobile}
+							/>
+						</div>
+						<h4>포트폴리오 메일</h4>
+						<FormField
+							control={form.control}
+							name="mailSubject"
+							render={({ field }) => (
+								<FormItem>
+									<div className="flex min-w-0 flex-col items-start gap-2 lg:flex-row lg:gap-4">
+										<FormLabel className="shrink-0 lg:w-20 lg:pt-2">
+											제목
+										</FormLabel>
+										<FormControl className="w-full min-w-0 lg:max-w-48">
+											<Input
+												placeholder="제목"
+												{...field}
+											/>
+										</FormControl>
+										<FormMessage />
+									</div>
+								</FormItem>
+							)}
 						/>
-					</div>
-					<div className="flex gap-4 items-center">
-						<Label className="flex-shrink-0 w-20">
-							배너(모바일)
-						</Label>
-						<ImageInput
-							id="banner-mobile"
-							className="items-center"
-							width={180}
-							height={320}
-							imageUrl={bannerUrlMobile}
-							onChange={setBannerMobile}
+						<FormField
+							control={form.control}
+							name="mailText"
+							render={({ field }) => (
+								<FormItem>
+									<div className="flex min-w-0 flex-col items-start gap-2 lg:flex-row lg:gap-4">
+										<FormLabel className="shrink-0 lg:w-20 lg:pt-2">
+											본문
+										</FormLabel>
+										<FormControl className="w-full min-w-0 lg:max-w-80">
+											<Textarea
+												className="resize-none w-full h-40"
+												placeholder="본문"
+												{...field}
+											/>
+										</FormControl>
+										<FormMessage />
+									</div>
+								</FormItem>
+							)}
 						/>
-					</div>
-					<h4>포트폴리오 메일</h4>
-					<FormField
-						control={form.control}
-						name="mailSubject"
-						render={({ field }) => (
-							<FormItem>
-								<div className="flex gap-4 items-center">
-									<FormLabel className="flex-shrink-0 w-20">
-										제목
-									</FormLabel>
-									<FormControl className="w-48">
-										<Input placeholder="제목" {...field} />
-									</FormControl>
-									<FormMessage />
-								</div>
-							</FormItem>
+						<div className="flex flex-wrap gap-3">
+							<Button type="submit">
+								{save.pending ? '처리 중…' : '저장'}
+							</Button>
+							<Button
+								onClick={() => void save.run(handleSubmitMail)}
+								disabled={attachmentsStale}
+								type="button"
+							>
+								전송
+							</Button>
+						</div>
+						{attachmentsStale && (
+							<div className="space-y-2">
+								<p role="alert">
+									첨부 파일 정보를 갱신하지 못했습니다.
+								</p>
+								<Button
+									type="button"
+									variant="outline"
+									onClick={() =>
+										void save.run(refreshAttachments)
+									}
+								>
+									다시 시도
+								</Button>
+							</div>
 						)}
-					/>
-					<FormField
-						control={form.control}
-						name="mailText"
-						render={({ field }) => (
-							<FormItem>
-								<div className="flex gap-4 items-center">
-									<FormLabel className="flex-shrink-0 w-20">
-										본문
-									</FormLabel>
-									<FormControl className="w-80">
-										<Textarea
-											className="resize-none w-full h-40"
-											placeholder="본문"
-											{...field}
-										/>
-									</FormControl>
-									<FormMessage />
-								</div>
-							</FormItem>
-						)}
-					/>
-					<div className="space-x-4">
-						<Button type="submit">저장</Button>
-						<Button
-							onClick={handleSubmitMail}
-							disabled={sendMail}
-							type="submit"
-						>
-							전송
-						</Button>
-					</div>
+					</fieldset>
 				</form>
 			</Form>
 		</div>

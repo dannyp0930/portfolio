@@ -2,52 +2,49 @@
 
 import { instance } from '@/app/api/instance';
 import AdminPagination from '@/components/dashboard/AdminPagination';
+import ListTable, {
+	ListFallback,
+	ListStatusRow,
+} from '@/components/dashboard/ListTable';
+import useAdminList from '@/components/dashboard/useAdminList';
 import { Button } from '@/components/ui/button';
-import SortIcon from '@/components/dashboard/SortIcon';
-import { isAxiosError } from 'axios';
-import { useSearchParams } from 'next/navigation';
-import {
-	ChangeEvent,
-	MouseEvent,
-	Suspense,
-	useCallback,
-	useEffect,
-	useState,
-} from 'react';
+import { SortHeader } from '@/components/dashboard/SortIcon';
+import { ChangeEvent, MouseEvent, Suspense, useState } from 'react';
 import { toast } from 'sonner';
 import { validateAndShowRequiredFields } from '@/lib/utils/validation';
-import { closestCenter, DndContext, DragEndEvent } from '@dnd-kit/core';
+import { closestCenter, DndContext } from '@dnd-kit/core';
 import {
 	SortableContext,
-	arrayMove,
 	verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
-import { cn } from '@/lib/utils';
 import ContactRow from '@/components/dashboard/info/ContactRow';
 
 export default function Contact() {
 	return (
-		<Suspense>
+		<Suspense fallback={<ListFallback />}>
 			<ContactContent />
 		</Suspense>
 	);
 }
 
 function ContactContent() {
-	const searchParams = useSearchParams();
-	const [load, setLoad] = useState<boolean>(true);
 	const [type, setType] = useState<string>('');
 	const [value, setValue] = useState<string>('');
 	const [label, setLabel] = useState<string>('');
-	const [selectPage, setSelectPage] = useState<number>(1);
-	const [contacts, setContacts] = useState<Contact[]>([]);
-	const [totalCnt, setTotalCnt] = useState<number>(0);
 	const [updateContactId, setUpdateContactId] = useState<number | null>();
 	const [updateContact, setUpdateContact] = useState<Contact | null>();
-	const take = 20;
-	const [orderBy, setOrderBy] = useState<string>('order');
-	const [order, setOrder] = useState<Order>('asc');
 	const [changeOrder, setChangeOrder] = useState<boolean>(false);
+
+	const list = useAdminList<Contact>('/info/contact');
+	const {
+		rows: contacts,
+		page: selectPage,
+		totalCnt,
+		take,
+		orderBy,
+		order,
+		busy,
+	} = list;
 
 	async function handleCreateContact(e: MouseEvent<HTMLButtonElement>) {
 		e.preventDefault();
@@ -58,7 +55,7 @@ function ContactContent() {
 		};
 		const erroRes = validateAndShowRequiredFields(fields, 'contact');
 		if (erroRes) return true;
-		try {
+		await list.mutate(async () => {
 			const body = { type, value, label };
 			const {
 				data: { message },
@@ -70,18 +67,12 @@ function ContactContent() {
 				setValue('');
 				setLabel('');
 			}
-		} catch (err) {
-			if (isAxiosError(err)) {
-				toast.error(err.response?.data.error || '오류가 발생했습니다');
-			}
-		} finally {
-			setLoad(true);
-		}
+		});
 	}
 
 	async function handleUpdateContact(e: MouseEvent<HTMLButtonElement>) {
 		e.preventDefault();
-		try {
+		await list.mutate(async () => {
 			const body = { ...updateContact };
 			const {
 				data: { message },
@@ -92,19 +83,14 @@ function ContactContent() {
 				setUpdateContactId(null);
 				setUpdateContact(null);
 			}
-		} catch (err) {
-			if (isAxiosError(err)) {
-				toast.error(err.response?.data.error || '오류가 발생했습니다');
-			}
-		} finally {
-			setLoad(true);
-		}
+		});
 	}
 
 	function handleDeleteContact(contactId: number) {
 		return async (e: MouseEvent<HTMLButtonElement>) => {
 			e.preventDefault();
-			try {
+			if (busy || !window.confirm('이 항목을 삭제하시겠습니까?')) return;
+			await list.mutate(async () => {
 				const body = { id: contactId };
 				const {
 					data: { message },
@@ -115,15 +101,7 @@ function ContactContent() {
 					setUpdateContactId(null);
 					setUpdateContact(null);
 				}
-			} catch (err) {
-				if (isAxiosError(err)) {
-					toast.error(
-						err.response?.data.error || '오류가 발생했습니다'
-					);
-				}
-			} finally {
-				setLoad(true);
-			}
+			});
 		};
 	}
 
@@ -149,100 +127,18 @@ function ContactContent() {
 		};
 	}
 
-	const handleSort = (column: string) => {
-		if (changeOrder) return;
-		if (orderBy === column) {
-			setOrder(order === 'asc' ? 'desc' : 'asc');
-		} else {
-			setOrderBy(column);
-			setOrder('asc');
-		}
-		setLoad(true);
-	};
-
-	const getContact = useCallback(async () => {
-		const params = {
-			page: selectPage,
-			take,
-			orderBy,
-			order,
-		};
-		try {
-			const {
-				data: { data, totalCnt },
-			} = await instance.get('/info/contact', { params });
-			setContacts(data);
-			setTotalCnt(totalCnt);
-			setLoad(false);
-		} catch (err) {
-			if (isAxiosError(err)) {
-				toast.error(err.response?.data.error || '오류가 발생했습니다');
-			}
-		}
-	}, [selectPage, take, orderBy, order]);
-
-	async function handleDragEnd(event: DragEndEvent) {
-		const { active, over } = event;
-		const originalContacts = [...contacts];
-		if (active.id !== over?.id && contacts) {
-			try {
-				const oldIndex = contacts.findIndex(
-					(contact) => contact.id === active.id
-				);
-				const newIndex = contacts.findIndex(
-					(contact) => contact.id === over?.id
-				);
-				const newOrder = arrayMove(contacts, oldIndex, newIndex);
-				setContacts(newOrder);
-				const body = newOrder.map((item, index) => ({
-					id: item.id,
-					prevOrder: item.order,
-					order: (selectPage - 1) * take + index + 1,
-				}));
-				const {
-					data: { message },
-					status,
-				} = await instance.patch('/info/contact', { data: body });
-				if (status === 200) {
-					toast.success(message);
-				}
-			} catch (err) {
-				if (isAxiosError(err)) {
-					toast.error(
-						err.response?.data.error || '오류가 발생했습니다'
-					);
-				}
-				setContacts(originalContacts);
-			} finally {
-				setChangeOrder(false);
-			}
-		}
-	}
-
-	useEffect(() => {
-		if (load) {
-			getContact();
-		}
-	}, [load, getContact]);
-
-	useEffect(() => {
-		const parmasPage = searchParams.get('p');
-		if (parmasPage) {
-			setSelectPage(parseInt(parmasPage));
-		}
-	}, [searchParams]);
-
-	useEffect(() => {
-		setLoad(true);
-	}, [selectPage]);
-
 	return (
 		<div className="py-10 rounded-lg bg-card">
 			<DndContext
 				collisionDetection={closestCenter}
-				onDragEnd={handleDragEnd}
+				onDragEnd={(event) => {
+					if (changeOrder)
+						list.reorder(event, contacts, () =>
+							setChangeOrder(false)
+						);
+				}}
 			>
-				<table className="w-full border-collapse table-fixed [&_th]:border [&_th]:px-2 [&_th]:py-1 [&_th:first-of-type]:border-l-0 [&_th:last-of-type]:border-r-0 [&_td]:border [&_td]:px-2 [&_td]:py-1 [&_td]:overflow-auto [&_td:first-of-type]:border-l-0 [&_td:last-of-type]:border-r-0">
+				<ListTable columns={5}>
 					<thead>
 						<tr>
 							<th>
@@ -250,70 +146,45 @@ function ContactContent() {
 								<Button
 									className="ml-4"
 									size="sm"
+									disabled={busy}
 									onClick={() => {
 										setChangeOrder(!changeOrder);
-										setOrderBy('order');
-										setOrder('asc');
-										setLoad(true);
+										list.resetSort();
 									}}
 								>
 									{changeOrder ? '취소' : '변경'}
 								</Button>
 							</th>
-							<th
-								className={cn(
-									!changeOrder && 'cursor-pointer',
-									'relative'
-								)}
-								onClick={() => handleSort('type')}
+							<SortHeader
+								orderBy={orderBy}
+								order={order}
+								currentColumn="type"
+								onSort={list.sort}
+								disabled={list.writing || changeOrder}
+								hideIcon={changeOrder}
 							>
 								타입
-								{!changeOrder && (
-									<span className="absolute right-2 bottom-1/2 translate-y-1/2">
-										<SortIcon
-											orderBy={orderBy}
-											currentColumn="type"
-											order={order}
-										/>
-									</span>
-								)}
-							</th>
-							<th
-								className={cn(
-									!changeOrder && 'cursor-pointer',
-									'relative'
-								)}
-								onClick={() => handleSort('value')}
+							</SortHeader>
+							<SortHeader
+								orderBy={orderBy}
+								order={order}
+								currentColumn="value"
+								onSort={list.sort}
+								disabled={list.writing || changeOrder}
+								hideIcon={changeOrder}
 							>
 								값
-								{!changeOrder && (
-									<span className="absolute right-2 bottom-1/2 translate-y-1/2">
-										<SortIcon
-											orderBy={orderBy}
-											currentColumn="value"
-											order={order}
-										/>
-									</span>
-								)}
-							</th>
-							<th
-								className={cn(
-									!changeOrder && 'cursor-pointer',
-									'relative'
-								)}
-								onClick={() => handleSort('label')}
+							</SortHeader>
+							<SortHeader
+								orderBy={orderBy}
+								order={order}
+								currentColumn="label"
+								onSort={list.sort}
+								disabled={list.writing || changeOrder}
+								hideIcon={changeOrder}
 							>
 								라벨
-								{!changeOrder && (
-									<span className="absolute right-2 bottom-1/2 translate-y-1/2">
-										<SortIcon
-											orderBy={orderBy}
-											currentColumn="label"
-											order={order}
-										/>
-									</span>
-								)}
-							</th>
+							</SortHeader>
 							<th></th>
 						</tr>
 					</thead>
@@ -327,7 +198,7 @@ function ContactContent() {
 									value={type}
 									required
 									onChange={(e) => setType(e.target.value)}
-									disabled={changeOrder}
+									disabled={changeOrder || busy}
 								/>
 							</td>
 							<td>
@@ -337,7 +208,7 @@ function ContactContent() {
 									value={value}
 									required
 									onChange={(e) => setValue(e.target.value)}
-									disabled={changeOrder}
+									disabled={changeOrder || busy}
 								/>
 							</td>
 							<td>
@@ -347,7 +218,7 @@ function ContactContent() {
 									value={label}
 									required
 									onChange={(e) => setLabel(e.target.value)}
-									disabled={changeOrder}
+									disabled={changeOrder || busy}
 								/>
 							</td>
 							<td>
@@ -355,13 +226,21 @@ function ContactContent() {
 									<Button
 										size="sm"
 										onClick={handleCreateContact}
-										disabled={changeOrder}
+										disabled={changeOrder || busy}
 									>
 										추가
 									</Button>
 								</div>
 							</td>
 						</tr>
+						<ListStatusRow
+							columns={5}
+							loading={list.loading}
+							writing={list.writing}
+							error={list.error}
+							empty={contacts.length === 0}
+							reload={list.reload}
+						/>
 						<SortableContext
 							items={contacts}
 							strategy={verticalListSortingStrategy}
@@ -377,7 +256,8 @@ function ContactContent() {
 									changeOrder={changeOrder}
 									updateContactId={updateContactId}
 									updateContact={updateContact}
-									setLoad={setLoad}
+									busy={busy}
+									onMove={list.move}
 									onChange={changeSelectUpdateContact}
 									onUpdate={handleUpdateContact}
 									onSelect={selectUpdateContact}
@@ -386,14 +266,14 @@ function ContactContent() {
 							))}
 						</SortableContext>
 					</tbody>
-				</table>
+				</ListTable>
 			</DndContext>
 			<AdminPagination
 				className="mt-10"
 				page={selectPage}
 				totalCnt={totalCnt}
 				take={take}
-				size={5}
+				disabled={list.loading || list.writing}
 			/>
 		</div>
 	);

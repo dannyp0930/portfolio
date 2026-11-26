@@ -3,7 +3,7 @@ import prisma from '@/lib/prisma';
 import { isAdmin } from '@/lib/isAdmin';
 
 export async function GET(req: NextRequest) {
-	if (!isAdmin(req)) {
+	if (!(await isAdmin(req))) {
 		return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
 	}
 	try {

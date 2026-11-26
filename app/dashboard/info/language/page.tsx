@@ -2,25 +2,19 @@
 
 import { instance } from '@/app/api/instance';
 import AdminPagination from '@/components/dashboard/AdminPagination';
+import ListTable, {
+	ListFallback,
+	ListStatusRow,
+} from '@/components/dashboard/ListTable';
+import useAdminList from '@/components/dashboard/useAdminList';
 import { Button } from '@/components/ui/button';
-import { isAxiosError } from 'axios';
 import dayjs from 'dayjs';
-import { useSearchParams } from 'next/navigation';
-import {
-	ChangeEvent,
-	MouseEvent,
-	Suspense,
-	useCallback,
-	useEffect,
-	useState,
-} from 'react';
+import { ChangeEvent, MouseEvent, Suspense, useState } from 'react';
 import { toast } from 'sonner';
-import SortIcon from '@/components/dashboard/SortIcon';
+import { SortHeader } from '@/components/dashboard/SortIcon';
 import { validateAndShowRequiredFields } from '@/lib/utils/validation';
-import { closestCenter, DndContext, DragEndEvent } from '@dnd-kit/core';
-import { cn } from '@/lib/utils';
+import { closestCenter, DndContext } from '@dnd-kit/core';
 import {
-	arrayMove,
 	SortableContext,
 	verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
@@ -28,28 +22,31 @@ import LanguageRow from '@/components/dashboard/info/LanguageRow';
 
 export default function Language() {
 	return (
-		<Suspense>
+		<Suspense fallback={<ListFallback />}>
 			<LanguageContent />
 		</Suspense>
 	);
 }
 
 function LanguageContent() {
-	const searchParams = useSearchParams();
-	const [load, setLoad] = useState<boolean>(true);
 	const [languageName, setLanguageName] = useState<string>('');
 	const [proficiency, setProficiency] = useState<string>('');
 	const [examDate, setExamDate] = useState<string>('');
 	const [institution, setInstitution] = useState<string>('');
-	const [selectPage, setSelectPage] = useState<number>(1);
-	const [languages, setLanguages] = useState<Language[]>([]);
-	const [totalCnt, setTotalCnt] = useState<number>(0);
 	const [updateLanguageId, setUpdateLanguageId] = useState<number | null>();
 	const [updateLanguage, setUpdateLanguage] = useState<Language | null>();
-	const take = 20;
-	const [orderBy, setOrderBy] = useState<string>('order');
-	const [order, setOrder] = useState<Order>('asc');
 	const [changeOrder, setChangeOrder] = useState<boolean>(false);
+
+	const list = useAdminList<Language>('/info/language');
+	const {
+		rows: languages,
+		page: selectPage,
+		totalCnt,
+		take,
+		orderBy,
+		order,
+		busy,
+	} = list;
 
 	async function handleCreateLanguage(e: MouseEvent<HTMLButtonElement>) {
 		e.preventDefault();
@@ -61,7 +58,7 @@ function LanguageContent() {
 		};
 		const erroRes = validateAndShowRequiredFields(fields, 'language');
 		if (erroRes) return true;
-		try {
+		await list.mutate(async () => {
 			const body = {
 				languageName,
 				proficiency,
@@ -79,18 +76,12 @@ function LanguageContent() {
 				setExamDate('');
 				setInstitution('');
 			}
-		} catch (err) {
-			if (isAxiosError(err)) {
-				toast.error(err.response?.data.error || '오류가 발생했습니다');
-			}
-		} finally {
-			setLoad(true);
-		}
+		});
 	}
 
 	async function handleUpdateLanguage(e: MouseEvent<HTMLButtonElement>) {
 		e.preventDefault();
-		try {
+		await list.mutate(async () => {
 			const body = {
 				...updateLanguage,
 				examDate: dayjs(updateLanguage?.examDate).toDate(),
@@ -104,19 +95,14 @@ function LanguageContent() {
 				setUpdateLanguageId(null);
 				setUpdateLanguage(null);
 			}
-		} catch (err) {
-			if (isAxiosError(err)) {
-				toast.error(err.response?.data.error || '오류가 발생했습니다');
-			}
-		} finally {
-			setLoad(true);
-		}
+		});
 	}
 
 	function handleDeleteLanguage(languageId: number) {
 		return async (e: MouseEvent<HTMLButtonElement>) => {
 			e.preventDefault();
-			try {
+			if (busy || !window.confirm('이 항목을 삭제하시겠습니까?')) return;
+			await list.mutate(async () => {
 				const body = { id: languageId };
 				const {
 					data: { message },
@@ -127,15 +113,7 @@ function LanguageContent() {
 					setUpdateLanguageId(null);
 					setUpdateLanguage(null);
 				}
-			} catch (err) {
-				if (isAxiosError(err)) {
-					toast.error(
-						err.response?.data.error || '오류가 발생했습니다'
-					);
-				}
-			} finally {
-				setLoad(true);
-			}
+			});
 		};
 	}
 
@@ -161,100 +139,18 @@ function LanguageContent() {
 		};
 	}
 
-	const handleSort = (column: string) => {
-		if (changeOrder) return;
-		if (orderBy === column) {
-			setOrder(order === 'asc' ? 'desc' : 'asc');
-		} else {
-			setOrderBy(column);
-			setOrder('asc');
-		}
-		setLoad(true);
-	};
-
-	const getLanguage = useCallback(async () => {
-		const params = {
-			page: selectPage,
-			take,
-			orderBy,
-			order,
-		};
-		try {
-			const {
-				data: { data, totalCnt },
-			} = await instance.get('/info/language', { params });
-			setLanguages(data);
-			setTotalCnt(totalCnt);
-			setLoad(false);
-		} catch (err) {
-			if (isAxiosError(err)) {
-				toast.error(err.response?.data.error || '오류가 발생했습니다');
-			}
-		}
-	}, [selectPage, take, orderBy, order]);
-
-	async function handleDragEnd(event: DragEndEvent) {
-		const { active, over } = event;
-		const originalLanguages = [...languages];
-		if (active.id !== over?.id && languages) {
-			try {
-				const oldIndex = languages.findIndex(
-					(language) => language.id === active.id
-				);
-				const newIndex = languages.findIndex(
-					(language) => language.id === over?.id
-				);
-				const newOrder = arrayMove(languages, oldIndex, newIndex);
-				setLanguages(newOrder);
-				const body = newOrder.map((item, index) => ({
-					id: item.id,
-					prevOrder: item.order,
-					order: (selectPage - 1) * take + index + 1,
-				}));
-				const {
-					data: { message },
-					status,
-				} = await instance.patch('/info/language', { data: body });
-				if (status === 200) {
-					toast.success(message);
-				}
-			} catch (err) {
-				if (isAxiosError(err)) {
-					toast.error(
-						err.response?.data.error || '오류가 발생했습니다'
-					);
-				}
-				setLanguages(originalLanguages);
-			} finally {
-				setChangeOrder(false);
-			}
-		}
-	}
-
-	useEffect(() => {
-		if (load) {
-			getLanguage();
-		}
-	}, [load, getLanguage]);
-
-	useEffect(() => {
-		const parmasPage = searchParams.get('p');
-		if (parmasPage) {
-			setSelectPage(parseInt(parmasPage));
-		}
-	}, [searchParams]);
-
-	useEffect(() => {
-		setLoad(true);
-	}, [selectPage]);
-
 	return (
 		<div className="py-10 rounded-lg bg-card">
 			<DndContext
 				collisionDetection={closestCenter}
-				onDragEnd={handleDragEnd}
+				onDragEnd={(event) => {
+					if (changeOrder)
+						list.reorder(event, languages, () =>
+							setChangeOrder(false)
+						);
+				}}
 			>
-				<table className="w-full border-collapse table-fixed [&_th]:border [&_th]:px-2 [&_th]:py-1 [&_th:first-of-type]:border-l-0 [&_th:last-of-type]:border-r-0 [&_td]:border [&_td]:px-2 [&_td]:py-1 [&_td]:overflow-auto [&_td:first-of-type]:border-l-0 [&_td:last-of-type]:border-r-0">
+				<ListTable columns={6}>
 					<thead>
 						<tr>
 							<th>
@@ -262,70 +158,45 @@ function LanguageContent() {
 								<Button
 									className="ml-4"
 									size="sm"
+									disabled={busy}
 									onClick={() => {
 										setChangeOrder(!changeOrder);
-										setOrderBy('order');
-										setOrder('asc');
-										setLoad(true);
+										list.resetSort();
 									}}
 								>
 									{changeOrder ? '취소' : '변경'}
 								</Button>
 							</th>
-							<th
-								className={cn(
-									!changeOrder && 'cursor-pointer',
-									'relative'
-								)}
-								onClick={() => handleSort('languageName')}
+							<SortHeader
+								orderBy={orderBy}
+								order={order}
+								currentColumn="languageName"
+								onSort={list.sort}
+								disabled={list.writing || changeOrder}
+								hideIcon={changeOrder}
 							>
 								언어명
-								{!changeOrder && (
-									<span className="absolute right-2 bottom-1/2 translate-y-1/2">
-										<SortIcon
-											orderBy={orderBy}
-											currentColumn="languageName"
-											order={order}
-										/>
-									</span>
-								)}
-							</th>
-							<th
-								className={cn(
-									!changeOrder && 'cursor-pointer',
-									'relative'
-								)}
-								onClick={() => handleSort('proficiency')}
+							</SortHeader>
+							<SortHeader
+								orderBy={orderBy}
+								order={order}
+								currentColumn="proficiency"
+								onSort={list.sort}
+								disabled={list.writing || changeOrder}
+								hideIcon={changeOrder}
 							>
 								숙련도
-								{!changeOrder && (
-									<span className="absolute right-2 bottom-1/2 translate-y-1/2">
-										<SortIcon
-											orderBy={orderBy}
-											currentColumn="proficiency"
-											order={order}
-										/>
-									</span>
-								)}
-							</th>
-							<th
-								className={cn(
-									!changeOrder && 'cursor-pointer',
-									'relative'
-								)}
-								onClick={() => handleSort('examDate')}
+							</SortHeader>
+							<SortHeader
+								orderBy={orderBy}
+								order={order}
+								currentColumn="examDate"
+								onSort={list.sort}
+								disabled={list.writing || changeOrder}
+								hideIcon={changeOrder}
 							>
 								시험일
-								{!changeOrder && (
-									<span className="absolute right-2 bottom-1/2 translate-y-1/2">
-										<SortIcon
-											orderBy={orderBy}
-											currentColumn="examDate"
-											order={order}
-										/>
-									</span>
-								)}
-							</th>
+							</SortHeader>
 							<th>기관</th>
 							<th></th>
 						</tr>
@@ -342,7 +213,7 @@ function LanguageContent() {
 									onChange={(e) =>
 										setLanguageName(e.target.value)
 									}
-									disabled={changeOrder}
+									disabled={changeOrder || busy}
 								/>
 							</td>
 							<td>
@@ -354,7 +225,7 @@ function LanguageContent() {
 									onChange={(e) =>
 										setProficiency(e.target.value)
 									}
-									disabled={changeOrder}
+									disabled={changeOrder || busy}
 								/>
 							</td>
 							<td>
@@ -366,7 +237,7 @@ function LanguageContent() {
 									onChange={(e) =>
 										setExamDate(e.target.value)
 									}
-									disabled={changeOrder}
+									disabled={changeOrder || busy}
 								/>
 							</td>
 							<td>
@@ -378,7 +249,7 @@ function LanguageContent() {
 									onChange={(e) =>
 										setInstitution(e.target.value)
 									}
-									disabled={changeOrder}
+									disabled={changeOrder || busy}
 								/>
 							</td>
 							<td>
@@ -386,13 +257,21 @@ function LanguageContent() {
 									<Button
 										size="sm"
 										onClick={handleCreateLanguage}
-										disabled={changeOrder}
+										disabled={changeOrder || busy}
 									>
 										추가
 									</Button>
 								</div>
 							</td>
 						</tr>
+						<ListStatusRow
+							columns={6}
+							loading={list.loading}
+							writing={list.writing}
+							error={list.error}
+							empty={languages.length === 0}
+							reload={list.reload}
+						/>
 						<SortableContext
 							items={languages}
 							strategy={verticalListSortingStrategy}
@@ -408,7 +287,8 @@ function LanguageContent() {
 									updateLanguageId={updateLanguageId}
 									updateLanguage={updateLanguage}
 									changeOrder={changeOrder}
-									setLoad={setLoad}
+									busy={busy}
+									onMove={list.move}
 									onChange={changeSelectUpdateLanguage}
 									onUpdate={handleUpdateLanguage}
 									onSelect={selectUpdateLanguage}
@@ -417,14 +297,14 @@ function LanguageContent() {
 							))}
 						</SortableContext>
 					</tbody>
-				</table>
+				</ListTable>
 			</DndContext>
 			<AdminPagination
 				className="mt-10"
 				page={selectPage}
 				totalCnt={totalCnt}
 				take={take}
-				size={5}
+				disabled={list.loading || list.writing}
 			/>
 		</div>
 	);

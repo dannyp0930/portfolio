@@ -5,7 +5,7 @@ import deleteFromS3 from '@/lib/deleteFromS3';
 import prisma from '@/lib/prisma';
 
 export async function POST(req: NextRequest) {
-	if (!isAdmin(req)) {
+	if (!(await isAdmin(req))) {
 		return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
 	}
 	try {
@@ -25,7 +25,7 @@ export async function POST(req: NextRequest) {
 }
 
 export async function PUT(req: NextRequest) {
-	if (!isAdmin(req)) {
+	if (!(await isAdmin(req))) {
 		return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
 	}
 	try {
@@ -45,7 +45,7 @@ export async function PUT(req: NextRequest) {
 }
 
 export async function PATCH(req: NextRequest) {
-	if (!isAdmin(req)) {
+	if (!(await isAdmin(req))) {
 		return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
 	}
 	const { data } = await req.json();
@@ -197,7 +197,7 @@ export async function GET(req: NextRequest) {
 }
 
 export async function DELETE(req: NextRequest) {
-	if (!isAdmin(req)) {
+	if (!(await isAdmin(req))) {
 		return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
 	}
 	const { id } = await req.json();

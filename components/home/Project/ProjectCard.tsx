@@ -7,7 +7,7 @@ import { faHome } from '@fortawesome/free-solid-svg-icons';
 import { faCircleInfo } from '@fortawesome/free-solid-svg-icons';
 import notionSvg from '@/assets/images/icons/notion.svg';
 import Image from 'next/image';
-import dayjs from 'dayjs';
+import { portfolioDate } from '@/lib/portfolioDate';
 
 export default function ProjectCard({
 	project,
@@ -66,9 +66,9 @@ export default function ProjectCard({
 						{project.intro}
 					</p>
 					<p className="text-xs text-foreground/50 tabular-nums">
-						{dayjs(project.startDate).format('YYYY.MM.DD')} ~{' '}
+						{portfolioDate(project.startDate, 'YYYY.MM.DD')} ~{' '}
 						{project.endDate &&
-							dayjs(project.endDate).format('YYYY.MM.DD')}
+							portfolioDate(project.endDate, 'YYYY.MM.DD')}
 					</p>
 				</div>
 				<div className="flex items-center gap-5 xl:gap-12">

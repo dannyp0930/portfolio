@@ -46,12 +46,6 @@ export async function POST(req: NextRequest) {
 			path: '/',
 			maxAge: 60 * 60,
 		});
-		cookieStore.set('is-admin', String(user.isAdmin), {
-			httpOnly: true,
-			secure: true,
-			path: '/',
-			maxAge: 60 * 60,
-		});
 		cookieStore.set('refresh-token', refreshToken, {
 			httpOnly: true,
 			secure: true,
@@ -61,10 +55,11 @@ export async function POST(req: NextRequest) {
 		return NextResponse.json(
 			{
 				user: {
+					id: user.id,
 					email: user.email,
 					name: user.name,
 					phone: user.phone,
-					subsribed: user.subscribed,
+					subscribed: user.subscribed,
 					isAdmin: user.isAdmin,
 				},
 			},

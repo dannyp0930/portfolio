@@ -43,24 +43,23 @@ export default function Dashboard({
 		},
 	];
 	return (
-		<div className="p-6">
-			<NavigationMenu className="z-0">
-				<NavigationMenuList>
+		<div className="min-w-0 p-3 sm:p-6">
+			<NavigationMenu className="z-0" aria-label="Info sections">
+				<NavigationMenuList className="flex-wrap justify-start gap-1 space-x-0">
 					{routes.map((route) => (
 						<NavigationMenuItem key={route.title}>
-							<Link href={route.url} legacyBehavior passHref>
-								<NavigationMenuLink
-									className={navigationMenuTriggerStyle()}
-									active={pathname === route.url}
-								>
-									{route.title}
-								</NavigationMenuLink>
-							</Link>
+							<NavigationMenuLink
+								asChild
+								className={navigationMenuTriggerStyle()}
+								active={pathname === route.url}
+							>
+								<Link href={route.url}>{route.title}</Link>
+							</NavigationMenuLink>
 						</NavigationMenuItem>
 					))}
 				</NavigationMenuList>
 			</NavigationMenu>
-			<div className="mt-5">{children}</div>
+			<div className="mt-5 min-w-0">{children}</div>
 		</div>
 	);
 }

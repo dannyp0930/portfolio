@@ -78,7 +78,7 @@ export async function POST(req: NextRequest) {
 }
 
 export async function GET(req: NextRequest) {
-	if (!isAdmin(req)) {
+	if (!(await isAdmin(req))) {
 		return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
 	}
 	const { searchParams } = new URL(req.url);

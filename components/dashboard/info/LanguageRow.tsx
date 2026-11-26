@@ -1,12 +1,9 @@
-import { instance } from '@/app/api/instance';
 import { Button } from '@/components/ui/button';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { isAxiosError } from 'axios';
 import dayjs from 'dayjs';
 import { ArrowDownFromLine, ArrowUpFromLine } from 'lucide-react';
-import { ChangeEvent, Dispatch, MouseEvent, SetStateAction } from 'react';
-import { toast } from 'sonner';
+import { ChangeEvent, MouseEvent } from 'react';
 
 export default function LanguageRow({
 	idx,
@@ -17,7 +14,8 @@ export default function LanguageRow({
 	changeOrder,
 	updateLanguageId,
 	updateLanguage,
-	setLoad,
+	busy,
+	onMove,
 	onChange,
 	onUpdate,
 	onSelect,
@@ -31,7 +29,8 @@ export default function LanguageRow({
 	changeOrder: boolean;
 	updateLanguageId: number | null | undefined;
 	updateLanguage: Language | null | undefined;
-	setLoad: Dispatch<SetStateAction<boolean>>;
+	busy: boolean;
+	onMove: (id: number, order: number, dir: boolean) => Promise<void>;
 	onChange: (
 		key: keyof Language
 	) => (e: ChangeEvent<HTMLInputElement>) => void;
@@ -45,37 +44,12 @@ export default function LanguageRow({
 }) {
 	const totalPages = Math.ceil(total / take);
 	const { attributes, listeners, setNodeRef, transform, transition } =
-		useSortable({ id: language.id });
+		useSortable({ id: language.id, disabled: busy || !changeOrder });
 
 	const style = {
 		transform: CSS.Transform.toString(transform),
 		transition,
 	};
-
-	function handleOrder(id: number, order: number, dir: boolean) {
-		return async (e: MouseEvent<HTMLButtonElement>) => {
-			e.preventDefault();
-			try {
-				const {
-					data: { message },
-					status,
-				} = await instance.patch('/info/language', {
-					data: { id, order, dir },
-				});
-				if (status === 200) {
-					toast.success(message);
-				}
-			} catch (err) {
-				if (isAxiosError(err)) {
-					toast.error(
-						err.response?.data.error || '오류가 발생했습니다'
-					);
-				}
-			} finally {
-				setLoad(true);
-			}
-		};
-	}
 
 	return (
 		<tr
@@ -100,11 +74,16 @@ export default function LanguageRow({
 						{idx === 0 && page !== 1 && (
 							<Button
 								variant="ghost"
-								onClick={handleOrder(
-									language.id,
-									language.order as number,
-									false
-								)}
+								disabled={busy || language.order == null}
+								aria-label="이전 페이지로 이동"
+								onClick={() => {
+									if (language.order != null)
+										void onMove(
+											language.id,
+											language.order,
+											false
+										);
+								}}
 							>
 								<ArrowUpFromLine />
 							</Button>
@@ -112,11 +91,16 @@ export default function LanguageRow({
 						{idx === take - 1 && page !== totalPages && (
 							<Button
 								variant="ghost"
-								onClick={handleOrder(
-									language.id,
-									language.order as number,
-									true
-								)}
+								disabled={busy || language.order == null}
+								aria-label="다음 페이지로 이동"
+								onClick={() => {
+									if (language.order != null)
+										void onMove(
+											language.id,
+											language.order,
+											true
+										);
+								}}
 							>
 								<ArrowDownFromLine />
 							</Button>
@@ -132,6 +116,7 @@ export default function LanguageRow({
 						<input
 							className="w-full focus:outline-none"
 							aria-label="언어명"
+							disabled={busy}
 							onChange={onChange('languageName')}
 							type="text"
 							value={updateLanguage?.languageName}
@@ -141,6 +126,7 @@ export default function LanguageRow({
 						<input
 							className="w-full focus:outline-none"
 							aria-label="숙련도"
+							disabled={busy}
 							onChange={onChange('proficiency')}
 							type="text"
 							value={updateLanguage?.proficiency}
@@ -150,6 +136,7 @@ export default function LanguageRow({
 						<input
 							className="w-full focus:outline-none"
 							aria-label="시험일"
+							disabled={busy}
 							onChange={onChange('examDate')}
 							type="date"
 							value={dayjs(updateLanguage?.examDate).format(
@@ -161,6 +148,7 @@ export default function LanguageRow({
 						<input
 							className="w-full focus:outline-none"
 							aria-label="발급 기관"
+							disabled={busy}
 							onChange={onChange('institution')}
 							type="text"
 							value={updateLanguage?.institution}
@@ -168,13 +156,18 @@ export default function LanguageRow({
 					</td>
 					<td>
 						<div className="flex gap-2 justify-center">
-							<Button size="sm" onClick={onUpdate}>
+							<Button
+								size="sm"
+								onClick={onUpdate}
+								disabled={busy || changeOrder}
+							>
 								저장
 							</Button>
 							<Button
 								variant="secondary"
 								size="sm"
 								onClick={onSelect()}
+								disabled={busy}
 							>
 								취소
 							</Button>
@@ -192,7 +185,7 @@ export default function LanguageRow({
 							<Button
 								size="sm"
 								onClick={onSelect(language)}
-								disabled={changeOrder}
+								disabled={changeOrder || busy}
 							>
 								수정
 							</Button>
@@ -200,7 +193,7 @@ export default function LanguageRow({
 								variant="destructive"
 								size="sm"
 								onClick={onDelete(language.id)}
-								disabled={changeOrder}
+								disabled={changeOrder || busy}
 							>
 								삭제
 							</Button>

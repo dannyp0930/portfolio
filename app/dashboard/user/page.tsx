@@ -2,37 +2,43 @@
 
 import { instance } from '@/app/api/instance';
 import AdminPagination from '@/components/dashboard/AdminPagination';
+import ListTable, {
+	ListFallback,
+	ListStatusRow,
+} from '@/components/dashboard/ListTable';
+import useAdminList from '@/components/dashboard/useAdminList';
 import { Button } from '@/components/ui/button';
-import { isAxiosError } from 'axios';
 import Link from 'next/link';
-import { useSearchParams } from 'next/navigation';
-import { MouseEvent, Suspense, useCallback, useEffect, useState } from 'react';
+import { MouseEvent, Suspense } from 'react';
 import { toast } from 'sonner';
-import SortIcon from '@/components/dashboard/SortIcon';
+import { SortHeader } from '@/components/dashboard/SortIcon';
 import dayjs from 'dayjs';
 
 export default function User() {
 	return (
-		<Suspense>
+		<Suspense fallback={<ListFallback />}>
 			<UserComponent />
 		</Suspense>
 	);
 }
 
 function UserComponent() {
-	const searchParams = useSearchParams();
-	const [load, setLoad] = useState<boolean>(true);
-	const [selectPage, setSelectPage] = useState<number>(1);
-	const [users, setUsers] = useState<User[]>([]);
-	const [totalCnt, setTotalCnt] = useState<number>(0);
-	const take = 20;
-	const [orderBy, setOrderBy] = useState<string>('createdAt');
-	const [order, setOrder] = useState<Order>('desc');
+	const list = useAdminList<User>('/user', 'createdAt', 'desc');
+	const {
+		rows: users,
+		page: selectPage,
+		totalCnt,
+		take,
+		orderBy,
+		order,
+		busy,
+	} = list;
 
 	function handleDeleteUser(userId: string) {
 		return async (e: MouseEvent<HTMLButtonElement>) => {
 			e.preventDefault();
-			try {
+			if (busy || !window.confirm('이 항목을 삭제하시겠습니까?')) return;
+			await list.mutate(async () => {
 				const body = { id: userId };
 				const {
 					data: { message },
@@ -43,67 +49,9 @@ function UserComponent() {
 				if (status === 200) {
 					toast.success(message);
 				}
-			} catch (err) {
-				if (isAxiosError(err)) {
-					toast.error(
-						err.response?.data.error || '오류가 발생했습니다'
-					);
-				}
-			} finally {
-				setLoad(true);
-			}
+			});
 		};
 	}
-
-	const handleSort = (column: string) => {
-		if (orderBy === column) {
-			setOrder(order === 'asc' ? 'desc' : 'asc');
-		} else {
-			setOrderBy(column);
-			setOrder('asc');
-		}
-		setLoad(true);
-	};
-
-	const getUser = useCallback(async () => {
-		const params = {
-			page: selectPage,
-			take,
-			orderBy,
-			order,
-		};
-		try {
-			const {
-				data: { data, totalCnt },
-			} = await instance.get('/user', { params });
-			setUsers(data);
-			setTotalCnt(totalCnt);
-			setLoad(false);
-		} catch (err) {
-			if (isAxiosError(err)) {
-				toast.error(err.response?.data.error || '오류가 발생했습니다');
-			}
-		} finally {
-			setLoad(false);
-		}
-	}, [selectPage, take, orderBy, order]);
-
-	useEffect(() => {
-		if (load) {
-			getUser();
-		}
-	}, [load, getUser]);
-
-	useEffect(() => {
-		const parmasPage = searchParams.get('p');
-		if (parmasPage) {
-			setSelectPage(parseInt(parmasPage));
-		}
-	}, [searchParams]);
-
-	useEffect(() => {
-		setLoad(true);
-	}, [selectPage]);
 
 	return (
 		<div className="m-5 py-10 rounded-lg bg-card">
@@ -112,91 +60,75 @@ function UserComponent() {
 					<Link href="/dashboard/user/create">등록</Link>
 				</Button>
 			</div>
-			<table className="w-full border-collapse table-fixed [&_th]:border [&_th]:px-2 [&_th]:py-1 [&_th:first-of-type]:border-l-0 [&_th:last-of-type]:border-r-0 [&_td]:border [&_td]:px-2 [&_td]:py-1 [&_td]:overflow-auto [&_td:first-of-type]:border-l-0 [&_td:last-of-type]:border-r-0">
+			<ListTable columns={7}>
 				<thead>
 					<tr>
-						<th
-							className="cursor-pointer relative"
-							onClick={() => handleSort('email')}
+						<SortHeader
+							orderBy={orderBy}
+							order={order}
+							currentColumn="email"
+							onSort={list.sort}
+							disabled={list.writing}
 						>
 							Email
-							<span className="absolute right-2 bottom-1/2 translate-y-1/2">
-								<SortIcon
-									orderBy={orderBy}
-									currentColumn="email"
-									order={order}
-								/>
-							</span>
-						</th>
-						<th
-							className="cursor-pointer relative"
-							onClick={() => handleSort('name')}
+						</SortHeader>
+						<SortHeader
+							orderBy={orderBy}
+							order={order}
+							currentColumn="name"
+							onSort={list.sort}
+							disabled={list.writing}
 						>
 							이름
-							<span className="absolute right-2 bottom-1/2 translate-y-1/2">
-								<SortIcon
-									orderBy={orderBy}
-									currentColumn="name"
-									order={order}
-								/>
-							</span>
-						</th>
-						<th
-							className="cursor-pointer relative"
-							onClick={() => handleSort('phone')}
+						</SortHeader>
+						<SortHeader
+							orderBy={orderBy}
+							order={order}
+							currentColumn="phone"
+							onSort={list.sort}
+							disabled={list.writing}
 						>
 							휴대전화
-							<span className="absolute right-2 bottom-1/2 translate-y-1/2">
-								<SortIcon
-									orderBy={orderBy}
-									currentColumn="phone"
-									order={order}
-								/>
-							</span>
-						</th>
-						<th
-							className="cursor-pointer relative"
-							onClick={() => handleSort('subscribed')}
+						</SortHeader>
+						<SortHeader
+							orderBy={orderBy}
+							order={order}
+							currentColumn="subscribed"
+							onSort={list.sort}
+							disabled={list.writing}
 						>
 							구독
-							<span className="absolute right-2 bottom-1/2 translate-y-1/2">
-								<SortIcon
-									orderBy={orderBy}
-									currentColumn="subscribed"
-									order={order}
-								/>
-							</span>
-						</th>
-						<th
-							className="cursor-pointer relative"
-							onClick={() => handleSort('createdAt')}
+						</SortHeader>
+						<SortHeader
+							orderBy={orderBy}
+							order={order}
+							currentColumn="createdAt"
+							onSort={list.sort}
+							disabled={list.writing}
 						>
 							생성일
-							<span className="absolute right-2 bottom-1/2 translate-y-1/2">
-								<SortIcon
-									orderBy={orderBy}
-									currentColumn="createdAt"
-									order={order}
-								/>
-							</span>
-						</th>
-						<th
-							className="cursor-pointer relative"
-							onClick={() => handleSort('updatedAt')}
+						</SortHeader>
+						<SortHeader
+							orderBy={orderBy}
+							order={order}
+							currentColumn="updatedAt"
+							onSort={list.sort}
+							disabled={list.writing}
 						>
 							수정일
-							<span className="absolute right-2 bottom-1/2 translate-y-1/2">
-								<SortIcon
-									orderBy={orderBy}
-									currentColumn="updatedAt"
-									order={order}
-								/>
-							</span>
-						</th>
+						</SortHeader>
 						<th></th>
 					</tr>
 				</thead>
 				<tbody>
+					<ListStatusRow
+						columns={7}
+						loading={list.loading}
+						writing={list.writing}
+						error={list.error}
+						empty={users.length === 0}
+						reload={list.reload}
+					/>
 					{users.map((user) => (
 						<tr key={user.id}>
 							<td>
@@ -260,7 +192,16 @@ function UserComponent() {
 							</td>
 							<td>
 								<div className="flex gap-2 justify-center">
-									<Button asChild size="sm">
+									<Button
+										asChild
+										size="sm"
+										aria-disabled={busy || undefined}
+										tabIndex={busy ? -1 : undefined}
+										className="aria-disabled:pointer-events-none aria-disabled:opacity-50"
+										onClick={(event) => {
+											if (busy) event.preventDefault();
+										}}
+									>
 										<Link
 											href={`/dashboard/user/${user.id}`}
 										>
@@ -270,6 +211,7 @@ function UserComponent() {
 									<Button
 										variant="destructive"
 										size="sm"
+										disabled={busy}
 										onClick={handleDeleteUser(user.id)}
 									>
 										삭제
@@ -279,13 +221,13 @@ function UserComponent() {
 						</tr>
 					))}
 				</tbody>
-			</table>
+			</ListTable>
 			<AdminPagination
 				className="mt-10"
 				page={selectPage}
 				totalCnt={totalCnt}
 				take={take}
-				size={5}
+				disabled={list.loading || list.writing}
 			/>
 		</div>
 	);

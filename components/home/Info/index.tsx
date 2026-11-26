@@ -1,6 +1,6 @@
 'use client';
 
-import dayjs from 'dayjs';
+import { portfolioDate } from '@/lib/portfolioDate';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
 	faEnvelope,
@@ -86,10 +86,11 @@ export default function Info({
 									{career.position}
 								</p>
 								<p className="text-xs text-theme-sub/85">
-									{dayjs(career.startDate).format('YYYY.MM')}{' '}
+									{portfolioDate(career.startDate, 'YYYY.MM')}{' '}
 									~{' '}
 									{career.endDate
-										? dayjs(career.endDate).format(
+										? portfolioDate(
+												career.endDate,
 												'YYYY.MM'
 											)
 										: '현재'}
@@ -128,11 +129,15 @@ export default function Info({
 									{education.degreeStatus}
 								</p>
 								<p className="text-xs text-theme-sub/85">
-									{dayjs(education.startDate).format(
+									{portfolioDate(
+										education.startDate,
 										'YYYY.MM'
 									)}{' '}
 									~{' '}
-									{dayjs(education.endDate).format('YYYY.MM')}
+									{portfolioDate(
+										education.endDate,
+										'YYYY.MM'
+									)}
 								</p>
 							</li>
 						))}
@@ -160,11 +165,13 @@ export default function Info({
 									{experience.organization}
 								</h4>
 								<p className="text-xs text-theme-sub/85">
-									{dayjs(experience.startDate).format(
+									{portfolioDate(
+										experience.startDate,
 										'YYYY.MM.DD'
 									)}{' '}
 									~{' '}
-									{dayjs(experience.endDate).format(
+									{portfolioDate(
+										experience.endDate,
 										'YYYY.MM.DD'
 									)}
 								</p>
@@ -230,7 +237,8 @@ export default function Info({
 									{certificate.certificateName}
 								</h4>
 								<p className="text-xs text-theme-sub/85">
-									{dayjs(certificate.issueDate).format(
+									{portfolioDate(
+										certificate.issueDate,
 										'YYYY.MM.DD'
 									)}{' '}
 									· {certificate.issuingOrganization}

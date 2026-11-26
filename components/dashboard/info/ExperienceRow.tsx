@@ -1,12 +1,9 @@
-import { instance } from '@/app/api/instance';
 import { Button } from '@/components/ui/button';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { isAxiosError } from 'axios';
 import dayjs from 'dayjs';
 import { ArrowDownFromLine, ArrowUpFromLine } from 'lucide-react';
-import { ChangeEvent, Dispatch, MouseEvent, SetStateAction } from 'react';
-import { toast } from 'sonner';
+import { ChangeEvent, MouseEvent } from 'react';
 
 export default function ExperienceRow({
 	idx,
@@ -17,7 +14,8 @@ export default function ExperienceRow({
 	changeOrder,
 	updateExperienceId,
 	updateExperience,
-	setLoad,
+	busy,
+	onMove,
 	onChange,
 	onUpdate,
 	onSelect,
@@ -31,7 +29,8 @@ export default function ExperienceRow({
 	changeOrder: boolean;
 	updateExperienceId: number | null | undefined;
 	updateExperience: Experience | null | undefined;
-	setLoad: Dispatch<SetStateAction<boolean>>;
+	busy: boolean;
+	onMove: (id: number, order: number, dir: boolean) => Promise<void>;
 	onChange: (
 		key: keyof Experience
 	) => (e: ChangeEvent<HTMLInputElement>) => void;
@@ -45,37 +44,12 @@ export default function ExperienceRow({
 }) {
 	const totalPages = Math.ceil(total / take);
 	const { attributes, listeners, setNodeRef, transform, transition } =
-		useSortable({ id: experience.id });
+		useSortable({ id: experience.id, disabled: busy || !changeOrder });
 
 	const style = {
 		transform: CSS.Transform.toString(transform),
 		transition,
 	};
-
-	function handleOrder(id: number, order: number, dir: boolean) {
-		return async (e: MouseEvent<HTMLButtonElement>) => {
-			e.preventDefault();
-			try {
-				const {
-					data: { message },
-					status,
-				} = await instance.patch('/info/experience', {
-					data: { id, order, dir },
-				});
-				if (status === 200) {
-					toast.success(message);
-				}
-			} catch (err) {
-				if (isAxiosError(err)) {
-					toast.error(
-						err.response?.data.error || '오류가 발생했습니다'
-					);
-				}
-			} finally {
-				setLoad(true);
-			}
-		};
-	}
 
 	return (
 		<tr
@@ -100,11 +74,16 @@ export default function ExperienceRow({
 						{idx === 0 && page !== 1 && (
 							<Button
 								variant="ghost"
-								onClick={handleOrder(
-									experience.id,
-									experience.order as number,
-									false
-								)}
+								disabled={busy || experience.order == null}
+								aria-label="이전 페이지로 이동"
+								onClick={() => {
+									if (experience.order != null)
+										void onMove(
+											experience.id,
+											experience.order,
+											false
+										);
+								}}
 							>
 								<ArrowUpFromLine />
 							</Button>
@@ -112,11 +91,16 @@ export default function ExperienceRow({
 						{idx === take - 1 && page !== totalPages && (
 							<Button
 								variant="ghost"
-								onClick={handleOrder(
-									experience.id,
-									experience.order as number,
-									true
-								)}
+								disabled={busy || experience.order == null}
+								aria-label="다음 페이지로 이동"
+								onClick={() => {
+									if (experience.order != null)
+										void onMove(
+											experience.id,
+											experience.order,
+											true
+										);
+								}}
 							>
 								<ArrowDownFromLine />
 							</Button>
@@ -132,6 +116,7 @@ export default function ExperienceRow({
 						<input
 							className="w-full focus:outline-none"
 							aria-label="기관명"
+							disabled={busy}
 							onChange={onChange('organization')}
 							type="text"
 							value={updateExperience?.organization}
@@ -141,6 +126,7 @@ export default function ExperienceRow({
 						<input
 							className="w-full focus:outline-none"
 							aria-label="설명"
+							disabled={busy}
 							onChange={onChange('description')}
 							type="text"
 							value={updateExperience?.description}
@@ -150,6 +136,7 @@ export default function ExperienceRow({
 						<input
 							className="w-full focus:outline-none"
 							aria-label="시작일"
+							disabled={busy}
 							onChange={onChange('startDate')}
 							type="date"
 							value={dayjs(updateExperience?.startDate).format(
@@ -161,6 +148,7 @@ export default function ExperienceRow({
 						<input
 							className="w-full focus:outline-none"
 							aria-label="종료일"
+							disabled={busy}
 							onChange={onChange('endDate')}
 							type="date"
 							value={dayjs(updateExperience?.endDate).format(
@@ -170,13 +158,18 @@ export default function ExperienceRow({
 					</td>
 					<td>
 						<div className="flex gap-2 justify-center">
-							<Button size="sm" onClick={onUpdate}>
+							<Button
+								size="sm"
+								onClick={onUpdate}
+								disabled={busy || changeOrder}
+							>
 								저장
 							</Button>
 							<Button
 								variant="secondary"
 								size="sm"
 								onClick={onSelect()}
+								disabled={busy}
 							>
 								취소
 							</Button>
@@ -194,7 +187,7 @@ export default function ExperienceRow({
 							<Button
 								size="sm"
 								onClick={onSelect(experience)}
-								disabled={changeOrder}
+								disabled={changeOrder || busy}
 							>
 								수정
 							</Button>
@@ -202,7 +195,7 @@ export default function ExperienceRow({
 								variant="destructive"
 								size="sm"
 								onClick={onDelete(experience.id)}
-								disabled={changeOrder}
+								disabled={changeOrder || busy}
 							>
 								삭제
 							</Button>

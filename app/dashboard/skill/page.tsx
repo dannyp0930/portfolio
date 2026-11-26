@@ -3,8 +3,13 @@
 import { formInstance, instance } from '@/app/api/instance';
 import ImageInput from '@/components/common/ImageInput';
 import AdminPagination from '@/components/dashboard/AdminPagination';
+import ListTable, {
+	ListFallback,
+	ListStatusRow,
+} from '@/components/dashboard/ListTable';
+import useAdminList from '@/components/dashboard/useAdminList';
 import SkillRow from '@/components/dashboard/SkillRow';
-import SortIcon from '@/components/dashboard/SortIcon';
+import { SortHeader } from '@/components/dashboard/SortIcon';
 import { Button } from '@/components/ui/button';
 import {
 	Select,
@@ -14,29 +19,18 @@ import {
 	SelectValue,
 } from '@/components/ui/select';
 import { SKILL_CATEGORY } from '@/lib/constants';
-import { cn } from '@/lib/utils';
-import { closestCenter, DndContext, DragEndEvent } from '@dnd-kit/core';
+import { closestCenter, DndContext } from '@dnd-kit/core';
 import {
-	arrayMove,
 	SortableContext,
 	verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
-import { isAxiosError } from 'axios';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import {
-	ChangeEvent,
-	MouseEvent,
-	Suspense,
-	useCallback,
-	useEffect,
-	useRef,
-	useState,
-} from 'react';
+import { ChangeEvent, MouseEvent, Suspense, useRef, useState } from 'react';
 import { toast } from 'sonner';
 
 export default function Skill() {
 	return (
-		<Suspense>
+		<Suspense fallback={<ListFallback />}>
 			<SkillComponent />
 		</Suspense>
 	);
@@ -45,29 +39,33 @@ export default function Skill() {
 function SkillComponent() {
 	const router = useRouter();
 	const pathname = usePathname();
-	const searchParams = useSearchParams();
-	const [load, setLoad] = useState<boolean>(true);
-	const [orderBy, setOrderBy] = useState<string>('order');
-	const [order, setOrder] = useState<Order>('asc');
 	const [title, setTitle] = useState<string>('');
 	const [description, setDescription] = useState<string>('');
 	const [level, setLevel] = useState<number>(1);
 	const [image, setImage] = useState<File | null>();
 	const [category, setCategory] = useState<string>('');
-	const [selectPage, setSelectPage] = useState<number>(1);
-	const [skills, setSkills] = useState<Skill[]>([]);
-	const [totalCnt, setTotalCnt] = useState<number>(0);
 	const [updateSkillId, setUpdateSkillId] = useState<number | null>();
 	const [updateSkill, setUpdateSkill] = useState<Skill | null>();
 	const [newImage, setNewImage] = useState<File | null>();
-	const [selectCategory, setSelectCategory] = useState<string>();
 	const [changeOrder, setChangeOrder] = useState<boolean>(false);
 	const imageRef = useRef<HTMLInputElement>(null);
-	const take = 20;
+
+	const selectCategory = useSearchParams().get('c') ?? '';
+	const reordering = changeOrder && !selectCategory;
+	const list = useAdminList<Skill>('/skill', 'order', 'asc', selectCategory);
+	const {
+		rows: skills,
+		page: selectPage,
+		totalCnt,
+		take,
+		orderBy,
+		order,
+		busy,
+	} = list;
 
 	async function handleCreateSkill(e: MouseEvent<HTMLButtonElement>) {
 		e.preventDefault();
-		try {
+		await list.mutate(async () => {
 			const formData = new FormData();
 			formData.append('title', title);
 			formData.append('description', description);
@@ -91,18 +89,12 @@ function SkillComponent() {
 				}
 				setCategory('');
 			}
-		} catch (err) {
-			if (isAxiosError(err)) {
-				toast.error(err.response?.data.error || '오류가 발생했습니다');
-			}
-		} finally {
-			setLoad(true);
-		}
+		});
 	}
 
 	async function handleUpdateSkill(e: MouseEvent<HTMLButtonElement>) {
 		e.preventDefault();
-		try {
+		await list.mutate(async () => {
 			const formData = new FormData();
 			if (updateSkill) {
 				formData.append('id', String(updateSkill.id));
@@ -121,21 +113,15 @@ function SkillComponent() {
 				setUpdateSkillId(null);
 				setUpdateSkill(null);
 				setNewImage(null);
-				toast.success(message);
 			}
-		} catch (err) {
-			if (isAxiosError(err)) {
-				toast.error(err.response?.data.error || '오류가 발생했습니다');
-			}
-		} finally {
-			setLoad(true);
-		}
+		});
 	}
 
 	function handleDeleteSkill(skillId: number) {
 		return async (e: MouseEvent<HTMLButtonElement>) => {
 			e.preventDefault();
-			try {
+			if (busy || !window.confirm('이 항목을 삭제하시겠습니까?')) return;
+			await list.mutate(async () => {
 				const body = { id: skillId };
 				const {
 					data: { message },
@@ -148,15 +134,7 @@ function SkillComponent() {
 					setUpdateSkillId(null);
 					setUpdateSkill(null);
 				}
-			} catch (err) {
-				if (isAxiosError(err)) {
-					toast.error(
-						err.response?.data.error || '오류가 발생했습니다'
-					);
-				}
-			} finally {
-				setLoad(true);
-			}
+			});
 		};
 	}
 
@@ -182,41 +160,6 @@ function SkillComponent() {
 		};
 	}
 
-	const handleSort = (column: string) => {
-		if (changeOrder) return;
-		if (orderBy === column) {
-			setOrder(order === 'asc' ? 'desc' : 'asc');
-		} else {
-			setOrderBy(column);
-			setOrder('asc');
-		}
-		setLoad(true);
-	};
-
-	const getSkill = useCallback(async () => {
-		const params = {
-			page: selectPage,
-			category: selectCategory,
-			take,
-			orderBy,
-			order,
-		};
-		try {
-			const {
-				data: { data, totalCnt },
-			} = await instance.get('/skill', { params });
-			setSkills(data);
-			setTotalCnt(totalCnt);
-			setLoad(false);
-		} catch (err) {
-			if (isAxiosError(err)) {
-				toast.error(err.response?.data.error || '오류가 발생했습니다');
-			}
-		} finally {
-			setLoad(false);
-		}
-	}, [selectPage, selectCategory, take, orderBy, order]);
-
 	function handleCategoryChange(value: string, page?: number) {
 		const params = {
 			...(value !== 'All' && { c: value }),
@@ -227,66 +170,12 @@ function SkillComponent() {
 		router.push(queryString ? `${pathname}?${queryString}` : pathname);
 	}
 
-	async function handleDragEnd(event: DragEndEvent) {
-		const { active, over } = event;
-		const originalSkills = [...skills];
-		if (active.id !== over?.id && skills) {
-			try {
-				const oldIndex = skills.findIndex(
-					(skill) => skill.id === active.id
-				);
-				const newIndex = skills.findIndex(
-					(skill) => skill.id === over?.id
-				);
-				const newOrder = arrayMove(skills, oldIndex, newIndex);
-				setSkills(newOrder);
-				const body = newOrder.map((item, index) => ({
-					id: item.id,
-					prevOrder: item.order,
-					order: (selectPage - 1) * take + index + 1,
-				}));
-				const {
-					data: { message },
-					status,
-				} = await instance.patch('/skill', { data: body });
-				if (status === 200) {
-					toast.success(message);
-				}
-			} catch (err) {
-				if (isAxiosError(err)) {
-					toast.error(
-						err.response?.data.error || '오류가 발생했습니다'
-					);
-				}
-				setSkills(originalSkills);
-			} finally {
-				setChangeOrder(false);
-			}
-		}
-	}
-
-	useEffect(() => {
-		if (load) {
-			getSkill();
-		}
-	}, [load, getSkill]);
-
-	useEffect(() => {
-		const paramsPage = searchParams.get('p') || '1';
-		const paramsCategory = searchParams.get('c') || '';
-		setSelectPage(parseInt(paramsPage));
-		setSelectCategory(paramsCategory);
-	}, [searchParams]);
-
-	useEffect(() => {
-		setLoad(true);
-	}, [selectPage, selectCategory]);
-
 	return (
 		<div className="m-5 py-10 rounded-lg bg-card">
 			<div className="p-4 pt-0">
 				<Select
 					onValueChange={handleCategoryChange}
+					disabled={list.writing || reordering}
 					value={selectCategory}
 				>
 					<SelectTrigger className="w-[180px]">
@@ -305,9 +194,14 @@ function SkillComponent() {
 			</div>
 			<DndContext
 				collisionDetection={closestCenter}
-				onDragEnd={handleDragEnd}
+				onDragEnd={(event) => {
+					if (reordering)
+						list.reorder(event, skills, () =>
+							setChangeOrder(false)
+						);
+				}}
 			>
-				<table className="w-full border-collapse table-fixed [&_th]:border [&_th]:px-2 [&_th]:py-1 [&_th:first-of-type]:border-l-0 [&_th:last-of-type]:border-r-0 [&_td]:border [&_td]:px-2 [&_td]:py-1 [&_td]:overflow-auto [&_td:first-of-type]:border-l-0 [&_td:last-of-type]:border-r-0">
+				<ListTable columns={7}>
 					<thead>
 						<tr>
 							<th>
@@ -315,73 +209,52 @@ function SkillComponent() {
 								<Button
 									className="ml-4"
 									size="sm"
+									disabled={busy}
 									onClick={() => {
-										setChangeOrder(!changeOrder);
-										setOrderBy('order');
-										setOrder('asc');
-										handleCategoryChange('All', selectPage);
-										setLoad(true);
+										setChangeOrder(!reordering);
+										list.resetSort();
+										if (selectCategory)
+											handleCategoryChange(
+												'All',
+												selectPage
+											);
 									}}
 								>
-									{changeOrder ? '취소' : '변경'}
+									{reordering ? '취소' : '변경'}
 								</Button>
 							</th>
-							<th
-								className={cn(
-									!changeOrder && 'cursor-pointer',
-									'relative'
-								)}
-								onClick={() => handleSort('title')}
+							<SortHeader
+								orderBy={orderBy}
+								order={order}
+								currentColumn="title"
+								onSort={list.sort}
+								disabled={list.writing || reordering}
+								hideIcon={reordering}
 							>
 								이름
-								{!changeOrder && (
-									<span className="absolute right-2 bottom-1/2 translate-y-1/2">
-										<SortIcon
-											orderBy={orderBy}
-											currentColumn="title"
-											order={order}
-										/>
-									</span>
-								)}
-							</th>
+							</SortHeader>
 							<th className="cursor-pointer">설명</th>
-							<th
-								className={cn(
-									!changeOrder && 'cursor-pointer',
-									'relative'
-								)}
-								onClick={() => handleSort('level')}
+							<SortHeader
+								orderBy={orderBy}
+								order={order}
+								currentColumn="level"
+								onSort={list.sort}
+								disabled={list.writing || reordering}
+								hideIcon={reordering}
 							>
 								수준
-								{!changeOrder && (
-									<span className="absolute right-2 bottom-1/2 translate-y-1/2">
-										<SortIcon
-											orderBy={orderBy}
-											currentColumn="value"
-											order={order}
-										/>
-									</span>
-								)}
-							</th>
+							</SortHeader>
 							<th>이미지</th>
-							<th
-								className={cn(
-									!changeOrder && 'cursor-pointer',
-									'relative'
-								)}
-								onClick={() => handleSort('category')}
+							<SortHeader
+								orderBy={orderBy}
+								order={order}
+								currentColumn="category"
+								onSort={list.sort}
+								disabled={list.writing || reordering}
+								hideIcon={reordering}
 							>
 								카테고리
-								{!changeOrder && (
-									<span className="absolute right-2 bottom-1/2 translate-y-1/2">
-										<SortIcon
-											orderBy={orderBy}
-											currentColumn="label"
-											order={order}
-										/>
-									</span>
-								)}
-							</th>
+							</SortHeader>
 							<th></th>
 						</tr>
 					</thead>
@@ -395,7 +268,7 @@ function SkillComponent() {
 									value={title}
 									required
 									onChange={(e) => setTitle(e.target.value)}
-									disabled={changeOrder}
+									disabled={reordering || busy}
 								/>
 							</td>
 							<td>
@@ -407,7 +280,7 @@ function SkillComponent() {
 									onChange={(e) =>
 										setDescription(e.target.value)
 									}
-									disabled={changeOrder}
+									disabled={reordering || busy}
 								/>
 							</td>
 							<td>
@@ -421,7 +294,7 @@ function SkillComponent() {
 									onChange={(e) =>
 										setLevel(Number(e.target.value))
 									}
-									disabled={changeOrder}
+									disabled={reordering || busy}
 								/>
 							</td>
 							<td>
@@ -432,7 +305,7 @@ function SkillComponent() {
 									width={36}
 									height={36}
 									className="items-center justify-center"
-									disabled={changeOrder}
+									disabled={reordering || busy}
 								/>
 							</td>
 							<td>
@@ -444,7 +317,7 @@ function SkillComponent() {
 									onChange={(e) =>
 										setCategory(e.target.value)
 									}
-									disabled={changeOrder}
+									disabled={reordering || busy}
 								/>
 							</td>
 							<td>
@@ -452,13 +325,21 @@ function SkillComponent() {
 									<Button
 										size="sm"
 										onClick={handleCreateSkill}
-										disabled={changeOrder}
+										disabled={reordering || busy}
 									>
 										추가
 									</Button>
 								</div>
 							</td>
 						</tr>
+						<ListStatusRow
+							columns={7}
+							loading={list.loading}
+							writing={list.writing}
+							error={list.error}
+							empty={skills.length === 0}
+							reload={list.reload}
+						/>
 						<SortableContext
 							items={skills}
 							strategy={verticalListSortingStrategy}
@@ -471,11 +352,12 @@ function SkillComponent() {
 									total={totalCnt}
 									page={selectPage}
 									skill={skill}
-									changeOrder={changeOrder}
+									changeOrder={reordering}
 									updateSkillId={updateSkillId}
 									updateSkill={updateSkill}
 									setNewImage={setNewImage}
-									setLoad={setLoad}
+									busy={busy}
+									onMove={list.move}
 									onChange={changeSelectUpdateSkill}
 									onUpdate={handleUpdateSkill}
 									onSelect={selectUpdateSkill}
@@ -484,14 +366,14 @@ function SkillComponent() {
 							))}
 						</SortableContext>
 					</tbody>
-				</table>
+				</ListTable>
 			</DndContext>
 			<AdminPagination
 				className="mt-10"
 				page={selectPage}
 				totalCnt={totalCnt}
 				take={take}
-				size={5}
+				disabled={list.loading || list.writing}
 			/>
 		</div>
 	);
