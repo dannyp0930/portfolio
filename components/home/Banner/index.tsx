@@ -36,7 +36,7 @@ export default function Banner({ intro }: BannerProps) {
 	return (
 		<section
 			id="banner"
-			className="relative flex flex-col items-center justify-center w-full text-center min-h-[100svh] h-dvh gap-7 py-24"
+			className="relative flex min-h-[100svh] w-full flex-col items-center justify-center gap-7 pb-24 pt-28 text-center"
 		>
 			{intro.bannerImageUrl && (
 				<picture className="absolute top-0 left-0 z-10 w-full h-full opacity-40">
@@ -50,8 +50,10 @@ export default function Banner({ intro }: BannerProps) {
 				</picture>
 			)}
 
-			<div className="z-20 content">
-				<h1 className="w-80 mg:w-full m-auto">{intro.title}</h1>
+			<div className="z-20 w-full max-w-3xl px-5">
+				<h1 className="text-balance break-words text-3xl leading-tight sm:text-4xl">
+					{intro.title}
+				</h1>
 				<BannerDescription description={intro.description as string} />
 			</div>
 
@@ -78,7 +80,7 @@ export default function Banner({ intro }: BannerProps) {
 				</span>
 				<FontAwesomeIcon
 					icon={faChevronDown}
-					className="w-4 h-4 animate-bounce"
+					className="w-4 h-4 motion-safe:animate-bounce"
 				/>
 			</div>
 		</section>

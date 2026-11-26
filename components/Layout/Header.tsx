@@ -10,14 +10,7 @@ type SectionId = (typeof NAV_SECTIONS)[number];
 
 export default function Header() {
 	const { user } = useUser();
-	const [session, setSession] = useState<boolean>();
-	const [isAdmin, setIsAdmin] = useState<boolean>();
 	const [activeSection, setActiveSection] = useState<SectionId | null>(null);
-
-	useEffect(() => {
-		setSession(user ? true : false);
-		setIsAdmin(user?.isAdmin ?? false);
-	}, [user]);
 
 	// IntersectionObserver로 현재 뷰포트에 보이는 섹션 감지
 	useEffect(() => {
@@ -139,12 +132,13 @@ export default function Header() {
 							</svg>
 						</Link>
 					</li>
-					{session ? (
-						isAdmin ? (
+					{user ? (
+						user.isAdmin ? (
 							<li>
 								<Link
 									className="inline-flex items-center justify-center min-h-[44px] min-w-[44px] md:min-h-0 md:min-w-0 hover:underline text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme focus-visible:rounded"
 									href="/dashboard"
+									aria-label="Dashboard"
 								>
 									<span className="hidden md:inline">
 										Dashboard
@@ -195,27 +189,7 @@ export default function Header() {
 								</li>
 							</>
 						)
-					) : (
-						<li>
-							<Link
-								className="inline-flex items-center justify-center min-h-[44px] min-w-[44px] md:min-h-0 md:min-w-0 hover:underline text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme focus-visible:rounded"
-								href="/login"
-							>
-								<span className="hidden md:inline">Login</span>
-								<svg
-									className="w-6 h-6 stroke-2 md:hidden stroke-white fill-transparent"
-									xmlns="http://www.w3.org/2000/svg"
-									viewBox="0 0 24 24"
-								>
-									<path
-										strokeLinecap="round"
-										strokeLinejoin="round"
-										d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z"
-									/>
-								</svg>
-							</Link>
-						</li>
-					)}
+					) : null}
 				</ul>
 			</nav>
 		</header>
