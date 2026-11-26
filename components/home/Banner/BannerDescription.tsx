@@ -12,20 +12,21 @@ export default function BannerDescription({
 	const [expanded, setExpanded] = useState(false);
 
 	return (
-		<div className="px-5 mt-10">
-			<div
+		<div className="mx-auto mt-5 max-w-prose sm:mt-7">
+			<p
 				id="banner-description"
-				className={`overflow-hidden transition-[max-height] duration-300 ease-out md:max-h-none ${
-					expanded ? 'max-h-[800px]' : 'max-h-36'
+				className={`whitespace-pre-wrap break-keep [overflow-wrap:anywhere] ${
+					expanded ? '' : 'line-clamp-4 md:line-clamp-none'
 				}`}
 			>
-				<p className="break-keep whitespace-pre-wrap">{description}</p>
-			</div>
+				{description}
+			</p>
 			<button
+				type="button"
 				onClick={() => setExpanded(!expanded)}
 				aria-expanded={expanded}
 				aria-controls="banner-description"
-				className="mt-2 text-sm text-theme-sub/70 underline underline-offset-2 md:hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-sub rounded"
+				className="mt-1 min-h-11 rounded px-3 text-sm text-theme-sub underline underline-offset-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-sub md:hidden"
 			>
 				{expanded ? '접기' : '더 보기'}
 			</button>
