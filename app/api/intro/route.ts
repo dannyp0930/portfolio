@@ -6,7 +6,7 @@ import deleteFromS3 from '@/lib/deleteFromS3';
 import prisma from '@/lib/prisma';
 
 export async function PUT(req: NextRequest) {
-	if (!isAdmin(req)) {
+	if (!(await isAdmin(req))) {
 		return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
 	}
 	const formData = await req.formData();

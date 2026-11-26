@@ -12,13 +12,14 @@ import {
 	SidebarMenu,
 	SidebarMenuButton,
 	SidebarMenuItem,
+	useSidebar,
 } from '@/components/ui/sidebar';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import { Button } from '@/components/ui/button';
-import { MouseEvent } from 'react';
 import { instance } from '@/app/api/instance';
 import { toast } from 'sonner';
-import { isAxiosError } from 'axios';
+import { useUser } from '@/context/UserContext';
+import { actionError, usePendingAction } from './FormFeedback';
 
 export default function AdminSidebar() {
 	const adminRoutes = [
@@ -76,10 +77,15 @@ export default function AdminSidebar() {
 		},
 	];
 	const pathname = usePathname();
-	const router = useRouter();
+	const { setOpenMobile } = useSidebar();
+	const { setUser } = useUser();
+	const logout = usePendingAction();
 
-	async function handleLogout(e: MouseEvent<HTMLButtonElement>) {
-		e.preventDefault();
+	function closeMobile() {
+		setOpenMobile(false);
+	}
+
+	async function handleLogout() {
 		try {
 			const {
 				data: { message },
@@ -87,21 +93,23 @@ export default function AdminSidebar() {
 			} = await instance.post('/logout');
 			if (status === 200) {
 				toast.success(message);
-				router.push('/');
+				closeMobile();
+				window.location.replace('/');
+				setUser(null);
 			}
 		} catch (err) {
-			if (isAxiosError(err)) {
-				toast.error(err.response?.data.error || '오류가 발생했습니다');
-			}
+			toast.error(actionError(err));
 		}
 	}
 	return (
-		<Sidebar>
+		<Sidebar mobileTitle="Dashboard navigation">
 			<SidebarHeader>
 				<SidebarMenu>
 					<SidebarMenuItem>
 						<SidebarMenuButton asChild>
-							<Link href="/">Home</Link>
+							<Link href="/" onNavigate={closeMobile}>
+								Home
+							</Link>
 						</SidebarMenuButton>
 					</SidebarMenuItem>
 				</SidebarMenu>
@@ -117,7 +125,15 @@ export default function AdminSidebar() {
 										asChild
 										isActive={pathname === route.url}
 									>
-										<Link href={route.url}>
+										<Link
+											href={route.url}
+											onNavigate={closeMobile}
+											aria-current={
+												pathname === route.url
+													? 'page'
+													: undefined
+											}
+										>
 											{route.title}
 										</Link>
 									</SidebarMenuButton>
@@ -136,7 +152,15 @@ export default function AdminSidebar() {
 										asChild
 										isActive={pathname === route.url}
 									>
-										<Link href={route.url}>
+										<Link
+											href={route.url}
+											onNavigate={closeMobile}
+											aria-current={
+												pathname === route.url
+													? 'page'
+													: undefined
+											}
+										>
 											{route.title}
 										</Link>
 									</SidebarMenuButton>
@@ -155,7 +179,15 @@ export default function AdminSidebar() {
 										asChild
 										isActive={pathname === route.url}
 									>
-										<Link href={route.url}>
+										<Link
+											href={route.url}
+											onNavigate={closeMobile}
+											aria-current={
+												pathname === route.url
+													? 'page'
+													: undefined
+											}
+										>
 											{route.title}
 										</Link>
 									</SidebarMenuButton>
@@ -166,8 +198,12 @@ export default function AdminSidebar() {
 				</SidebarGroup>
 			</SidebarContent>
 			<SidebarFooter>
-				<Button onClick={handleLogout} variant="destructive">
-					Logout
+				<Button
+					onClick={() => void logout.run(handleLogout)}
+					disabled={logout.pending}
+					variant="destructive"
+				>
+					{logout.pending ? 'Logging out…' : 'Logout'}
 				</Button>
 			</SidebarFooter>
 		</Sidebar>

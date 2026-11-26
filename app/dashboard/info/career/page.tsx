@@ -2,55 +2,52 @@
 
 import { instance } from '@/app/api/instance';
 import AdminPagination from '@/components/dashboard/AdminPagination';
+import ListTable, {
+	ListFallback,
+	ListStatusRow,
+} from '@/components/dashboard/ListTable';
+import useAdminList from '@/components/dashboard/useAdminList';
 import { Button } from '@/components/ui/button';
-import { isAxiosError } from 'axios';
 import dayjs from 'dayjs';
-import { useSearchParams } from 'next/navigation';
-import {
-	ChangeEvent,
-	MouseEvent,
-	Suspense,
-	useCallback,
-	useEffect,
-	useState,
-} from 'react';
+import { ChangeEvent, MouseEvent, Suspense, useState } from 'react';
 import { toast } from 'sonner';
-import SortIcon from '@/components/dashboard/SortIcon';
+import { SortHeader } from '@/components/dashboard/SortIcon';
 import { validateAndShowRequiredFields } from '@/lib/utils/validation';
-import { cn } from '@/lib/utils';
 import CareerRow from '@/components/dashboard/info/CareerRow';
 import {
-	arrayMove,
 	SortableContext,
 	verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
-import { closestCenter, DndContext, DragEndEvent } from '@dnd-kit/core';
+import { closestCenter, DndContext } from '@dnd-kit/core';
 
 export default function Career() {
 	return (
-		<Suspense>
+		<Suspense fallback={<ListFallback />}>
 			<CareerContent />
 		</Suspense>
 	);
 }
 
 function CareerContent() {
-	const searchParams = useSearchParams();
-	const [load, setLoad] = useState<boolean>(true);
 	const [organization, setOrganization] = useState<string>('');
 	const [position, setPosition] = useState<string>('');
 	const [description, setDescription] = useState<string>('');
 	const [startDate, setStartDate] = useState<string>('');
 	const [endDate, setEndDate] = useState<string>('');
-	const [selectPage, setSelectPage] = useState<number>(1);
-	const [careers, setCareers] = useState<CareerOverview[]>([]);
-	const [totalCnt, setTotalCnt] = useState<number>(0);
 	const [updateCareerId, setUpdateCareerId] = useState<number | null>();
 	const [updateCareer, setUpdateCareer] = useState<CareerOverview | null>();
-	const take = 20;
-	const [orderBy, setOrderBy] = useState<string>('order');
-	const [order, setOrder] = useState<Order>('asc');
 	const [changeOrder, setChangeOrder] = useState<boolean>(false);
+
+	const list = useAdminList<CareerOverview>('/info/career');
+	const {
+		rows: careers,
+		page: selectPage,
+		totalCnt,
+		take,
+		orderBy,
+		order,
+		busy,
+	} = list;
 
 	async function handleCreateCareer(e: MouseEvent<HTMLButtonElement>) {
 		e.preventDefault();
@@ -62,7 +59,7 @@ function CareerContent() {
 		};
 		const erroRes = validateAndShowRequiredFields(fields, 'careerOverview');
 		if (erroRes) return true;
-		try {
+		await list.mutate(async () => {
 			const body = {
 				organization,
 				position,
@@ -82,18 +79,12 @@ function CareerContent() {
 				setStartDate('');
 				setEndDate('');
 			}
-		} catch (err) {
-			if (isAxiosError(err)) {
-				toast.error(err.response?.data.error || '오류가 발생했습니다');
-			}
-		} finally {
-			setLoad(true);
-		}
+		});
 	}
 
 	async function handleUpdateCareer(e: MouseEvent<HTMLButtonElement>) {
 		e.preventDefault();
-		try {
+		await list.mutate(async () => {
 			const body = {
 				...updateCareer,
 				startDate: dayjs(updateCareer?.startDate).toDate(),
@@ -108,19 +99,14 @@ function CareerContent() {
 				setUpdateCareerId(null);
 				setUpdateCareer(null);
 			}
-		} catch (err) {
-			if (isAxiosError(err)) {
-				toast.error(err.response?.data.error || '오류가 발생했습니다');
-			}
-		} finally {
-			setLoad(true);
-		}
+		});
 	}
 
 	function handleDeleteCareer(careerId: number) {
 		return async (e: MouseEvent<HTMLButtonElement>) => {
 			e.preventDefault();
-			try {
+			if (busy || !window.confirm('이 항목을 삭제하시겠습니까?')) return;
+			await list.mutate(async () => {
 				const body = { id: careerId };
 				const {
 					data: { message },
@@ -131,15 +117,7 @@ function CareerContent() {
 					setUpdateCareerId(null);
 					setUpdateCareer(null);
 				}
-			} catch (err) {
-				if (isAxiosError(err)) {
-					toast.error(
-						err.response?.data.error || '오류가 발생했습니다'
-					);
-				}
-			} finally {
-				setLoad(true);
-			}
+			});
 		};
 	}
 
@@ -165,100 +143,18 @@ function CareerContent() {
 		};
 	}
 
-	const handleSort = (column: string) => {
-		if (changeOrder) return;
-		if (orderBy === column) {
-			setOrder(order === 'asc' ? 'desc' : 'asc');
-		} else {
-			setOrderBy(column);
-			setOrder('asc');
-		}
-		setLoad(true);
-	};
-
-	const getCareer = useCallback(async () => {
-		const params = {
-			page: selectPage,
-			take,
-			orderBy,
-			order,
-		};
-		try {
-			const {
-				data: { data, totalCnt },
-			} = await instance.get('/info/career', { params });
-			setCareers(data);
-			setTotalCnt(totalCnt);
-			setLoad(false);
-		} catch (err) {
-			if (isAxiosError(err)) {
-				toast.error(err.response?.data.error || '오류가 발생했습니다');
-			}
-		}
-	}, [selectPage, take, orderBy, order]);
-
-	async function handleDragEnd(event: DragEndEvent) {
-		const { active, over } = event;
-		const originalCareers = [...careers];
-		if (active.id !== over?.id && careers) {
-			try {
-				const oldIndex = careers.findIndex(
-					(career) => career.id === active.id
-				);
-				const newIndex = careers.findIndex(
-					(career) => career.id === over?.id
-				);
-				const newOrder = arrayMove(careers, oldIndex, newIndex);
-				setCareers(newOrder);
-				const body = newOrder.map((item, index) => ({
-					id: item.id,
-					prevOrder: item.order,
-					order: (selectPage - 1) * take + index + 1,
-				}));
-				const {
-					data: { message },
-					status,
-				} = await instance.patch('/info/career', { data: body });
-				if (status === 200) {
-					toast.success(message);
-				}
-			} catch (err) {
-				if (isAxiosError(err)) {
-					toast.error(
-						err.response?.data.error || '오류가 발생했습니다'
-					);
-				}
-				setCareers(originalCareers);
-			} finally {
-				setChangeOrder(false);
-			}
-		}
-	}
-
-	useEffect(() => {
-		if (load) {
-			getCareer();
-		}
-	}, [load, getCareer]);
-
-	useEffect(() => {
-		const parmasPage = searchParams.get('p');
-		if (parmasPage) {
-			setSelectPage(parseInt(parmasPage));
-		}
-	}, [searchParams]);
-
-	useEffect(() => {
-		setLoad(true);
-	}, [selectPage]);
-
 	return (
 		<div className="py-10 rounded-lg bg-card">
 			<DndContext
 				collisionDetection={closestCenter}
-				onDragEnd={handleDragEnd}
+				onDragEnd={(event) => {
+					if (changeOrder)
+						list.reorder(event, careers, () =>
+							setChangeOrder(false)
+						);
+				}}
 			>
-				<table className="w-full border-collapse table-fixed [&_th]:border [&_th]:px-2 [&_th]:py-1 [&_th:first-of-type]:border-l-0 [&_th:last-of-type]:border-r-0 [&_td]:border [&_td]:px-2 [&_td]:py-1 [&_td]:overflow-auto [&_td:first-of-type]:border-l-0 [&_td:last-of-type]:border-r-0">
+				<ListTable columns={7}>
 					<thead>
 						<tr>
 							<th>
@@ -266,72 +162,47 @@ function CareerContent() {
 								<Button
 									className="ml-4"
 									size="sm"
+									disabled={busy}
 									onClick={() => {
 										setChangeOrder(!changeOrder);
-										setOrderBy('order');
-										setOrder('asc');
-										setLoad(true);
+										list.resetSort();
 									}}
 								>
 									{changeOrder ? '취소' : '변경'}
 								</Button>
 							</th>
-							<th
-								className={cn(
-									!changeOrder && 'cursor-pointer',
-									'relative'
-								)}
-								onClick={() => handleSort('organization')}
+							<SortHeader
+								orderBy={orderBy}
+								order={order}
+								currentColumn="organization"
+								onSort={list.sort}
+								disabled={list.writing || changeOrder}
+								hideIcon={changeOrder}
 							>
 								조직
-								{!changeOrder && (
-									<span className="absolute right-2 bottom-1/2 translate-y-1/2">
-										<SortIcon
-											orderBy={orderBy}
-											currentColumn="organization"
-											order={order}
-										/>
-									</span>
-								)}
-							</th>
+							</SortHeader>
 							<th>직무</th>
 							<th>설명</th>
-							<th
-								className={cn(
-									!changeOrder && 'cursor-pointer',
-									'relative'
-								)}
-								onClick={() => handleSort('startDate')}
+							<SortHeader
+								orderBy={orderBy}
+								order={order}
+								currentColumn="startDate"
+								onSort={list.sort}
+								disabled={list.writing || changeOrder}
+								hideIcon={changeOrder}
 							>
 								시작
-								{!changeOrder && (
-									<span className="absolute right-2 bottom-1/2 translate-y-1/2">
-										<SortIcon
-											orderBy={orderBy}
-											currentColumn="startDate"
-											order={order}
-										/>
-									</span>
-								)}
-							</th>
-							<th
-								className={cn(
-									!changeOrder && 'cursor-pointer',
-									'relative'
-								)}
-								onClick={() => handleSort('endDate')}
+							</SortHeader>
+							<SortHeader
+								orderBy={orderBy}
+								order={order}
+								currentColumn="endDate"
+								onSort={list.sort}
+								disabled={list.writing || changeOrder}
+								hideIcon={changeOrder}
 							>
 								종료
-								{!changeOrder && (
-									<span className="absolute right-2 bottom-1/2 translate-y-1/2">
-										<SortIcon
-											orderBy={orderBy}
-											currentColumn="endDate"
-											order={order}
-										/>
-									</span>
-								)}
-							</th>
+							</SortHeader>
 							<th></th>
 						</tr>
 					</thead>
@@ -347,7 +218,7 @@ function CareerContent() {
 									onChange={(e) =>
 										setOrganization(e.target.value)
 									}
-									disabled={changeOrder}
+									disabled={changeOrder || busy}
 								/>
 							</td>
 							<td>
@@ -359,7 +230,7 @@ function CareerContent() {
 									onChange={(e) =>
 										setPosition(e.target.value)
 									}
-									disabled={changeOrder}
+									disabled={changeOrder || busy}
 								/>
 							</td>
 							<td>
@@ -371,7 +242,7 @@ function CareerContent() {
 									onChange={(e) =>
 										setDescription(e.target.value)
 									}
-									disabled={changeOrder}
+									disabled={changeOrder || busy}
 								/>
 							</td>
 							<td>
@@ -383,7 +254,7 @@ function CareerContent() {
 									onChange={(e) =>
 										setStartDate(e.target.value)
 									}
-									disabled={changeOrder}
+									disabled={changeOrder || busy}
 								/>
 							</td>
 							<td>
@@ -393,7 +264,7 @@ function CareerContent() {
 									value={endDate}
 									required
 									onChange={(e) => setEndDate(e.target.value)}
-									disabled={changeOrder}
+									disabled={changeOrder || busy}
 								/>
 							</td>
 							<td>
@@ -401,13 +272,21 @@ function CareerContent() {
 									<Button
 										size="sm"
 										onClick={handleCreateCareer}
-										disabled={changeOrder}
+										disabled={changeOrder || busy}
 									>
 										추가
 									</Button>
 								</div>
 							</td>
 						</tr>
+						<ListStatusRow
+							columns={7}
+							loading={list.loading}
+							writing={list.writing}
+							error={list.error}
+							empty={careers.length === 0}
+							reload={list.reload}
+						/>
 						<SortableContext
 							items={careers}
 							strategy={verticalListSortingStrategy}
@@ -423,7 +302,8 @@ function CareerContent() {
 									updateCareerId={updateCareerId}
 									updateCareer={updateCareer}
 									changeOrder={changeOrder}
-									setLoad={setLoad}
+									busy={busy}
+									onMove={list.move}
 									onChange={changeSelectUpdateCareer}
 									onUpdate={handleUpdateCareer}
 									onSelect={selectUpdateCareer}
@@ -432,14 +312,14 @@ function CareerContent() {
 							))}
 						</SortableContext>
 					</tbody>
-				</table>
+				</ListTable>
 			</DndContext>
 			<AdminPagination
 				className="mt-10"
 				page={selectPage}
 				totalCnt={totalCnt}
 				take={take}
-				size={5}
+				disabled={list.loading || list.writing}
 			/>
 		</div>
 	);

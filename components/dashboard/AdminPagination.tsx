@@ -8,7 +8,6 @@ import {
 	PaginationPrevious,
 } from '@/components/ui/pagination';
 import { useSearchParams } from 'next/navigation';
-import { useCallback, useEffect, useState } from 'react';
 
 export default function AdminPagination({
 	className,
@@ -16,74 +15,84 @@ export default function AdminPagination({
 	totalCnt,
 	take,
 	size = 5,
-}: AdminPaginationProps) {
+	disabled,
+}: AdminPaginationProps & { disabled?: boolean }) {
 	const searchParams = useSearchParams();
-	const totalPages = Math.ceil(totalCnt / take);
-	const [pagesArray, setPagesArray] = useState<number[]>([]);
-	const createQueryString = useCallback(
-		(name: string, value: string) => {
-			const params = new URLSearchParams(searchParams.toString());
-			params.set(name, value);
-			return params.toString();
-		},
-		[searchParams]
+	const totalPages = Math.max(1, Math.ceil(totalCnt / take));
+	const count = Math.min(totalPages, size);
+	const start = Math.max(
+		1,
+		Math.min(page - Math.floor(count / 2), totalPages - count + 1)
 	);
-	useEffect(() => {
-		if (totalPages > size) {
-			let startPage = Math.max(1, page - Math.floor(size / 2));
-			let endPage = Math.min(totalPages, page + Math.floor(size / 2));
-			if (startPage === 1) {
-				endPage = size;
-			} else if (endPage === totalPages) {
-				startPage = totalPages - (size - 1);
-			}
-			setPagesArray(
-				Array.from({ length: size }, (_, i) => startPage + i)
-			);
-		} else {
-			setPagesArray(Array.from({ length: totalPages }, (_, i) => i + 1));
-		}
-	}, [totalPages, page, size]);
+	const pages = Array.from({ length: count }, (_, index) => start + index);
+
+	function href(targetPage: number) {
+		const params = new URLSearchParams(searchParams.toString());
+		params.set('p', String(targetPage));
+		return `?${params.toString()}`;
+	}
+
+	if (totalPages === 1 && page === 1) return null;
+
 	return (
-		<Pagination className={className}>
-			<PaginationContent>
+		<Pagination className={className} aria-label="목록 페이지">
+			<PaginationContent className="flex-wrap justify-center">
 				<PaginationItem>
-					{totalPages > size && page > 1 ? (
-						<PaginationPrevious
-							href={`?${createQueryString('p', (page - 1).toString())}`}
-						/>
-					) : (
-						<PaginationPrevious aria-disabled="true" />
-					)}
+					<PaginationPrevious
+						aria-label="이전 페이지"
+						href={href(Math.max(1, Math.min(page - 1, totalPages)))}
+						aria-disabled={disabled || page <= 1 || undefined}
+						tabIndex={disabled || page <= 1 ? -1 : undefined}
+						className="aria-disabled:pointer-events-none aria-disabled:opacity-50"
+						onClick={(event) => {
+							if (disabled || page <= 1) event.preventDefault();
+						}}
+					/>
 				</PaginationItem>
-				{pagesArray[0] !== 1 && (
-					<PaginationItem>
+				{start > 1 && (
+					<PaginationItem className="hidden sm:list-item">
 						<PaginationEllipsis />
 					</PaginationItem>
 				)}
-				{pagesArray.map((item) => (
+				{pages.map((item) => (
 					<PaginationItem key={item}>
 						<PaginationLink
 							isActive={page === item}
-							href={`?${createQueryString('p', item.toString())}`}
+							aria-label={`${item} 페이지`}
+							href={href(item)}
+							aria-disabled={disabled || undefined}
+							tabIndex={disabled ? -1 : undefined}
+							className="aria-disabled:pointer-events-none aria-disabled:opacity-50"
+							onClick={(event) => {
+								if (disabled || page === item)
+									event.preventDefault();
+							}}
 						>
 							{item}
 						</PaginationLink>
 					</PaginationItem>
 				))}
-				{totalPages > size && pagesArray[size - 1] !== totalPages && (
-					<PaginationItem>
+				{start + count - 1 < totalPages && (
+					<PaginationItem className="hidden sm:list-item">
 						<PaginationEllipsis />
 					</PaginationItem>
 				)}
 				<PaginationItem>
-					{page < totalPages ? (
-						<PaginationNext
-							href={`?${createQueryString('p', (page + 1).toString())}`}
-						/>
-					) : (
-						<PaginationNext aria-disabled="true" />
-					)}
+					<PaginationNext
+						aria-label="다음 페이지"
+						href={href(Math.min(page + 1, totalPages))}
+						aria-disabled={
+							disabled || page >= totalPages || undefined
+						}
+						tabIndex={
+							disabled || page >= totalPages ? -1 : undefined
+						}
+						className="aria-disabled:pointer-events-none aria-disabled:opacity-50"
+						onClick={(event) => {
+							if (disabled || page >= totalPages)
+								event.preventDefault();
+						}}
+					/>
 				</PaginationItem>
 			</PaginationContent>
 		</Pagination>

@@ -10,9 +10,9 @@ export default function AuthProvider({
 	children: React.ReactNode;
 }) {
 	const [user, setUser] = useState<UserContextType>(null);
-	useAuthCheck(setUser);
+	const { authStatus, retryAuth } = useAuthCheck(setUser);
 	return (
-		<UserContext.Provider value={{ user, setUser }}>
+		<UserContext.Provider value={{ user, setUser, authStatus, retryAuth }}>
 			{children}
 		</UserContext.Provider>
 	);

@@ -4,7 +4,7 @@ import uploadToS3 from '@/lib/uploadToS3';
 import deleteFromS3 from '@/lib/deleteFromS3';
 
 export async function POST(req: NextRequest) {
-	if (!isAdmin(req)) {
+	if (!(await isAdmin(req))) {
 		return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
 	}
 	try {
@@ -35,7 +35,7 @@ export async function POST(req: NextRequest) {
 }
 
 export async function DELETE(req: NextRequest) {
-	if (!isAdmin(req)) {
+	if (!(await isAdmin(req))) {
 		return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
 	}
 	const { imageUrl } = await req.json();

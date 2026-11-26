@@ -1,12 +1,9 @@
-import { instance } from '@/app/api/instance';
 import { Button } from '@/components/ui/button';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { isAxiosError } from 'axios';
 import dayjs from 'dayjs';
 import { ArrowDownFromLine, ArrowUpFromLine } from 'lucide-react';
-import { ChangeEvent, Dispatch, MouseEvent, SetStateAction } from 'react';
-import { toast } from 'sonner';
+import { ChangeEvent, MouseEvent } from 'react';
 
 export default function EducationRow({
 	idx,
@@ -17,7 +14,8 @@ export default function EducationRow({
 	changeOrder,
 	updateEducationId,
 	updateEducation,
-	setLoad,
+	busy,
+	onMove,
 	onChange,
 	onUpdate,
 	onSelect,
@@ -31,7 +29,8 @@ export default function EducationRow({
 	changeOrder: boolean;
 	updateEducationId: number | null | undefined;
 	updateEducation: Education | null | undefined;
-	setLoad: Dispatch<SetStateAction<boolean>>;
+	busy: boolean;
+	onMove: (id: number, order: number, dir: boolean) => Promise<void>;
 	onChange: (
 		key: keyof Education
 	) => (e: ChangeEvent<HTMLInputElement>) => void;
@@ -45,37 +44,12 @@ export default function EducationRow({
 }) {
 	const totalPages = Math.ceil(total / take);
 	const { attributes, listeners, setNodeRef, transform, transition } =
-		useSortable({ id: education.id });
+		useSortable({ id: education.id, disabled: busy || !changeOrder });
 
 	const style = {
 		transform: CSS.Transform.toString(transform),
 		transition,
 	};
-
-	function handleOrder(id: number, order: number, dir: boolean) {
-		return async (e: MouseEvent<HTMLButtonElement>) => {
-			e.preventDefault();
-			try {
-				const {
-					data: { message },
-					status,
-				} = await instance.patch('/info/education', {
-					data: { id, order, dir },
-				});
-				if (status === 200) {
-					toast.success(message);
-				}
-			} catch (err) {
-				if (isAxiosError(err)) {
-					toast.error(
-						err.response?.data.error || '오류가 발생했습니다'
-					);
-				}
-			} finally {
-				setLoad(true);
-			}
-		};
-	}
 
 	return (
 		<tr
@@ -100,11 +74,16 @@ export default function EducationRow({
 						{idx === 0 && page !== 1 && (
 							<Button
 								variant="ghost"
-								onClick={handleOrder(
-									education.id,
-									education.order as number,
-									false
-								)}
+								disabled={busy || education.order == null}
+								aria-label="이전 페이지로 이동"
+								onClick={() => {
+									if (education.order != null)
+										void onMove(
+											education.id,
+											education.order,
+											false
+										);
+								}}
 							>
 								<ArrowUpFromLine />
 							</Button>
@@ -112,11 +91,16 @@ export default function EducationRow({
 						{idx === take - 1 && page !== totalPages && (
 							<Button
 								variant="ghost"
-								onClick={handleOrder(
-									education.id,
-									education.order as number,
-									true
-								)}
+								disabled={busy || education.order == null}
+								aria-label="다음 페이지로 이동"
+								onClick={() => {
+									if (education.order != null)
+										void onMove(
+											education.id,
+											education.order,
+											true
+										);
+								}}
 							>
 								<ArrowDownFromLine />
 							</Button>
@@ -132,6 +116,7 @@ export default function EducationRow({
 						<input
 							className="w-full focus:outline-none"
 							aria-label="학교명"
+							disabled={busy}
 							onChange={onChange('institutionName')}
 							type="text"
 							value={updateEducation?.institutionName}
@@ -141,6 +126,7 @@ export default function EducationRow({
 						<input
 							className="w-full focus:outline-none"
 							aria-label="학위 상태"
+							disabled={busy}
 							onChange={onChange('degreeStatus')}
 							type="text"
 							value={updateEducation?.degreeStatus}
@@ -150,6 +136,7 @@ export default function EducationRow({
 						<input
 							className="w-full focus:outline-none"
 							aria-label="시작일"
+							disabled={busy}
 							onChange={onChange('startDate')}
 							type="date"
 							value={dayjs(updateEducation?.startDate).format(
@@ -161,6 +148,7 @@ export default function EducationRow({
 						<input
 							className="w-full focus:outline-none"
 							aria-label="종료일"
+							disabled={busy}
 							onChange={onChange('endDate')}
 							type="date"
 							value={dayjs(updateEducation?.endDate).format(
@@ -170,13 +158,18 @@ export default function EducationRow({
 					</td>
 					<td>
 						<div className="flex gap-2 justify-center">
-							<Button size="sm" onClick={onUpdate}>
+							<Button
+								size="sm"
+								onClick={onUpdate}
+								disabled={busy || changeOrder}
+							>
 								저장
 							</Button>
 							<Button
 								variant="secondary"
 								size="sm"
 								onClick={onSelect()}
+								disabled={busy}
 							>
 								취소
 							</Button>
@@ -194,7 +187,7 @@ export default function EducationRow({
 							<Button
 								size="sm"
 								onClick={onSelect(education)}
-								disabled={changeOrder}
+								disabled={changeOrder || busy}
 							>
 								수정
 							</Button>
@@ -202,7 +195,7 @@ export default function EducationRow({
 								variant="destructive"
 								size="sm"
 								onClick={onDelete(education.id)}
-								disabled={changeOrder}
+								disabled={changeOrder || busy}
 							>
 								삭제
 							</Button>

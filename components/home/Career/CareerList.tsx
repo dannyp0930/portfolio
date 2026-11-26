@@ -1,4 +1,4 @@
-import dayjs from 'dayjs';
+import { portfolioDate } from '@/lib/portfolioDate';
 
 export default function CareerList({ careers }: CareerListProps) {
 	return (
@@ -26,10 +26,10 @@ export default function CareerList({ careers }: CareerListProps) {
 								{career.companyName}
 							</h3>
 							<span className="text-xs text-theme-sub/85 font-mono whitespace-nowrap flex-shrink-0">
-								{dayjs(career.startDate).format('YYYY.MM')}
+								{portfolioDate(career.startDate, 'YYYY.MM')}
 								{' — '}
 								{career.endDate
-									? dayjs(career.endDate).format('YYYY.MM')
+									? portfolioDate(career.endDate, 'YYYY.MM')
 									: '현재'}
 							</span>
 						</div>

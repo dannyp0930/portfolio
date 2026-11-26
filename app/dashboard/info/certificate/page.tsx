@@ -2,25 +2,19 @@
 
 import { instance } from '@/app/api/instance';
 import AdminPagination from '@/components/dashboard/AdminPagination';
+import ListTable, {
+	ListFallback,
+	ListStatusRow,
+} from '@/components/dashboard/ListTable';
+import useAdminList from '@/components/dashboard/useAdminList';
 import { Button } from '@/components/ui/button';
-import { isAxiosError } from 'axios';
 import dayjs from 'dayjs';
-import { useSearchParams } from 'next/navigation';
-import {
-	ChangeEvent,
-	MouseEvent,
-	Suspense,
-	useCallback,
-	useEffect,
-	useState,
-} from 'react';
+import { ChangeEvent, MouseEvent, Suspense, useState } from 'react';
 import { toast } from 'sonner';
-import SortIcon from '@/components/dashboard/SortIcon';
+import { SortHeader } from '@/components/dashboard/SortIcon';
 import { validateAndShowRequiredFields } from '@/lib/utils/validation';
-import { closestCenter, DndContext, DragEndEvent } from '@dnd-kit/core';
-import { cn } from '@/lib/utils';
+import { closestCenter, DndContext } from '@dnd-kit/core';
 import {
-	arrayMove,
 	SortableContext,
 	verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
@@ -28,30 +22,33 @@ import CertificateRow from '@/components/dashboard/info/CertificateRow';
 
 export default function Certificate() {
 	return (
-		<Suspense>
+		<Suspense fallback={<ListFallback />}>
 			<CertificateContent />
 		</Suspense>
 	);
 }
 
 function CertificateContent() {
-	const searchParams = useSearchParams();
-	const [load, setLoad] = useState<boolean>(true);
 	const [certificateName, setCertificateName] = useState<string>('');
 	const [issueDate, setIssueDate] = useState<string>('');
 	const [issuingOrganization, setIssuingOrganization] = useState<string>('');
-	const [selectPage, setSelectPage] = useState<number>(1);
-	const [certificates, setCertificates] = useState<Certificate[]>([]);
-	const [totalCnt, setTotalCnt] = useState<number>(0);
 	const [updateCertificateId, setUpdateCertificateId] = useState<
 		number | null
 	>();
 	const [updateCertificate, setUpdateCertificate] =
 		useState<Certificate | null>();
-	const take = 20;
-	const [orderBy, setOrderBy] = useState<string>('order');
-	const [order, setOrder] = useState<Order>('asc');
 	const [changeOrder, setChangeOrder] = useState<boolean>(false);
+
+	const list = useAdminList<Certificate>('/info/certificate');
+	const {
+		rows: certificates,
+		page: selectPage,
+		totalCnt,
+		take,
+		orderBy,
+		order,
+		busy,
+	} = list;
 
 	async function handleCreateCertificate(e: MouseEvent<HTMLButtonElement>) {
 		e.preventDefault();
@@ -62,7 +59,7 @@ function CertificateContent() {
 		};
 		const erroRes = validateAndShowRequiredFields(fields, 'certificate');
 		if (erroRes) return true;
-		try {
+		await list.mutate(async () => {
 			const body = {
 				certificateName,
 				issueDate: dayjs(issueDate).toDate(),
@@ -78,18 +75,12 @@ function CertificateContent() {
 				setIssueDate('');
 				setIssuingOrganization('');
 			}
-		} catch (err) {
-			if (isAxiosError(err)) {
-				toast.error(err.response?.data.error || '오류가 발생했습니다');
-			}
-		} finally {
-			setLoad(true);
-		}
+		});
 	}
 
 	async function handleUpdateCertificate(e: MouseEvent<HTMLButtonElement>) {
 		e.preventDefault();
-		try {
+		await list.mutate(async () => {
 			const body = {
 				...updateCertificate,
 				issueDate: dayjs(updateCertificate?.issueDate).toDate(),
@@ -103,19 +94,14 @@ function CertificateContent() {
 				setUpdateCertificateId(null);
 				setUpdateCertificate(null);
 			}
-		} catch (err) {
-			if (isAxiosError(err)) {
-				toast.error(err.response?.data.error || '오류가 발생했습니다');
-			}
-		} finally {
-			setLoad(true);
-		}
+		});
 	}
 
 	function handleDeleteCertificate(certificateId: number) {
 		return async (e: MouseEvent<HTMLButtonElement>) => {
 			e.preventDefault();
-			try {
+			if (busy || !window.confirm('이 항목을 삭제하시겠습니까?')) return;
+			await list.mutate(async () => {
 				const body = { id: certificateId };
 				const {
 					data: { message },
@@ -128,15 +114,7 @@ function CertificateContent() {
 					setUpdateCertificateId(null);
 					setUpdateCertificate(null);
 				}
-			} catch (err) {
-				if (isAxiosError(err)) {
-					toast.error(
-						err.response?.data.error || '오류가 발생했습니다'
-					);
-				}
-			} finally {
-				setLoad(true);
-			}
+			});
 		};
 	}
 
@@ -162,100 +140,18 @@ function CertificateContent() {
 		};
 	}
 
-	const handleSort = (column: string) => {
-		if (changeOrder) return;
-		if (orderBy === column) {
-			setOrder(order === 'asc' ? 'desc' : 'asc');
-		} else {
-			setOrderBy(column);
-			setOrder('asc');
-		}
-		setLoad(true);
-	};
-
-	const getCertificate = useCallback(async () => {
-		const params = {
-			page: selectPage,
-			take,
-			orderBy,
-			order,
-		};
-		try {
-			const {
-				data: { data, totalCnt },
-			} = await instance.get('/info/certificate', { params });
-			setCertificates(data);
-			setTotalCnt(totalCnt);
-			setLoad(false);
-		} catch (err) {
-			if (isAxiosError(err)) {
-				toast.error(err.response?.data.error || '오류가 발생했습니다');
-			}
-		}
-	}, [selectPage, take, orderBy, order]);
-
-	async function handleDragEnd(event: DragEndEvent) {
-		const { active, over } = event;
-		const originalCertificates = [...certificates];
-		if (active.id !== over?.id && certificates) {
-			try {
-				const oldIndex = certificates.findIndex(
-					(certificate) => certificate.id === active.id
-				);
-				const newIndex = certificates.findIndex(
-					(certificate) => certificate.id === over?.id
-				);
-				const newOrder = arrayMove(certificates, oldIndex, newIndex);
-				setCertificates(newOrder);
-				const body = newOrder.map((item, index) => ({
-					id: item.id,
-					prevOrder: item.order,
-					order: (selectPage - 1) * take + index + 1,
-				}));
-				const {
-					data: { message },
-					status,
-				} = await instance.patch('/info/certificate', { data: body });
-				if (status === 200) {
-					toast.success(message);
-				}
-			} catch (err) {
-				if (isAxiosError(err)) {
-					toast.error(
-						err.response?.data.error || '오류가 발생했습니다'
-					);
-				}
-				setCertificates(originalCertificates);
-			} finally {
-				setChangeOrder(false);
-			}
-		}
-	}
-
-	useEffect(() => {
-		if (load) {
-			getCertificate();
-		}
-	}, [load, getCertificate]);
-
-	useEffect(() => {
-		const parmasPage = searchParams.get('p');
-		if (parmasPage) {
-			setSelectPage(parseInt(parmasPage));
-		}
-	}, [searchParams]);
-
-	useEffect(() => {
-		setLoad(true);
-	}, [selectPage]);
-
 	return (
 		<div className="py-10 rounded-lg bg-card">
 			<DndContext
 				collisionDetection={closestCenter}
-				onDragEnd={handleDragEnd}
+				onDragEnd={(event) => {
+					if (changeOrder)
+						list.reorder(event, certificates, () =>
+							setChangeOrder(false)
+						);
+				}}
 			>
-				<table className="w-full border-collapse table-fixed [&_th]:border [&_th]:px-2 [&_th]:py-1 [&_th:first-of-type]:border-l-0 [&_th:last-of-type]:border-r-0 [&_td]:border [&_td]:px-2 [&_td]:py-1 [&_td]:overflow-auto [&_td:first-of-type]:border-l-0 [&_td:last-of-type]:border-r-0">
+				<ListTable columns={5}>
 					<thead>
 						<tr>
 							<th>
@@ -263,72 +159,45 @@ function CertificateContent() {
 								<Button
 									className="ml-4"
 									size="sm"
+									disabled={busy}
 									onClick={() => {
 										setChangeOrder(!changeOrder);
-										setOrderBy('order');
-										setOrder('asc');
-										setLoad(true);
+										list.resetSort();
 									}}
 								>
 									{changeOrder ? '취소' : '변경'}
 								</Button>
 							</th>
-							<th
-								className={cn(
-									!changeOrder && 'cursor-pointer',
-									'relative'
-								)}
-								onClick={() => handleSort('certificateName')}
+							<SortHeader
+								orderBy={orderBy}
+								order={order}
+								currentColumn="certificateName"
+								onSort={list.sort}
+								disabled={list.writing || changeOrder}
+								hideIcon={changeOrder}
 							>
 								자격증명
-								{!changeOrder && (
-									<span className="absolute right-2 bottom-1/2 translate-y-1/2">
-										<SortIcon
-											orderBy={orderBy}
-											currentColumn="certificateName"
-											order={order}
-										/>
-									</span>
-								)}
-							</th>
-							<th
-								className={cn(
-									!changeOrder && 'cursor-pointer',
-									'relative'
-								)}
-								onClick={() =>
-									handleSort('issuingOrganization')
-								}
+							</SortHeader>
+							<SortHeader
+								orderBy={orderBy}
+								order={order}
+								currentColumn="issuingOrganization"
+								onSort={list.sort}
+								disabled={list.writing || changeOrder}
+								hideIcon={changeOrder}
 							>
 								발급기관
-								{!changeOrder && (
-									<span className="absolute right-2 bottom-1/2 translate-y-1/2">
-										<SortIcon
-											orderBy={orderBy}
-											currentColumn="issuingOrganization"
-											order={order}
-										/>
-									</span>
-								)}
-							</th>
-							<th
-								className={cn(
-									!changeOrder && 'cursor-pointer',
-									'relative'
-								)}
-								onClick={() => handleSort('issueDate')}
+							</SortHeader>
+							<SortHeader
+								orderBy={orderBy}
+								order={order}
+								currentColumn="issueDate"
+								onSort={list.sort}
+								disabled={list.writing || changeOrder}
+								hideIcon={changeOrder}
 							>
 								발급일
-								{!changeOrder && (
-									<span className="absolute right-2 bottom-1/2 translate-y-1/2">
-										<SortIcon
-											orderBy={orderBy}
-											currentColumn="issueDate"
-											order={order}
-										/>
-									</span>
-								)}
-							</th>
+							</SortHeader>
 							<th></th>
 						</tr>
 					</thead>
@@ -344,7 +213,7 @@ function CertificateContent() {
 									onChange={(e) =>
 										setCertificateName(e.target.value)
 									}
-									disabled={changeOrder}
+									disabled={changeOrder || busy}
 								/>
 							</td>
 							<td>
@@ -356,7 +225,7 @@ function CertificateContent() {
 									onChange={(e) =>
 										setIssuingOrganization(e.target.value)
 									}
-									disabled={changeOrder}
+									disabled={changeOrder || busy}
 								/>
 							</td>
 							<td>
@@ -368,7 +237,7 @@ function CertificateContent() {
 									onChange={(e) =>
 										setIssueDate(e.target.value)
 									}
-									disabled={changeOrder}
+									disabled={changeOrder || busy}
 								/>
 							</td>
 							<td>
@@ -376,13 +245,21 @@ function CertificateContent() {
 									<Button
 										size="sm"
 										onClick={handleCreateCertificate}
-										disabled={changeOrder}
+										disabled={changeOrder || busy}
 									>
 										추가
 									</Button>
 								</div>
 							</td>
 						</tr>
+						<ListStatusRow
+							columns={5}
+							loading={list.loading}
+							writing={list.writing}
+							error={list.error}
+							empty={certificates.length === 0}
+							reload={list.reload}
+						/>
 						<SortableContext
 							items={certificates}
 							strategy={verticalListSortingStrategy}
@@ -398,7 +275,8 @@ function CertificateContent() {
 									updateCertificateId={updateCertificateId}
 									updateCertificate={updateCertificate}
 									changeOrder={changeOrder}
-									setLoad={setLoad}
+									busy={busy}
+									onMove={list.move}
 									onChange={changeSelectUpdateCertificate}
 									onUpdate={handleUpdateCertificate}
 									onSelect={selectUpdateCertificate}
@@ -407,14 +285,14 @@ function CertificateContent() {
 							))}
 						</SortableContext>
 					</tbody>
-				</table>
+				</ListTable>
 			</DndContext>
 			<AdminPagination
 				className="mt-10"
 				page={selectPage}
 				totalCnt={totalCnt}
 				take={take}
-				size={5}
+				disabled={list.loading || list.writing}
 			/>
 		</div>
 	);

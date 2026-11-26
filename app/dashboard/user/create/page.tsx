@@ -1,6 +1,10 @@
 'use client';
 
 import { instance } from '@/app/api/instance';
+import {
+	actionError,
+	usePendingAction,
+} from '@/components/dashboard/FormFeedback';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import {
@@ -14,7 +18,6 @@ import {
 import { Input } from '@/components/ui/input';
 import { formatPhoneNumber } from '@/lib/formatUtils';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { isAxiosError } from 'axios';
 import { useRouter } from 'next/navigation';
 import { ChangeEvent } from 'react';
 import { useForm } from 'react-hook-form';
@@ -36,6 +39,7 @@ const formSchema = z.object({
 });
 
 export default function UserCreate() {
+	const save = usePendingAction();
 	const router = useRouter();
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
@@ -63,135 +67,149 @@ export default function UserCreate() {
 				router.push('/dashboard/user');
 			}
 		} catch (err) {
-			if (isAxiosError(err)) {
-				toast.error(err.response?.data.error || '오류가 발생했습니다');
-			}
+			toast.error(actionError(err));
 		}
 	}
 	return (
-		<div className="m-5 p-10 rounded-lg bg-card">
+		<div className="m-3 min-w-0 rounded-lg bg-card p-4 sm:m-5 sm:p-10">
 			<Form {...form}>
 				<form
-					onSubmit={form.handleSubmit(handleSubmit)}
+					onSubmit={form.handleSubmit((values) =>
+						save.run(() => handleSubmit(values))
+					)}
+					aria-busy={save.pending}
 					className="space-y-8"
 				>
-					<FormField
-						control={form.control}
-						name="email"
-						render={({ field }) => (
-							<FormItem>
-								<div className="flex gap-4 items-center">
-									<FormLabel className="flex-shrink-0 w-20">
-										Email
-									</FormLabel>
-									<FormControl className="w-48">
-										<Input placeholder="Email" {...field} />
-									</FormControl>
-									<FormMessage />
-								</div>
-							</FormItem>
-						)}
-					/>
-					<FormField
-						control={form.control}
-						name="name"
-						render={({ field }) => (
-							<FormItem>
-								<div className="flex gap-4 items-center">
-									<FormLabel className="flex-shrink-0 w-20">
-										이름
-									</FormLabel>
-									<FormControl className="w-48">
-										<Input placeholder="이름" {...field} />
-									</FormControl>
-									<FormMessage />
-								</div>
-							</FormItem>
-						)}
-					/>
-					<FormField
-						control={form.control}
-						name="phone"
-						render={({ field }) => (
-							<FormItem>
-								<div className="flex gap-4 items-center">
-									<FormLabel className="flex-shrink-0 w-20">
-										휴대전화
-									</FormLabel>
-									<FormControl className="w-48">
-										<Input
-											placeholder="000-0000-0000"
-											{...field}
-											onChange={handlePhoneNumber}
-										/>
-									</FormControl>
-									<FormMessage />
-								</div>
-							</FormItem>
-						)}
-					/>
-					<FormField
-						control={form.control}
-						name="password"
-						render={({ field }) => (
-							<FormItem>
-								<div className="flex gap-4 items-center">
-									<FormLabel className="flex-shrink-0 w-20">
-										비밀번호
-									</FormLabel>
-									<FormControl className="w-48">
-										<Input
-											placeholder="비밀번호"
-											type="password"
-											{...field}
-										/>
-									</FormControl>
-									<FormMessage />
-								</div>
-							</FormItem>
-						)}
-					/>
-					<FormField
-						control={form.control}
-						name="subscribed"
-						render={({ field }) => (
-							<FormItem>
-								<div className="flex gap-4 items-center">
-									<FormLabel className="flex-shrink-0 w-20">
-										뉴스레터 구독
-									</FormLabel>
-									<FormControl>
-										<Checkbox
-											checked={field.value}
-											onCheckedChange={field.onChange}
-										/>
-									</FormControl>
-									<FormMessage />
-								</div>
-							</FormItem>
-						)}
-					/>
-					<FormField
-						control={form.control}
-						name="isAdmin"
-						render={({ field }) => (
-							<FormItem>
-								<div className="flex gap-4 items-center">
-									<FormLabel className="flex-shrink-0 w-20">
-										관리자
-									</FormLabel>
-									<FormControl>
-										<Checkbox
-											checked={field.value}
-											onCheckedChange={field.onChange}
-										/>
-									</FormControl>
-									<FormMessage />
-								</div>
-							</FormItem>
-						)}
-					/>
-					<Button type="submit">등록</Button>
+					<fieldset
+						className="min-w-0 space-y-6"
+						disabled={save.pending}
+					>
+						<FormField
+							control={form.control}
+							name="email"
+							render={({ field }) => (
+								<FormItem>
+									<div className="flex min-w-0 flex-col items-start gap-2 lg:flex-row lg:gap-4">
+										<FormLabel className="shrink-0 lg:w-20 lg:pt-2">
+											Email
+										</FormLabel>
+										<FormControl className="w-full min-w-0 lg:max-w-48">
+											<Input
+												placeholder="Email"
+												{...field}
+											/>
+										</FormControl>
+										<FormMessage />
+									</div>
+								</FormItem>
+							)}
+						/>
+						<FormField
+							control={form.control}
+							name="name"
+							render={({ field }) => (
+								<FormItem>
+									<div className="flex min-w-0 flex-col items-start gap-2 lg:flex-row lg:gap-4">
+										<FormLabel className="shrink-0 lg:w-20 lg:pt-2">
+											이름
+										</FormLabel>
+										<FormControl className="w-full min-w-0 lg:max-w-48">
+											<Input
+												placeholder="이름"
+												{...field}
+											/>
+										</FormControl>
+										<FormMessage />
+									</div>
+								</FormItem>
+							)}
+						/>
+						<FormField
+							control={form.control}
+							name="phone"
+							render={({ field }) => (
+								<FormItem>
+									<div className="flex min-w-0 flex-col items-start gap-2 lg:flex-row lg:gap-4">
+										<FormLabel className="shrink-0 lg:w-20 lg:pt-2">
+											휴대전화
+										</FormLabel>
+										<FormControl className="w-full min-w-0 lg:max-w-48">
+											<Input
+												placeholder="000-0000-0000"
+												{...field}
+												onChange={handlePhoneNumber}
+											/>
+										</FormControl>
+										<FormMessage />
+									</div>
+								</FormItem>
+							)}
+						/>
+						<FormField
+							control={form.control}
+							name="password"
+							render={({ field }) => (
+								<FormItem>
+									<div className="flex min-w-0 flex-col items-start gap-2 lg:flex-row lg:gap-4">
+										<FormLabel className="shrink-0 lg:w-20 lg:pt-2">
+											비밀번호
+										</FormLabel>
+										<FormControl className="w-full min-w-0 lg:max-w-48">
+											<Input
+												placeholder="비밀번호"
+												type="password"
+												{...field}
+											/>
+										</FormControl>
+										<FormMessage />
+									</div>
+								</FormItem>
+							)}
+						/>
+						<FormField
+							control={form.control}
+							name="subscribed"
+							render={({ field }) => (
+								<FormItem>
+									<div className="flex min-w-0 items-center gap-4">
+										<FormLabel className="shrink-0 lg:w-20 lg:pt-2">
+											뉴스레터 구독
+										</FormLabel>
+										<FormControl>
+											<Checkbox
+												checked={field.value}
+												onCheckedChange={field.onChange}
+											/>
+										</FormControl>
+										<FormMessage />
+									</div>
+								</FormItem>
+							)}
+						/>
+						<FormField
+							control={form.control}
+							name="isAdmin"
+							render={({ field }) => (
+								<FormItem>
+									<div className="flex min-w-0 items-center gap-4">
+										<FormLabel className="shrink-0 lg:w-20 lg:pt-2">
+											관리자
+										</FormLabel>
+										<FormControl>
+											<Checkbox
+												checked={field.value}
+												onCheckedChange={field.onChange}
+											/>
+										</FormControl>
+										<FormMessage />
+									</div>
+								</FormItem>
+							)}
+						/>
+						<Button type="submit">
+							{save.pending ? '등록 중…' : '등록'}
+						</Button>
+					</fieldset>
 				</form>
 			</Form>
 		</div>

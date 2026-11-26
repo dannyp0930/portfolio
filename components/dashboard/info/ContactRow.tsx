@@ -1,11 +1,8 @@
-import { instance } from '@/app/api/instance';
 import { Button } from '@/components/ui/button';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { isAxiosError } from 'axios';
 import { ArrowDownFromLine, ArrowUpFromLine } from 'lucide-react';
-import { ChangeEvent, Dispatch, MouseEvent, SetStateAction } from 'react';
-import { toast } from 'sonner';
+import { ChangeEvent, MouseEvent } from 'react';
 
 export default function ContactRow({
 	idx,
@@ -16,7 +13,8 @@ export default function ContactRow({
 	changeOrder,
 	updateContactId,
 	updateContact,
-	setLoad,
+	busy,
+	onMove,
 	onChange,
 	onUpdate,
 	onSelect,
@@ -30,7 +28,8 @@ export default function ContactRow({
 	changeOrder: boolean;
 	updateContactId: number | null | undefined;
 	updateContact: Contact | null | undefined;
-	setLoad: Dispatch<SetStateAction<boolean>>;
+	busy: boolean;
+	onMove: (id: number, order: number, dir: boolean) => Promise<void>;
 	onChange: (
 		key: keyof Contact
 	) => (e: ChangeEvent<HTMLInputElement>) => void;
@@ -42,37 +41,12 @@ export default function ContactRow({
 }) {
 	const totalPages = Math.ceil(total / take);
 	const { attributes, listeners, setNodeRef, transform, transition } =
-		useSortable({ id: contact.id });
+		useSortable({ id: contact.id, disabled: busy || !changeOrder });
 
 	const style = {
 		transform: CSS.Transform.toString(transform),
 		transition,
 	};
-
-	function handleOrder(id: number, order: number, dir: boolean) {
-		return async (e: MouseEvent<HTMLButtonElement>) => {
-			e.preventDefault();
-			try {
-				const {
-					data: { message },
-					status,
-				} = await instance.patch('/info/contact', {
-					data: { id, order, dir },
-				});
-				if (status === 200) {
-					toast.success(message);
-				}
-			} catch (err) {
-				if (isAxiosError(err)) {
-					toast.error(
-						err.response?.data.error || '오류가 발생했습니다'
-					);
-				}
-			} finally {
-				setLoad(true);
-			}
-		};
-	}
 
 	return (
 		<tr
@@ -97,11 +71,16 @@ export default function ContactRow({
 						{idx === 0 && page !== 1 && (
 							<Button
 								variant="ghost"
-								onClick={handleOrder(
-									contact.id,
-									contact.order as number,
-									false
-								)}
+								disabled={busy || contact.order == null}
+								aria-label="이전 페이지로 이동"
+								onClick={() => {
+									if (contact.order != null)
+										void onMove(
+											contact.id,
+											contact.order,
+											false
+										);
+								}}
 							>
 								<ArrowUpFromLine />
 							</Button>
@@ -109,11 +88,16 @@ export default function ContactRow({
 						{idx === take - 1 && page !== totalPages && (
 							<Button
 								variant="ghost"
-								onClick={handleOrder(
-									contact.id,
-									contact.order as number,
-									true
-								)}
+								disabled={busy || contact.order == null}
+								aria-label="다음 페이지로 이동"
+								onClick={() => {
+									if (contact.order != null)
+										void onMove(
+											contact.id,
+											contact.order,
+											true
+										);
+								}}
 							>
 								<ArrowDownFromLine />
 							</Button>
@@ -129,6 +113,7 @@ export default function ContactRow({
 						<input
 							className="w-full focus:outline-none"
 							aria-label="유형"
+							disabled={busy}
 							onChange={onChange('type')}
 							type="text"
 							value={updateContact?.type}
@@ -138,6 +123,7 @@ export default function ContactRow({
 						<input
 							className="w-full focus:outline-none"
 							aria-label="값"
+							disabled={busy}
 							onChange={onChange('value')}
 							type="text"
 							value={updateContact?.value}
@@ -147,6 +133,7 @@ export default function ContactRow({
 						<input
 							className="w-full focus:outline-none"
 							aria-label="라벨"
+							disabled={busy}
 							onChange={onChange('label')}
 							type="text"
 							value={updateContact?.label}
@@ -154,13 +141,18 @@ export default function ContactRow({
 					</td>
 					<td>
 						<div className="flex gap-2 justify-center">
-							<Button size="sm" onClick={onUpdate}>
+							<Button
+								size="sm"
+								onClick={onUpdate}
+								disabled={busy || changeOrder}
+							>
 								저장
 							</Button>
 							<Button
 								variant="secondary"
 								size="sm"
 								onClick={onSelect()}
+								disabled={busy}
 							>
 								취소
 							</Button>
@@ -177,7 +169,7 @@ export default function ContactRow({
 							<Button
 								size="sm"
 								onClick={onSelect(contact)}
-								disabled={changeOrder}
+								disabled={changeOrder || busy}
 							>
 								수정
 							</Button>
@@ -185,7 +177,7 @@ export default function ContactRow({
 								variant="destructive"
 								size="sm"
 								onClick={onDelete(contact.id)}
-								disabled={changeOrder}
+								disabled={changeOrder || busy}
 							>
 								삭제
 							</Button>
