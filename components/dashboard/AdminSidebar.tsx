@@ -198,6 +198,18 @@ export default function AdminSidebar() {
 				</SidebarGroup>
 			</SidebarContent>
 			<SidebarFooter>
+				<details className="rounded-md border border-sidebar-border">
+					<summary className="min-h-11 cursor-pointer px-3 py-3 text-sm focus-visible:outline focus-visible:-outline-offset-2">
+						홈 화면에 추가
+					</summary>
+					<div className="space-y-2 px-3 pb-3 text-xs leading-relaxed">
+						<p>
+							iPhone Safari: 공유 → 홈 화면에 추가 → 웹 앱으로
+							열기
+						</p>
+						<p>Android Chrome: 메뉴 → 홈 화면에 추가 → 설치</p>
+					</div>
+				</details>
 				<Button
 					onClick={() => void logout.run(handleLogout)}
 					disabled={logout.pending}
